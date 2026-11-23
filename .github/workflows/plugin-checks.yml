@@ -1,0 +1,54 @@
+name: Plugin Checks ✅
+
+# Added by /plugin-setup. Fails a pull request whose manifests or docs drifted from the plugins
+# on disk, or in which a plugin changed and its version did not. Every job runs one shared action
+# at the ref named below, so nothing is vendored into this repository.
+# The ref is a commit of JanSzewczyk/claude-plugins: its only plugin-dev tag (v3.0.0) predates these actions.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  manifests:
+    name: Manifests and Docs 🔍
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 📚
+        uses: actions/checkout@v7
+      - name: Check manifests and documentation 🔍
+        uses: JanSzewczyk/claude-plugins/.github/actions/marketplace-audit@c190a0d278750a2fc33d0b884d657e6ca59ed6ea
+        # Inputs: strict, path.
+
+  version-bumps:
+    name: Version Bumps 🏷️
+    # Fails a pull request in which a plugin changed and its version did not. Works in a marketplace
+    # and in a single-plugin repo, and fetches the base history itself, so no fetch-depth: 0.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 📚
+        uses: actions/checkout@v7
+      - name: Check every changed plugin has a version bump 🏷️
+        uses: JanSzewczyk/claude-plugins/.github/actions/version-bump-check@c190a0d278750a2fc33d0b884d657e6ca59ed6ea
+        with:
+          changelog: "true"
+        # Inputs: strict (also fail a bump that is too small), ignore-plugins, base-ref, path.
+
+  skills:
+    name: Skill Audit 🔎
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 📚
+        uses: actions/checkout@v7
+      - name: Audit every skill 🔎
+        uses: JanSzewczyk/claude-plugins/.github/actions/skill-audit@c190a0d278750a2fc33d0b884d657e6ca59ed6ea
+        # Inputs: path, skills-glob (default plugins/*/skills/*/).

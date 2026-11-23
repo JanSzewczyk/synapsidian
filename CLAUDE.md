@@ -75,7 +75,57 @@ synapsidian-work or needs an option.
 
 ## Versions
 
-Bump `version` in the plugin's `.claude-plugin/plugin.json` for every shipped change (the
-installed copy is cached per version). For synapsidian-work, keep `extension/extension.yaml`'s
-`version` equal to its plugin version; `/synapsidian-work:setup` re-installs the extension when they
-differ.
+Versions are bumped only on request, through `/plugin-release` (see the plugin development section
+below). When synapsidian-work's version changes, keep `extension/extension.yaml`'s `version` equal
+to its plugin version; `/synapsidian-work:setup` re-installs the extension when they differ.
+
+<!-- BEGIN:plugin-dev -->
+## Plugin development
+
+Managed by `/plugin-setup`; re-run it to refresh this section instead of editing it here.
+
+### Where things live
+
+- Marketplace: `.claude-plugin/marketplace.json`.
+- Plugins: `plugins/<name>/.claude-plugin/plugin.json` for `synapsidian`, `synapsidian-work`,
+  `synapsidian-projects` and `synapsidian-dock`.
+
+- Each manifest is `<plugin>/.claude-plugin/plugin.json`. `skills/`, `agents/`, `hooks/` and every
+  other component sit at the plugin root, never inside `.claude-plugin/`.
+- A new **plugin** is registered in `.claude-plugin/marketplace.json`. A new skill or agent inside
+  an existing plugin is not.
+- No plugin sets `agents`, so agent files are found by scanning `agents/`. If a manifest ever sets
+  `agents`, it must list every agent file, because the array replaces the scan.
+- Every manifest opens with `$schema`: `https://www.schemastore.org/claude-code-plugin-manifest.json`
+  for a plugin, `https://www.schemastore.org/claude-code-marketplace.json` for the marketplace.
+
+### After a change to a plugin
+
+1. **Update the docs that list capabilities by hand:** the root `README.md`, each
+   `plugins/<name>/README.md`, and the plugin layout list at the top of this file.
+2. **Run `/marketplace-creator audit`** and fix what it reports before committing. It checks manifests,
+   docs and frontmatter against what is on disk.
+
+### Versions
+
+Plugins pin `version`, so users stay on the cached copy until it changes; semver sizes are in
+`/plugin-release`.
+
+**Never bump a version on your own.** Editing a skill or an agent is not a request to bump: change
+a `version` only when the user asks for it in this conversation, and then through `/plugin-release`,
+which proposes the size from the diff and writes nothing until the user agrees. A pull request that
+changed a plugin and left its version alone is caught by CI, not by a standing instruction.
+
+### Releasing
+
+Release tags are `<plugin>--v<version>`, created through `/plugin-release`. Every plugin that lists
+`dependencies` resolves a version range against these tags, so tag each version a range can point at.
+
+Every version bump adds a `CHANGELOG.md` section, `## [<version> <plugin>] — <date>`;
+`/plugin-release` drafts it from git history.
+
+### What runs on its own
+
+Nothing in the background. The steps above happen because this file asks for them; CI, if
+`.github/workflows/plugin-checks.yml` exists, fails a pull request with drift or a missing bump.
+<!-- END:plugin-dev -->
