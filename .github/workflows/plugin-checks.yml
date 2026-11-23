@@ -3,7 +3,7 @@ name: Plugin Checks ✅
 # Added by /plugin-setup. Fails a pull request whose manifests or docs drifted from the plugins
 # on disk, or in which a plugin changed and its version did not. Every job runs one shared action
 # at the ref named below, so nothing is vendored into this repository.
-# The ref is a commit of JanSzewczyk/claude-plugins: its only plugin-dev tag (v3.0.0) predates these actions.
+# The ref is main of JanSzewczyk/claude-plugins, so the checks always run the latest actions.
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout code 📚
         uses: actions/checkout@v7
       - name: Check manifests and documentation 🔍
-        uses: JanSzewczyk/claude-plugins/.github/actions/marketplace-audit@c190a0d278750a2fc33d0b884d657e6ca59ed6ea
+        uses: JanSzewczyk/claude-plugins/.github/actions/marketplace-audit@main
         # Inputs: strict, path.
 
   version-bumps:
@@ -38,7 +38,7 @@ jobs:
       - name: Checkout code 📚
         uses: actions/checkout@v7
       - name: Check every changed plugin has a version bump 🏷️
-        uses: JanSzewczyk/claude-plugins/.github/actions/version-bump-check@c190a0d278750a2fc33d0b884d657e6ca59ed6ea
+        uses: JanSzewczyk/claude-plugins/.github/actions/version-bump-check@main
         with:
           changelog: "true"
         # Inputs: strict (also fail a bump that is too small), ignore-plugins, base-ref, path.
@@ -50,11 +50,5 @@ jobs:
       - name: Checkout code 📚
         uses: actions/checkout@v7
       - name: Audit every skill 🔎
-        uses: JanSzewczyk/claude-plugins/.github/actions/skill-audit@c190a0d278750a2fc33d0b884d657e6ca59ed6ea
-        with:
-          # Every skill except synapsidian's find and recap: they run in a forked Explore subagent
-          # (context, agent, background in the frontmatter, D131), keys the audit contract rejects.
-          # The action splits this on spaces, so each pattern is a glob: [!fr]* skips find and recap
-          # by first letter, re[!c]* brings back research and review.
-          skills-glob: "plugins/synapsidian-*/skills/*/ plugins/synapsidian/skills/[!fr]*/ plugins/synapsidian/skills/re[!c]*/"
+        uses: JanSzewczyk/claude-plugins/.github/actions/skill-audit@main
         # Inputs: path, skills-glob (default plugins/*/skills/*/).

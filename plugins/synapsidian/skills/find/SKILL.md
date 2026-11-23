@@ -1,11 +1,8 @@
 ---
 name: find
 description: Search the user's second-brain vault and answer from it, citing notes as [[links]]. Use when the user asks what they know, decided or planned about something, or refers to past work, people or decisions ("what did we decide about...", "do I have notes on...", "znajdź w notatkach"), and before creating a note, to check it doesn't exist.
-allowed-tools: Bash(synapsidian *) Read Grep Glob
+allowed-tools: Bash(synapsidian *) Read Grep Glob Agent
 argument-hint: "<question or keywords>"
-context: fork
-agent: Explore
-background: false
 ---
 
 # Find in the vault
@@ -14,7 +11,7 @@ The `synapsidian` command finds the vault by itself (plugin option `vault_path`)
 
 Question: $ARGUMENTS
 
-This runs in a subagent of its own (D131): it sees only the question above, not the conversation, so whoever invokes it passes the whole question, with any names or dates it needs. Return the answer and its `[[links]]`, not the notes' text.
+Run this in an Explore subagent (D131), so the notes it reads stay out of this conversation: spawn it with the Agent tool (`subagent_type: Explore`) and a prompt that holds the question above, with any names or dates it needs, and the steps below, because it does not see the conversation. Relay its answer and `[[links]]`, not the notes' text, and read no notes yourself. If no subagent tool is available, do the steps yourself.
 
 1. Notes are written in English, and the search matches words, not meaning. If the question is in another language, translate it to English keywords first (keep names, ticket keys and product terms as they are). Then run the ranked search:
    ```bash
