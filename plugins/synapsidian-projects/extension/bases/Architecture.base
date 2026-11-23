@@ -1,0 +1,20 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "architecture"
+views:
+  - type: table
+    name: By app
+    groupBy:
+      property: app
+      direction: ASC
+    order:
+      - file.name
+      - project
+      - kind
+      - summary
+      - scanned_at
+    sort:
+      - property: kind
+        direction: DESC

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "synapsidian-projects",
+  "displayName": "Synapsidian Projects",
+  "version": "0.12.5",
+  "description": "Projects add-on for the synapsidian plugin: any number of projects in the vault, each a hub note with its own kanban board of tasks, and the project's milestones, tasks, decisions, specs, changes, bug investigations, postmortems, architecture notes, research, workflows, notes and thinking filed under its own folder. Plans milestones with a target date and a board of their tasks. Creates and refreshes projects from a read-only repository scan, records MADR decisions numbered per project, keeps bug investigations and blameless postmortems, documents the architecture of a project's code in any language, and draws an Excalidraw mind map per project. Code repositories are only ever read.",
+  "author": {
+    "name": "Szum Tech Team",
+    "email": "szum.tech@gmail.com",
+    "url": "https://github.com/JanSzewczyk"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/JanSzewczyk/synapsidian",
+  "keywords": ["obsidian", "second-brain", "projects", "kanban", "decisions"],
+  "dependencies": ["synapsidian"]
+}

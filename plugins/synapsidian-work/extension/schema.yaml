@@ -1,0 +1,32 @@
+# synapsidian-work's additions to the synapsidian schema (D90). `/synapsidian-work:setup` installs this file
+# into the vault as `.synapsidian/extensions/synapsidian-work/schema.yaml`; the core merges it there.
+# `types:` adds note types; `extend:` adds fields to core types or widens their enums.
+
+# Architecture notes moved to synapsidian-projects with the architect skill (D104, D109).
+
+types:
+  # A brag log for performance reviews (D111): one note per thing the user got done that is worth
+  # bringing up later, logged by /synapsidian-work:win, listed by the 1:1 prep and the review.
+  win:
+    folder: Wins
+    filename: "{date} {title}"
+    fields:
+      date: {required: true, kind: date}
+      impact: {required: true, kind: text, enum: [small, medium, large], default: medium}
+      evidence: {kind: links}
+
+extend:
+  meeting:
+    fields:
+      kind: {enum: [1-1, standup, retro]}
+  task:
+    fields:
+      source: {enum: [slack, email, jira, github]}
+  project:
+    fields:
+      jira: {kind: text}
+  about:
+    fields:
+      team: {kind: text}
+      company: {kind: text}
+      manager: {kind: link}

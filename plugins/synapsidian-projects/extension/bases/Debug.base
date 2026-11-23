@@ -1,0 +1,33 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "debug"
+views:
+  - type: table
+    name: Investigating
+    filters:
+      and:
+        - note.status == "investigating"
+    groupBy:
+      property: project
+      direction: ASC
+    order:
+      - file.name
+      - project
+      - summary
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: By project
+    groupBy:
+      property: project
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - summary
+    sort:
+      - property: file.name
+        direction: DESC

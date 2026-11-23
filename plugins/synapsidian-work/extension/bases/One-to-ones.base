@@ -1,0 +1,17 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "meeting"
+    - note.kind == "1-1"
+views:
+  - type: table
+    name: One-to-ones
+    order:
+      - file.name
+      - date
+      - attendees
+      - summary
+    sort:
+      - property: date
+        direction: DESC

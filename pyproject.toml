@@ -1,0 +1,35 @@
+# Development environment only (tests, lint). The plugin's scripts declare their own
+# dependencies inline (PEP 723) and run with `uv run --script`.
+[project]
+name = "synapsidian-plugin"
+version = "0.0.0"
+requires-python = ">=3.12"
+# Script dependencies the tests exercise offline (source.py with saved HTML).
+dependencies = ["pyyaml>=6.0.2", "httpx>=0.28.1", "trafilatura>=2.3.1", "markitdown>=0.1.8"]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.7"]
+
+[tool.uv]
+package = false
+# markitdown pins magika 0.6, which doesn't bound onnxruntime; without this the lock picks a
+# release with no wheels for Python 3.14.
+constraint-dependencies = ["onnxruntime>=1.24.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["plugins/synapsidian/scripts", "plugins/synapsidian-work/scripts"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["plugins/synapsidian/scripts", "plugins/synapsidian-work/scripts", "plugins/synapsidian-projects/scripts", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "PTH", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+# Fixture content: one note per line reads better than wrapped strings.
+"tests/fixtures/build_fixture_vault.py" = ["E501"]

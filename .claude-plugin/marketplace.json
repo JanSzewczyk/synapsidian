@@ -1,0 +1,63 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
+  "name": "synapsidian",
+  "description": "Local marketplace for the synapsidian plugins (installed in place from this repo).",
+  "owner": {
+    "name": "Szum Tech Team",
+    "email": "szum.tech@gmail.com",
+    "url": "https://github.com/JanSzewczyk"
+  },
+  "plugins": [
+    {
+      "name": "synapsidian",
+      "source": "./plugins/synapsidian",
+      "description": "Second brain in an Obsidian vault.",
+      "author": {
+        "name": "Szum Tech Team",
+        "email": "szum.tech@gmail.com",
+        "url": "https://github.com/JanSzewczyk"
+      },
+      "homepage": "https://github.com/JanSzewczyk/synapsidian",
+      "license": "MIT"
+    },
+    {
+      "name": "synapsidian-work",
+      "source": "./plugins/synapsidian-work",
+      "description": "Work add-on for synapsidian: 1:1s, stand-up, retros, a win log, pull requests, Jira, email and Slack asks.",
+      "author": {
+        "name": "Szum Tech Team",
+        "email": "szum.tech@gmail.com",
+        "url": "https://github.com/JanSzewczyk"
+      },
+      "homepage": "https://github.com/JanSzewczyk/synapsidian",
+      "license": "MIT",
+      "dependencies": ["synapsidian"]
+    },
+    {
+      "name": "synapsidian-projects",
+      "source": "./plugins/synapsidian-projects",
+      "description": "Projects add-on for synapsidian: a hub with a kanban board per project, and its notes filed under the project's folder.",
+      "author": {
+        "name": "Szum Tech Team",
+        "email": "szum.tech@gmail.com",
+        "url": "https://github.com/JanSzewczyk"
+      },
+      "homepage": "https://github.com/JanSzewczyk/synapsidian",
+      "license": "MIT",
+      "dependencies": ["synapsidian"]
+    },
+    {
+      "name": "synapsidian-dock",
+      "source": "./plugins/synapsidian-dock",
+      "description": "Dock add-on for synapsidian: the brief in a band above the prompt and a /synapsidian pane whose keys change a task without a Claude turn (a Claude Code mod).",
+      "author": {
+        "name": "Szum Tech Team",
+        "email": "szum.tech@gmail.com",
+        "url": "https://github.com/JanSzewczyk"
+      },
+      "homepage": "https://github.com/JanSzewczyk/synapsidian",
+      "license": "MIT",
+      "dependencies": ["synapsidian"]
+    }
+  ]
+}
