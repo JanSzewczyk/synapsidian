@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Set up or repair the synapsidian second-brain vault end to end - check Obsidian, uv and git, create the vault layout, configure Obsidian (core plugins, Bases, daily notes, templates, property types), install and configure the required community plugins (Git, Excalidraw, Templater, Calendar Bases, and those an add-on requires) or file a task with the steps, offer the recommended ones (Claudian), register the vault in Obsidian and fill in About.md. Use the first time the plugin is used, when the user asks to set up, install, configure, repair or check the vault ("set up synapsidian", "skonfiguruj vault", "check my vault setup", "is synapsidian set up correctly"), or when another synapsidian skill reports the vault is missing.
+description: Set up or repair the synapsidian vault end to end - check Obsidian, uv and git, create the vault layout, configure Obsidian and its community plugins, register the vault and fill in About.md. Use the first time the plugin is used, when the user asks to set up, install, configure, repair or check the vault ("set up synapsidian", "skonfiguruj vault", "is synapsidian set up correctly"), or when another synapsidian skill reports the vault is missing.
 argument-hint: "[check]"
 allowed-tools: Bash(synapsidian *) Bash(obsidian *) Bash(command -v synapsidian-work) Bash(command -v synapsidian-projects) Read AskUserQuestion
 ---

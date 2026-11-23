@@ -4,6 +4,7 @@ The projects add-on for the `synapsidian` plugin. Any number of projects in the 
 
 ## Requirements
 
+- [Claude Code](https://claude.com/claude-code); not claude.ai or Cowork, because the plugin ships a `bin/` command they refuse
 - The `synapsidian` plugin, set up with `/synapsidian:setup` (installing synapsidian-projects installs `synapsidian` too if it's missing)
 - Two more Obsidian community plugins, which `/synapsidian-projects:setup` installs or reports:
   - **Folder notes**: a click on a project's folder opens its hub

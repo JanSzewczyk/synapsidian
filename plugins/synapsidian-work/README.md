@@ -4,6 +4,7 @@ The work add-on for the `synapsidian` plugin: 1:1 notes and prep, the stand-up n
 
 ## Requirements
 
+- [Claude Code](https://claude.com/claude-code); not claude.ai or Cowork, because the plugin ships a `bin/` command they refuse
 - The `synapsidian` plugin, set up with `/synapsidian:setup` (installing synapsidian-work installs `synapsidian` too if it's missing)
 - Each source is optional, and a source you don't configure is skipped silently:
   - [`gh`](https://cli.github.com), signed in, for pull requests

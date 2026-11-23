@@ -1,6 +1,6 @@
 ---
 name: ingest
-description: Take a source into the second-brain vault and integrate it - a web article, a YouTube video, a PDF / DOCX / PPTX file, a Confluence page, pasted text or an image. Keeps a verbatim copy in Sources/, then updates the existing knowledge, project, people and decision notes, creates notes for new concepts, a literature note for a source worth keeping as a whole, and marks contradictions. Use when the user shares material to learn from or keep ("ingest this", "add this article to my synapsidian", "przeczytaj i zapisz", "dodaj ten artykuł / film / dokument", a bare YouTube or article link with "zapisz"). Add "visual" for a video whose screen matters (slides, code, diagrams). For a quick unprocessed note use /synapsidian:capture; for a question to look up on the web use /synapsidian:research.
+description: Take a source into the second-brain vault and integrate it - a web article, a YouTube video, a PDF / DOCX / PPTX file, a Confluence page, pasted text or an image. Keeps a verbatim copy in Sources/ and updates the related notes. Use when the user shares material to learn from or keep ("ingest this", "add this article to my synapsidian", "przeczytaj i zapisz", "dodaj ten artykuł / film / dokument", a bare link with "zapisz"). Add "visual" for a video whose screen matters. For a quick note use /synapsidian:capture; for a web question use /synapsidian:research.
 argument-hint: "<url | file path | folder | confluence page | text> [visual]"
 allowed-tools: Bash(synapsidian *) Read Grep Glob
 ---

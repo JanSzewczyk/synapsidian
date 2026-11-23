@@ -31,7 +31,7 @@
       },
       "homepage": "https://github.com/JanSzewczyk/synapsidian",
       "license": "MIT",
-      "dependencies": ["synapsidian"]
+      "dependencies": [{ "name": "synapsidian", "version": "~0.33.0" }]
     },
     {
       "name": "synapsidian-projects",
@@ -44,7 +44,7 @@
       },
       "homepage": "https://github.com/JanSzewczyk/synapsidian",
       "license": "MIT",
-      "dependencies": ["synapsidian"]
+      "dependencies": [{ "name": "synapsidian", "version": "~0.33.0" }]
     },
     {
       "name": "synapsidian-dock",
@@ -57,7 +57,7 @@
       },
       "homepage": "https://github.com/JanSzewczyk/synapsidian",
       "license": "MIT",
-      "dependencies": ["synapsidian"]
+      "dependencies": [{ "name": "synapsidian", "version": "~0.33.0" }]
     }
   ]
 }
