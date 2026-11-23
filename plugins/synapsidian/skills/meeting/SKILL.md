@@ -1,8 +1,8 @@
 ---
 name: meeting
-description: Create a meeting note in the synapsidian vault from a calendar event (attendees linked, agenda from the invite), or with `import` fill a note from its Gemini notes and file the next steps as tasks. Use when the user is about to have or just had a meeting ("note for my 14:00", "przygotuj notatkę na spotkanie", "notatka ze spotkania z Alex"), wants notes for today's meetings, or wants Gemini notes imported ("import the notes from my 1:1", "zaimportuj notatki z Gemini").
-argument-hint: "[event title, time, or 'today'] | import <title, time, or 'today'>"
+description: Create a meeting note from a calendar event (attendees linked, agenda from the invite), or with `import` fill a note from its Gemini notes and file next steps as tasks. Use when the user is about to have or just had a meeting ("note for my 14:00", "notatka ze spotkania") or wants Gemini notes imported ("zaimportuj notatki z Gemini").
 allowed-tools: Bash(synapsidian *) Bash(command -v synapsidian-work) Bash(synapsidian-work hook *) Read Edit Grep Glob
+argument-hint: "[event title, time, or 'today'] | import <title, time, or 'today'>"
 ---
 
 # Meeting note

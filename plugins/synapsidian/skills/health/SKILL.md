@@ -1,8 +1,8 @@
 ---
 name: health
-description: Vault health run for the synapsidian vault - applies the safe mechanical fixes, then lists what needs a decision (broken links, orphans, schema problems, duplicates, credentials, stale Inbox captures) in a Vault health section of today's daily note. Runs from a scheduled task on weekday mornings; with `apply` it links the orphans the user picks. Use when the scheduled run fires or the user asks to check or clean up the vault ("check the vault health", "sprawdź vault", "napraw osierocone notatki", "apply the health suggestions").
-argument-hint: "[apply]"
+description: Vault health run - applies safe mechanical fixes, then lists what needs a decision (broken links, orphans, schema problems, duplicates, credentials, stale Inbox captures) in today's daily note. Runs from a scheduled task; `apply` links the orphans the user picks. Use when the run fires or the user asks to check the vault ("check the vault health", "sprawdź vault").
 allowed-tools: Bash(synapsidian *) Read Edit Grep Glob
+argument-hint: "[apply]"
 ---
 
 # Health

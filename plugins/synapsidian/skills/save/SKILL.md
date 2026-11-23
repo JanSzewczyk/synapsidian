@@ -1,8 +1,8 @@
 ---
 name: save
-description: File what matters from the current conversation into the second-brain vault - decisions, tasks, people facts, knowledge, how-tos, ideas and project progress - updating existing notes rather than duplicating them, plus a devlog line in today's daily note. Use when the user says to save, record or remember the session ("save this", "zapisz to", "save to synapsidian", "log this session", "remember this decision"), at the natural end of a substantial piece of work, or with "inbox" to sort the Inbox captures into proper notes.
-argument-hint: "[inbox] [focus or hint]"
+description: File what matters from the current conversation into the vault - decisions, tasks, people facts, knowledge, how-tos, ideas and project progress - updating existing notes and adding a devlog line. Use when the user says to save or remember the session ("save this", "zapisz to", "remember this decision"), at the end of substantial work, or with "inbox" to sort Inbox captures.
 allowed-tools: Bash(synapsidian *) Read Grep Glob
+argument-hint: "[inbox] [focus or hint]"
 ---
 
 # Save to the vault

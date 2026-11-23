@@ -51,4 +51,10 @@ jobs:
         uses: actions/checkout@v7
       - name: Audit every skill 🔎
         uses: JanSzewczyk/claude-plugins/.github/actions/skill-audit@c190a0d278750a2fc33d0b884d657e6ca59ed6ea
+        with:
+          # Every skill except synapsidian's find and recap: they run in a forked Explore subagent
+          # (context, agent, background in the frontmatter, D131), keys the audit contract rejects.
+          # The action splits this on spaces, so each pattern is a glob: [!fr]* skips find and recap
+          # by first letter, re[!c]* brings back research and review.
+          skills-glob: "plugins/synapsidian-*/skills/*/ plugins/synapsidian/skills/[!fr]*/ plugins/synapsidian/skills/re[!c]*/"
         # Inputs: path, skills-glob (default plugins/*/skills/*/).

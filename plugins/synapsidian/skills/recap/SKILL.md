@@ -1,8 +1,8 @@
 ---
 name: recap
-description: Summarise any period from the synapsidian vault in chat - a day, a week, a sprint, a month, or "since X" - from devlogs, tasks, decisions and meetings, without writing anything. Use when the user asks what they did, what happened or what was decided over some stretch of time ("recap last week", "co robiłem w zeszłym tygodniu", "what happened on the export project this month", "summarise since Monday", "przypomnij mi ostatnie dwa tygodnie").
-argument-hint: "<period, e.g. 'last week', 'since 2026-10-01', 'yesterday'> [topic or project]"
+description: Summarise any period from the vault in chat - a day, week, sprint, month or "since X" - from devlogs, tasks, decisions and meetings, writing nothing. Use when the user asks what happened over a stretch of time ("recap last week", "co robiłem w zeszłym tygodniu", "summarise since Monday").
 allowed-tools: Bash(synapsidian *) Read Grep Glob
+argument-hint: "<period, e.g. 'last week', 'since 2026-10-01', 'yesterday'> [topic or project]"
 context: fork
 agent: Explore
 background: false

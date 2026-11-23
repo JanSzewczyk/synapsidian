@@ -1,8 +1,8 @@
 ---
 name: capture
-description: Drop a quick thought, link or snippet into the second-brain vault's Inbox exactly as given, with no processing. Use when the user wants to jot something down fast ("capture this", "note this down", "wrzuć do inboxa", "zanotuj szybko") or when an idea comes up mid-task that should not interrupt the work. For filing things properly from a conversation use /synapsidian:save instead.
-argument-hint: "<text or URL>"
+description: Drop a quick thought, link or snippet into the vault's Inbox as given, with no processing. Use when the user wants to jot something down fast ("capture this", "wrzuć do inboxa", "zanotuj szybko"). To file things properly use /synapsidian:save.
 allowed-tools: Bash(synapsidian *)
+argument-hint: "<text or URL>"
 ---
 
 # Capture to Inbox

@@ -1,8 +1,8 @@
 ---
 name: setup
 description: Set up, update or check the synapsidian-work add-on in the user's synapsidian vault - install its schema extension (1:1, stand-up and retro meetings, the win log, work task sources, a Jira key on projects, About fields for team, company and manager), check which work sources are configured (GitHub repositories, Jira projects, work repositories, stand-up days and time), fill the work fields in About.md, and schedule the stand-up run. Use after installing synapsidian-work, when a synapsidian-work skill says the extension is missing, when the user asks to set up, check or repair the work add-on ("set up synapsidian-work", "skonfiguruj synapsidian-work", "is the work add-on set up"), or with `schedule` to create or fix the stand-up's scheduled task.
-argument-hint: "[check|schedule]"
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-work *) Bash(command -v synapsidian) Read AskUserQuestion
+argument-hint: "[check|schedule]"
 ---
 
 # Set up synapsidian-work

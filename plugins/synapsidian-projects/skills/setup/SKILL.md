@@ -1,8 +1,8 @@
 ---
 name: setup
-description: Set up, update or check the synapsidian-projects add-on in the user's synapsidian vault - install its schema extension, move project notes (older architecture notes included) into their project folders, switch Bases to select notes by type, and give every project its board and views. Use after installing synapsidian-projects, when a synapsidian-projects skill says the extension is missing, or when the user asks to set up, check or repair the projects add-on or wants a board on their projects ("set up synapsidian-projects", "skonfiguruj synapsidian-projects", "add boards to my projects", "dodaj tablice do projektów").
-argument-hint: "[check]"
+description: Set up, update or check the synapsidian-projects add-on - install its schema extension, move project notes into their project folders, switch Bases to select notes by type and give every project its board and views. Use after installing it, when a projects skill says the extension is missing, or when the user asks to set up or repair it ("set up synapsidian-projects", "skonfiguruj synapsidian-projects", "add boards to my projects").
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Bash(command -v synapsidian) Bash(obsidian *) Read Glob
+argument-hint: "[check]"
 ---
 
 # Set up synapsidian-projects

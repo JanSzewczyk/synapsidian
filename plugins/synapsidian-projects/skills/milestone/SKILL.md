@@ -1,8 +1,8 @@
 ---
 name: milestone
-description: Plan and track a project's milestones in the synapsidian vault (synapsidian-projects add-on) - a milestone note in Projects/<Project>/Milestones/ with a goal, exit criteria, a start and target date and a board of the tasks that belong to it, going planned, active, done (or dropped), with progress counted from its tasks and a line on the project hub. Use when the user splits a project into stages, phases, releases or iterations, puts tasks into one, or asks how one stands ("add a milestone", "dodaj kamień milowy", "plan the beta release", "put T5 and T6 in the MVP", "how far is the MVP", "jak idzie etap 2", "the beta is done", "zamknij etap"). One task is /synapsidian:task; one change to make is /synapsidian-projects:change.
-argument-hint: "<name> [project <name>] [target <date>] | add <tasks> to <milestone> | start|done|drop|status <milestone>"
+description: Plan and track a project's milestones (synapsidian-projects add-on) - a note in Projects/<Project>/Milestones/ with a goal, exit criteria, dates and a board of its tasks, with progress counted from them. Use when the user splits a project into stages, releases or iterations, puts tasks into one, or asks how one stands ("add a milestone", "dodaj kamień milowy", "put T5 in the MVP", "how far is the MVP", "zamknij etap"). One task is /synapsidian:task; one change is /synapsidian-projects:change.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<name> [project <name>] [target <date>] | add <tasks> to <milestone> | start|done|drop|status <milestone>"
 ---
 
 # Milestone

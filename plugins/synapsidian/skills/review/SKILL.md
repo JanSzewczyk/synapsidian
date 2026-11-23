@@ -1,8 +1,8 @@
 ---
 name: review
-description: Periodic review of the synapsidian vault - weekly every Friday, monthly on the last Friday of the month, quarterly on the last Friday of the quarter - summarising what got done, decisions, open threads, recurring patterns and contradictions, plus a vault health pass that applies only safe fixes. Saves a review note. Use when the scheduled Friday run fires, or when the user asks for a weekly/monthly/quarterly review, or a look back at the period (a vault health check on its own is /synapsidian:health) ("weekly review", "przegląd tygodnia", "podsumuj miesiąc", "how did the quarter go").
-argument-hint: "[week|month|quarter] [YYYY-MM-DD]"
+description: Periodic vault review - weekly every Friday, monthly on the last Friday of the month, quarterly on the last Friday of the quarter - summarising what got done, decisions and open threads, plus a safe health pass; saves a review note. Use when the scheduled run fires or the user asks for a review ("weekly review", "przegląd tygodnia").
 allowed-tools: Bash(synapsidian *) Bash(command -v synapsidian-work) Bash(synapsidian-work hook *) Bash(command -v synapsidian-projects) Bash(synapsidian-projects hook *) Bash(synapsidian-projects progress *) Read Grep Glob
+argument-hint: "[week|month|quarter] [YYYY-MM-DD]"
 ---
 
 # Review

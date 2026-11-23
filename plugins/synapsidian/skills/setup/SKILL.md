@@ -1,8 +1,8 @@
 ---
 name: setup
-description: Set up or repair the synapsidian vault end to end - check Obsidian, uv and git, create the vault layout, configure Obsidian and its community plugins, register the vault and fill in About.md. Use the first time the plugin is used, when the user asks to set up, install, configure, repair or check the vault ("set up synapsidian", "skonfiguruj vault", "is synapsidian set up correctly"), or when another synapsidian skill reports the vault is missing.
-argument-hint: "[check]"
+description: Set up or repair the synapsidian vault end to end - check Obsidian, uv and git, create the layout, configure Obsidian and its community plugins, register the vault and fill in About.md. Use the first time, when the user asks to set up, configure or check the vault ("set up synapsidian", "skonfiguruj vault"), or when another skill reports the vault is missing.
 allowed-tools: Bash(synapsidian *) Bash(obsidian *) Bash(command -v synapsidian-work) Bash(command -v synapsidian-projects) Read AskUserQuestion
+argument-hint: "[check]"
 ---
 
 # Set up the synapsidian vault

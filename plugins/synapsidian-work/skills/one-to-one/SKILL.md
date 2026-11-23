@@ -1,8 +1,8 @@
 ---
 name: one-to-one
 description: Prepare and keep the user's 1:1 notes in the synapsidian vault - a note per 1:1 meeting with Talking points, Notes and Action items, topics waiting in the person's Open topics, unfinished action items carried forward. Prepares the next 1:1, drops a topic in instantly, works a topic out or drafts the wording, tidies the note, and reads it back. Use whenever a one-on-one comes up ("przygotuj notatkę na 1:1 z Alexem", "dopisz temat do 1:1", "co mam na jedynce", "rozwiń ten temat", "napisz mi, jak to powiedzieć", "prepare my 1:1 with X", "add a topic for my next one-on-one", "what was on the last 1:1"), even when the user doesn't name the vault.
-argument-hint: "[prepare|add|work|tidy|read] <person> [topic]"
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-work *) Read Grep Glob
+argument-hint: "[prepare|add|work|tidy|read] <person> [topic]"
 ---
 
 # 1:1 notes

@@ -1,8 +1,8 @@
 ---
 name: win
 description: Log a work win in the synapsidian vault's brag log (synapsidian-work add-on) - one note in Wins/ per thing the user got done that is worth bringing up at a performance review, with its date, impact (small, medium, large), evidence links and who saw it - or list the wins of a period. Use when the user wants an achievement remembered for later ("log a win", "add this to my brag doc", "zapisz to jako sukces", "dopisz do brag logu", "this is worth mentioning at my review", "I shipped X, keep it for my review") or asks what they achieved ("my wins this quarter", "co osiągnąłem w tym kwartale", "what can I bring to my performance review").
-argument-hint: "[<what happened>] | list [week|month|quarter|half|year|<from> <to>]"
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-work hook *) Read Grep Glob
+argument-hint: "[<what happened>] | list [week|month|quarter|half|year|<from> <to>]"
 ---
 
 # Wins

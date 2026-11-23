@@ -1,8 +1,8 @@
 ---
 name: project
-description: Create, refresh, report on or list projects in the synapsidian vault (synapsidian-projects add-on) - a hub note with a kanban board in Projects/<Project>/, a read-only scan of a code repository into the hub, `status` for what closed, what is blocked and how the milestones stand, and `close` for a retro. Use when the user starts tracking a project, wants its facts refreshed, asks how it is going, finishes it, or lists projects ("new project", "add a project for this repo", "załóż projekt", "refresh the project", "how is web-app going", "jak idzie projekt", "close the project", "zamknij projekt", "list my projects"). Decisions are /synapsidian-projects:decide; tasks are /synapsidian:task with the project.
-argument-hint: "[new <name> [repo <path|url>] | refresh <name> | status <name> | close <name> | list | <name>]"
+description: Create, refresh, report on or list projects (synapsidian-projects add-on) - a hub note with a kanban board in Projects/<Project>/, a read-only scan of a code repository, `status` and `close` with a retro. Use when the user starts tracking a project, wants it refreshed, asks how it is going, finishes it or lists projects ("new project", "załóż projekt", "how is web-app going", "jak idzie projekt", "zamknij projekt"). Decisions are /synapsidian-projects:decide; tasks are /synapsidian:task.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "[new <name> [repo <path|url>] | refresh <name> | status <name> | close <name> | list | <name>]"
 ---
 
 # Projects

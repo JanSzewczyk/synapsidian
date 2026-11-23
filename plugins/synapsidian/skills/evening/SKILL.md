@@ -1,8 +1,8 @@
 ---
 name: evening
-description: Unattended end-of-day run for the synapsidian vault - turns the day's Claude Code sessions (from the session queue) into devlog bullets in each day's daily note and files the decisions, how-tos, knowledge, people facts and tasks they contain. Runs from a scheduled task each evening and catches up on any missed days. Use when the evening run is due or the user asks to process the session queue, catch up the devlog or log what was done in their sessions ("run the evening", "uzupełnij devlog", "process my sessions", "log what I did today").
-argument-hint: "[YYYY-MM-DD to process only that day]"
+description: Unattended end-of-day run - turns the day's Claude Code sessions (from the session queue) into devlog bullets and files the decisions, how-tos, knowledge, people facts and tasks they contain. Use when the evening run is due or the user asks to process the session queue ("run the evening", "uzupełnij devlog").
 allowed-tools: Bash(synapsidian *) Read Edit Grep Glob
+argument-hint: "[YYYY-MM-DD to process only that day]"
 ---
 
 # Evening run

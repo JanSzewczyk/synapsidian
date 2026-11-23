@@ -1,8 +1,8 @@
 ---
 name: research
-description: Research a question for the second-brain vault - first what the vault knows, then the web for the gaps - and save a cited dossier in Research/. Use when the user wants something looked up, compared or investigated and kept ("research X", "zbadaj", "sprawdź w internecie i zapisz", "compare A and B"). Add "deep" for a broad sweep; "refresh <dossier>" or "watch" updates watched dossiers. For material the user already has use /synapsidian:ingest; for a vault-only question use /synapsidian:find.
-argument-hint: "<question> [deep] | refresh <dossier> | watch"
+description: Research a question - first what the vault knows, then the web for the gaps, saved as a cited dossier in Research/. Use when the user wants something looked up, compared or investigated and kept ("research X", "zbadaj", "compare A and B"). Add "deep", "refresh <dossier>" or "watch". For material the user already has use /synapsidian:ingest; for a vault-only question /synapsidian:find.
 allowed-tools: Bash(synapsidian *) Read Grep Glob WebSearch WebFetch
+argument-hint: "<question> [deep] | refresh <dossier> | watch"
 ---
 
 # Research

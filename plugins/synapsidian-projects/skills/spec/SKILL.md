@@ -1,8 +1,8 @@
 ---
 name: spec
-description: Write or update a specification in the synapsidian vault (synapsidian-projects add-on) - a living document of how part of a project should work (purpose, scope, requirements, design, open questions), kept in Projects/<Project>/Specs/ and edited in place, with git as its history. Use when the user wants to specify, describe or pin down how a feature, module, API, process or system should behave, or to update such a description ("write a spec for", "spisz specyfikację", "update the checkout spec", "zaktualizuj specyfikację", "what does the spec say about"). A change to make is /synapsidian-projects:change; a decision between options is /synapsidian-projects:decide.
-argument-hint: "<subject> [project <name>] | update <spec> ..."
+description: Write or update a specification (synapsidian-projects add-on) - a living document of how part of a project should work, kept in Projects/<Project>/Specs/ and edited in place. Use when the user wants to specify or pin down how a feature, module, API or process should behave ("write a spec for", "spisz specyfikację", "update the checkout spec"). A change to make is /synapsidian-projects:change; a decision between options is /synapsidian-projects:decide.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<subject> [project <name>] | update <spec> ..."
 ---
 
 # Spec

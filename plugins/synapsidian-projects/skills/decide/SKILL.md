@@ -1,8 +1,8 @@
 ---
 name: decide
-description: Record an architecture or project decision in the synapsidian vault (synapsidian-projects add-on) as a MADR decision note in the project's Decisions/ folder, numbered per project, drafted as proposed and accepted only after the user reviews it. Also accepts, rejects, deprecates or supersedes a decision. Use when the user decides, or wants to decide, something about a project ("record this decision", "zapisz decyzję", "ADR for switching to X", "we decided to use Y", "supersede decision 4", "accept the proposed decision", "odrzuć tę decyzję"). Smaller decisions found while saving a conversation are /synapsidian:save's.
-argument-hint: "<what was decided> [project <name>] | accept|reject|deprecate <decision> | supersede <decision> with <what>"
+description: Record an architecture or project decision (synapsidian-projects add-on) as a MADR note in the project's Decisions/ folder, numbered per project, drafted as proposed and accepted only after review; also accepts, rejects, deprecates or supersedes one. Use when the user decides something about a project ("record this decision", "zapisz decyzję", "ADR for switching to X", "supersede decision 4"). Smaller decisions found while saving are /synapsidian:save's.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<what was decided> [project <name>] | accept|reject|deprecate <decision> | supersede <decision> with <what>"
 ---
 
 # Decide

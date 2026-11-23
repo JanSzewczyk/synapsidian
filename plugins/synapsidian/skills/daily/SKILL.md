@@ -1,8 +1,8 @@
 ---
 name: daily
-description: Create or refresh today's daily note in the second-brain vault, filling its brief with what is due, overdue, in progress and active. Use when the user asks for today's note itself ("open today's note", "daily note", "notatka dzienna"); a morning brief or "what's on today" is /synapsidian:morning. Also when another synapsidian skill needs today's daily note to exist.
-argument-hint: "[YYYY-MM-DD]"
+description: Create or refresh today's daily note, filling its brief with what is due, overdue and in progress. Use when the user asks for the note itself ("daily note", "notatka dzienna"); a morning brief is /synapsidian:morning. Also when another skill needs today's note to exist.
 allowed-tools: Bash(synapsidian *) Read Grep Glob
+argument-hint: "[YYYY-MM-DD]"
 ---
 
 # Daily note

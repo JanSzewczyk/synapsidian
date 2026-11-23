@@ -1,8 +1,8 @@
 ---
 name: architect
-description: Write and refresh architecture notes for a project's code in the synapsidian vault (synapsidian-projects add-on) - an overview per app and a note per large module in Projects/<Project>/Architecture/, from a read-only scan of the hub's `repo`, any language (Vue apps get domains, stores and routes); refreshes keep what the user wrote. Use when the user asks how an app or module is built, wants a project's architecture documented or brought up to date ("describe the architecture of web-app", "opisz architekturę", "update the architecture notes", "how is the reports module structured"), or before work in an unfamiliar area of a project's code.
-argument-hint: "<project> [app] [module]"
+description: Write and refresh architecture notes for a project's code (synapsidian-projects add-on) - an overview per app and a note per large module in Projects/<Project>/Architecture/, from a read-only scan of the hub's `repo`, any language. Use when the user asks how an app or module is built or wants its architecture documented or updated ("describe the architecture of web-app", "opisz architekturę"), or before work in an unfamiliar area of the code.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<project> [app] [module]"
 ---
 
 # Architect

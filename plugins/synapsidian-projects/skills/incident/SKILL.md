@@ -1,8 +1,8 @@
 ---
 name: incident
-description: Write a blameless postmortem of an incident in a project in the synapsidian vault (synapsidian-projects add-on) - an incident note in Projects/<Project>/Incidents/ with a summary, a timeline, the impact, the root cause, what went well and action items filed as tasks - drafted, then made final once the user has reviewed it. Use when something broke for users or a team and the user wants it written up or reviewed ("write a postmortem", "napisz postmortem", "incident report for yesterday's outage", "opisz incydent", "finalise the postmortem", "what action items came out of the outage"). The hunt for a bug's cause is /synapsidian-projects:debug; a single follow-up is /synapsidian:task.
-argument-hint: "<what happened> [project <name>] [date YYYY-MM-DD] | final <incident note>"
+description: Write a blameless postmortem of an incident (synapsidian-projects add-on) - a note in Projects/<Project>/Incidents/ with summary, timeline, impact, root cause, what went well and action items filed as tasks, drafted then made final after review. Use when something broke for users or a team and the user wants it written up ("write a postmortem", "napisz postmortem", "opisz incydent"). The hunt for a bug's cause is /synapsidian-projects:debug.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<what happened> [project <name>] [date YYYY-MM-DD] | final <incident note>"
 ---
 
 # Incident

@@ -1,6 +1,6 @@
 ---
 name: morning
-description: Morning run for the synapsidian vault - fills today's daily note with the brief (what needs attention, what got done, what's coming up), the agenda with meeting-note skeletons, and what the evening run wrote overnight; with the synapsidian-work add-on also pull requests, Jira and asks from email and Slack. Runs from a scheduled task on weekday mornings. Use when the user asks for their morning brief, today's plan or what needs their attention today ("morning brief", "poranny brief", "what's on today", "co mnie dziś czeka"), or when the scheduled morning run fires.
+description: Morning run - fills today's daily note with the brief (what needs attention, what got done, what's coming up), the agenda with meeting-note skeletons and the evening run's output; with synapsidian-work also pull requests, Jira and asks. Use for the morning brief or today's plan ("morning brief", "poranny brief", "co mnie dziś czeka") or when the scheduled run fires.
 allowed-tools: Bash(synapsidian *) Bash(command -v synapsidian-work) Bash(synapsidian-work hook *) Read Grep Glob
 ---
 

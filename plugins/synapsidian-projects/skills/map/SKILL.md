@@ -1,8 +1,8 @@
 ---
 name: map
 description: Draw or refresh a project's mind map in the synapsidian vault (synapsidian-projects add-on) - an Excalidraw drawing in Projects/<Project>/Maps/ with the hub in the middle and a branch for each kind of project note, every node a link coloured by status. A refresh adds what is new, drops what closed and keeps what the user moved or drew. Use when the user wants to see a project at a glance ("draw a map of the project", "mapa myśli projektu", "refresh the project map", "odśwież mapę", "mind map for web-app").
-argument-hint: "<project> [all | <n> per branch]"
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<project> [all | <n> per branch]"
 ---
 
 # Project map

@@ -1,8 +1,8 @@
 ---
 name: one-to-one-triage
 description: Turn the rough topics of an upcoming 1:1 in the synapsidian vault into a proper prep - an interview about the conversation, then one topic at a time (goal, history from past 1:1s, targeted questions, a comparison table when options are weighed), and last an English talking script per topic that is tentative, well argued and ends on a question. Updates the 1:1 note in place. Use when the user wants to prepare properly for a 1:1 or a difficult conversation with their manager, a report or a peer ("przygotuj mnie do rozmowy z...", "triage the topics for my 1:1", "help me raise this with my manager", "write me a 1:1 script", "jak to powiedzieć na jedynce").
-argument-hint: "<person or 1:1 note>"
 allowed-tools: Bash(synapsidian *) Read Grep Glob AskUserQuestion
+argument-hint: "<person or 1:1 note>"
 ---
 
 # 1:1 triage

@@ -1,8 +1,8 @@
 ---
 name: change
-description: Track one change to a project in the synapsidian vault (synapsidian-projects add-on) - a change note in Projects/<Project>/Changes/ that goes proposed, doing, done (or dropped), says why and what changes, links the specs it touches, the decisions it rests on and the tasks that carry it out with a diagram of their order, and on closing logs the result on the project hub. Use when the user plans, starts, finishes or abandons a change to a project, a feature, a migration, a refactor or a process change ("open a change for", "zaplanuj zmianę", "start the change", "the migration is done", "zamknij zmianę", "drop that change"). Single steps are tasks (/synapsidian:task); a choice between options is /synapsidian-projects:decide.
-argument-hint: "<what changes> [project <name>] | start|done|drop <change>"
+description: Track one change to a project (synapsidian-projects add-on) - a note in Projects/<Project>/Changes/ that goes proposed, doing, done or dropped, says why and what changes, and links its specs, decisions and tasks. Use when the user plans, starts, finishes or abandons a feature, migration, refactor or process change ("open a change for", "zaplanuj zmianę", "the migration is done", "zamknij zmianę"). Single steps are /synapsidian:task; a choice between options is /synapsidian-projects:decide.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<what changes> [project <name>] | start|done|drop <change>"
 ---
 
 # Change

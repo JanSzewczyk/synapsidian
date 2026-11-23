@@ -1,8 +1,8 @@
 ---
 name: think
-description: Thinking tools over the second-brain vault, one mode per call - challenge, brainstorm, topic (all the vault knows about X), patterns, distill, learn (lessons from past sessions as proposed rules), ideas (rank the backlog), graduate (an idea into a project or tasks). Use when the user wants something stress-tested ("challenge this", "co może pójść nie tak"), brainstormed ("burza mózgów"), pulled together ("co wiem o X"), patterns spotted ("jakie wzorce"), a source distilled, or ideas reviewed or graduated ("przejrzyj pomysły", "zrób z tego projekt").
-argument-hint: "<challenge|brainstorm|topic|patterns|distill|learn|ideas|graduate> <subject> [fix]"
+description: Thinking tools over the vault, one mode per call - challenge, brainstorm, topic, patterns, distill, learn, ideas, graduate. Use when the user wants something stress-tested ("challenge this", "co może pójść nie tak"), brainstormed ("burza mózgów"), pulled together ("co wiem o X") or an idea graduated ("zrób z tego projekt").
 allowed-tools: Bash(synapsidian *) Read Grep Glob
+argument-hint: "<challenge|brainstorm|topic|patterns|distill|learn|ideas|graduate> <subject> [fix]"
 ---
 
 # Think

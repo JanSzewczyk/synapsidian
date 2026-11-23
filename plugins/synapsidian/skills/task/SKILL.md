@@ -1,8 +1,8 @@
 ---
 name: task
-description: Add, update, close or list tasks in the second-brain vault (Tn task notes with status, priority, due date and project). Use whenever the user wants something on their task list or asks what's on it ("add a task", "remind me to", "what's due today", "what's overdue", "close T12", "T7 done", "move the deadline", "dodaj zadanie", "co mam na dziś", "zamknij T3").
-argument-hint: "add <what> [due <date>] [priority] [project] | done <Tn> | update <Tn> ... | list [today|overdue|week|project <name>]"
+description: Add, update, close or list tasks (Tn notes with status, priority, due date and project). Use when the user wants something on their task list or asks what's on it ("add a task", "remind me to", "close T12", "dodaj zadanie", "co mam na dziś").
 allowed-tools: Bash(synapsidian *) Read Grep Glob
+argument-hint: "add <what> [due <date>] [priority] [project] | done <Tn> | update <Tn> ... | list [today|overdue|week|project <name>]"
 ---
 
 # Tasks

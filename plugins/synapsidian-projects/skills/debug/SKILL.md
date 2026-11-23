@@ -1,8 +1,8 @@
 ---
 name: debug
-description: Keep the investigation of one bug in the synapsidian vault (synapsidian-projects add-on) - a debug note in Projects/<Project>/Debug/ with the symptom, how to reproduce it, what was tried and ruled out, the root cause and the fix - updated while the hunt goes on, closed as fixed or wontfix with a line on the project hub. Use when the user is chasing a bug in a project and wants it written down, or wants to find what was learned about one before ("log this bug investigation", "zapisz debugowanie", "start a debug note for", "we found the root cause", "the bug is fixed", "won't fix it", "did we see this error before"). Writing the fix's tasks is /synapsidian:task; a postmortem of an outage is /synapsidian-projects:incident.
-argument-hint: "<the bug> [project <name>] | update|fixed|wontfix <debug note>"
+description: Keep the investigation of one bug (synapsidian-projects add-on) - a note in Projects/<Project>/Debug/ with the symptom, reproduction, what was ruled out, the root cause and the fix, closed as fixed or wontfix. Use when the user is chasing a bug and wants it written down, or wants to find what was learned before ("log this bug investigation", "zapisz debugowanie", "the bug is fixed", "did we see this error before"). A postmortem of an outage is /synapsidian-projects:incident.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Read Grep Glob
+argument-hint: "<the bug> [project <name>] | update|fixed|wontfix <debug note>"
 ---
 
 # Debug

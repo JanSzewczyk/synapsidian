@@ -1,8 +1,8 @@
 ---
 name: find
-description: Search the user's Obsidian second-brain vault and answer from it, citing notes as [[links]]. Use whenever the user asks what they know, decided, noted or planned about something, or refers to past work, people, projects or decisions that may be recorded in the vault ("what did we decide about...", "do I have notes on...", "who owns...", "znajdź w notatkach", "co ustaliłem z..."), and before creating a vault note, to check it doesn't already exist.
-argument-hint: "<question or keywords>"
+description: Search the user's second-brain vault and answer from it, citing notes as [[links]]. Use when the user asks what they know, decided or planned about something, or refers to past work, people or decisions ("what did we decide about...", "do I have notes on...", "znajdź w notatkach"), and before creating a note, to check it doesn't exist.
 allowed-tools: Bash(synapsidian *) Read Grep Glob
+argument-hint: "<question or keywords>"
 context: fork
 agent: Explore
 background: false

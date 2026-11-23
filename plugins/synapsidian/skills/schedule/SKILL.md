@@ -1,8 +1,8 @@
 ---
 name: schedule
-description: Set up, check or repair the synapsidian plugin's recurring runs as desktop scheduled tasks - vault health, morning brief, evening devlog and the Friday review (default times the user can move), plus any add-on's runs - and tell the user exactly how to set their permission mode. Use when the user asks to schedule, automate or check synapsidian's recurring runs ("set up synapsidian's scheduled tasks", "zaplanuj automaty", "is the morning brief scheduled", "why didn't the evening run work").
-argument-hint: "[check]"
+description: Set up, check or repair synapsidian's recurring runs as desktop scheduled tasks (vault health, morning brief, evening devlog, Friday review, plus add-on runs) and explain the permission mode. Use when the user asks to schedule or check them ("set up synapsidian's scheduled tasks", "zaplanuj automaty", "why didn't the evening run work").
 allowed-tools: Bash(synapsidian *) Bash(command -v synapsidian-work) Bash(synapsidian-work hook *) Read
+argument-hint: "[check]"
 ---
 
 # Scheduled runs

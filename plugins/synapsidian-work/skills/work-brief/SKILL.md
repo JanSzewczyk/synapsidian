@@ -1,8 +1,8 @@
 ---
 name: work-brief
 description: Work part of the synapsidian morning brief - the user's pull requests (waiting on them, ready to merge, stuck), their open Jira tickets, and unanswered asks from email and Slack filed as tasks. Pull requests are only listed, never filed as tasks. The synapsidian morning run invokes it with `morning`; also use it when the user asks only for the work side ("what PRs need me", "co czeka na mnie w PR-ach", "anything I owe people on Slack", "my open tickets").
-argument-hint: "[morning]"
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-work *) Read Grep Glob
+argument-hint: "[morning]"
 ---
 
 # Work brief
