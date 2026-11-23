@@ -43,6 +43,24 @@ jobs:
           changelog: "true"
         # Inputs: strict (also fail a bump that is too small), ignore-plugins, base-ref, path.
 
+  plugins-cli:
+    name: Plugins in the CLI 🔌
+    runs-on: ubuntu-latest
+    # validate reads manifests; these steps ask the CLI itself. Load and install run in a
+    # throwaway HOME and CLAUDE_CONFIG_DIR the script deletes afterwards, never the runner's own.
+    steps:
+      - name: Checkout code 📚
+        uses: actions/checkout@v7
+      - name: Check every plugin loads 🔌
+        uses: JanSzewczyk/claude-plugins/.github/actions/plugin-load-check@main
+      - name: Check every plugin installs from the marketplace 📦
+        uses: JanSzewczyk/claude-plugins/.github/actions/plugin-install-check@main
+      - name: Check the always-on token budget ⚖️
+        uses: JanSzewczyk/claude-plugins/.github/actions/plugin-budget-check@main
+        with:
+          # Optional: with the secret the tokens are counted, without it they are estimated.
+          api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+
   skills:
     name: Skill Audit 🔎
     runs-on: ubuntu-latest

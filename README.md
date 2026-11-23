@@ -185,7 +185,7 @@ claude plugin validate plugins/synapsidian --strict && claude plugin validate pl
 (cd plugins/synapsidian-dock && claude plugin test)
 ```
 
-Pull requests also run [`.github/workflows/plugin-checks.yml`](.github/workflows/plugin-checks.yml): manifests and docs against the plugins on disk, a version bump for every changed plugin (with its `CHANGELOG.md` section), and a skill audit.
+Pull requests also run two workflows. [`plugin-checks.yml`](.github/workflows/plugin-checks.yml): manifests and docs against the plugins on disk, a version bump for every changed plugin (with its `CHANGELOG.md` section), that every plugin loads and installs through the Claude Code CLI, the always-on token budget, and a skill audit. [`tests.yml`](.github/workflows/tests.yml): pytest on Python 3.12 and 3.13, Ruff, and the dock mod's tests. Dependabot keeps the actions and the uv lockfile current.
 
 ### 🛠️ Running scripts directly
 
@@ -201,7 +201,7 @@ plugins/synapsidian-work/bin/synapsidian-work standup window --days tue,thu --ti
 ```text
 synapsidian/
 ├── .claude-plugin/          # marketplace.json: the four plugins
-├── .github/workflows/       # plugin-checks.yml
+├── .github/                 # workflows (plugin-checks, tests) and dependabot.yml
 ├── docs/                    # spec.md, decisions.md, research/
 ├── plugins/
 │   ├── synapsidian/         # core: skills, hooks, schema, bases, scripts
