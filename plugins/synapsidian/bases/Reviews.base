@@ -1,0 +1,29 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "review"
+views:
+  - type: table
+    name: All reviews
+    order:
+      - file.name
+      - period
+      - period_start
+      - period_end
+      - summary
+    sort:
+      - property: period_end
+        direction: DESC
+  - type: table
+    name: Months and quarters
+    filters:
+      and:
+        - note.period != "week"
+    order:
+      - file.name
+      - period
+      - summary
+    sort:
+      - property: period_end
+        direction: DESC

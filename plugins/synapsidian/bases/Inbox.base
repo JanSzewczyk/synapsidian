@@ -1,0 +1,15 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "capture"
+views:
+  - type: table
+    name: To triage
+    order:
+      - file.name
+      - file.ctime
+      - source_url
+    sort:
+      - property: file.ctime
+        direction: ASC

@@ -1,0 +1,19 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "idea"
+views:
+  - type: kanban
+    name: Pipeline
+    groupBy:
+      property: status
+      direction: ASC
+    groupOrder:
+      - new
+      - exploring
+      - graduated
+      - dropped
+    order:
+      - file.name
+      - summary

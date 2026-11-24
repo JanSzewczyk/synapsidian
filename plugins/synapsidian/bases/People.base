@@ -1,0 +1,39 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "person"
+views:
+  - type: table
+    name: Everyone
+    groupBy:
+      property: relationship
+      direction: ASC
+    order:
+      - file.name
+      - role
+      - team
+      - summary
+  - type: table
+    name: Follow up
+    filters:
+      and:
+        - note.follow_up.isTruthy()
+    order:
+      - file.name
+      - follow_up
+      - last_contact
+      - summary
+    sort:
+      - property: follow_up
+        direction: ASC
+  - type: table
+    name: Recently touched
+    order:
+      - file.name
+      - role
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+    limit: 20

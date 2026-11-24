@@ -1,0 +1,24 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "thinking"
+views:
+  - type: table
+    name: All thinking
+    order:
+      - file.name
+      - kind
+      - summary
+      - about
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: By kind
+    groupBy:
+      property: kind
+      direction: ASC
+    order:
+      - file.name
+      - summary

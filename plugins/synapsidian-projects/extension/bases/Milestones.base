@@ -1,0 +1,38 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "milestone"
+views:
+  - type: table
+    name: Open
+    filters:
+      and:
+        - note.status != "done"
+        - note.status != "dropped"
+    groupBy:
+      property: project
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - start
+      - target
+      - summary
+    sort:
+      - property: target
+        direction: ASC
+  - type: table
+    name: By project
+    groupBy:
+      property: project
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - target
+      - done_on
+      - summary
+    sort:
+      - property: target
+        direction: ASC

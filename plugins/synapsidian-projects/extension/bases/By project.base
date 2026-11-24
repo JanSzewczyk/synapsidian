@@ -1,0 +1,36 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - or:
+        - note.type == "task"
+        - note.type == "decision"
+views:
+  - type: table
+    name: Open tasks by project
+    filters:
+      and:
+        - note.type == "task"
+        - note.status != "done"
+        - note.status != "dropped"
+    groupBy:
+      property: project
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - priority
+      - due
+  - type: table
+    name: Decisions by project
+    filters:
+      and:
+        - note.type == "decision"
+        - note.status != "superseded"
+    groupBy:
+      property: project
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - summary

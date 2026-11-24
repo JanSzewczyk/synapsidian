@@ -1,0 +1,24 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "meeting"
+views:
+  - type: table
+    name: Recent
+    order:
+      - file.name
+      - date
+      - kind
+      - attendees
+      - summary
+    sort:
+      - property: date
+        direction: DESC
+    limit: 50
+  - type: calendar
+    name: Calendar
+    startDate: note.date
+    order:
+      - file.name
+      - kind

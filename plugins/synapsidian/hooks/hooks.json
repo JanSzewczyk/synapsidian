@@ -1,0 +1,79 @@
+{
+  "description": "synapsidian: session brief, session queue, >> prompts captured to the Inbox, vault edit approval, write-time schema check",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/run.sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/brief.py"],
+            "timeout": 20
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/run.sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/brief.py", "--minimal"],
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/session-end.sh"],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/capture.sh"],
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/run.sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/approve.py"],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/run.sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/validate.py", "--hook"],
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

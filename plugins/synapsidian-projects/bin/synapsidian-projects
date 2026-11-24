@@ -1,0 +1,61 @@
+#!/bin/sh
+# synapsidian-projects <command>: run a synapsidian-projects script, or print a hook reference, the extension
+# directory or a hub template section.
+# On the Bash PATH while the plugin is enabled, next to synapsidian's own `synapsidian` command.
+set -e
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+
+usage() {
+  echo "usage: synapsidian-projects scan --repo PATH [--docs PATH ...] [--last COMMIT] [--branch NAME] [--markdown]" >&2
+  echo "                                       read-only facts about a project's repository" >&2
+  echo "       synapsidian-projects repo {resolve|bind|forget|keep-path|list} --state DIR ...   where a hub's repository is on this device" >&2
+  echo "       synapsidian-projects decision-number --project TITLE   next decision number (synapsidian query JSON on stdin)" >&2
+  echo "       synapsidian-projects map --project TITLE [--max-leaves N]   write or refresh the project's Excalidraw map (synapsidian query JSON on stdin)" >&2
+  echo "       synapsidian-projects flow --project TITLE [--milestone TITLE | --change TITLE] [--markdown]" >&2
+  echo "                                       Mermaid roadmap, or a milestone's or change's tasks in order (synapsidian query JSON on stdin)" >&2
+  echo "       synapsidian-projects progress --project TITLE [--since DATE] [--until DATE] [--today DATE] [--markdown]" >&2
+  echo "                                       what closed, what is under way or blocked, the milestones (synapsidian query JSON on stdin)" >&2
+  echo "       synapsidian-projects architect {apps --repo PATH | scan --repo PATH --app REL [--last COMMIT] [--branch NAME]}" >&2
+  echo "                                       read-only architecture facts of an app" >&2
+  echo "       synapsidian-projects hook <name>      print the steps a core synapsidian skill adds for projects" >&2
+  echo "       synapsidian-projects extension        print the extension directory for synapsidian setup" >&2
+  echo "       synapsidian-projects section <title>  print one '## <title>' section of the project hub template" >&2
+}
+
+# The body of one `## <title>` section of the hub template; headings inside code fences don't count.
+section() {
+  awk -v want="## $1" '
+    /^(```|~~~)/ { fence = !fence }
+    !fence && /^## / { if (on) exit; on = ($0 == want); next }
+    on { print }
+  ' "$root/extension/templates/project.md"
+}
+
+[ $# -ge 1 ] || { usage; exit 2; }
+cmd=$1
+shift
+case "$cmd" in
+  scan | decision-number) exec "$root/scripts/run.sh" "$root/scripts/projects.py" "$cmd" "$@" ;;
+  repo) exec "$root/scripts/run.sh" "$root/scripts/repos.py" "$@" ;;
+  map) exec "$root/scripts/run.sh" "$root/scripts/maps.py" "$@" ;;
+  flow) exec "$root/scripts/run.sh" "$root/scripts/flows.py" "$@" ;;
+  progress) exec "$root/scripts/run.sh" "$root/scripts/progress.py" "$@" ;;
+  architect) exec "$root/scripts/run.sh" "$root/scripts/architect.py" "$@" ;;
+  hook)
+    name=${1:-}
+    case "$name" in
+      "" | *[!a-z0-9-]*) usage; exit 2 ;;
+    esac
+    [ -f "$root/references/hook-$name.md" ] || { echo "synapsidian-projects: no hook named $name" >&2; exit 2; }
+    exec cat "$root/references/hook-$name.md"
+    ;;
+  extension) echo "$root/extension" ;;
+  section)
+    [ -n "${1:-}" ] || { usage; exit 2; }
+    text=$(section "$1")
+    [ -n "$text" ] || { echo "synapsidian-projects: the hub template has no section $1" >&2; exit 2; }
+    printf '%s\n' "$text"
+    ;;
+  -h | --help | help) usage; exit 0 ;;
+  *) usage; exit 2 ;;
+esac

@@ -1,0 +1,138 @@
+# synapsidian-projects' additions to the synapsidian schema (D98-D111, D145, D147). `/synapsidian-projects:setup` installs this
+# file into the vault as `.synapsidian/extensions/synapsidian-projects/schema.yaml`; the core merges it there.
+#
+# The core knows no projects (D99): the `project` type and every `project` field come from here.
+# A project's hub lives in a folder of its own, `Projects/<title>/<title>.md`; a note of any
+# type below with a `project` is filed under that folder, and one without stays in its type's
+# flat folder.
+
+types:
+  project:
+    folder: "Projects/{title}"
+    filename: "{title}"
+    fields:
+      status: {required: true, kind: text, enum: [active, paused, done, dropped], default: active}
+      kind: {kind: text, enum: [repository, system]}
+      # A remote URL, the same on every device, or an absolute local path, which ties the project
+      # to one device (D139). Each device finds its clone of a URL with `synapsidian-projects repo`.
+      repo: {kind: text}
+      # A folder inside the repository, for a project that is one app of a monorepo.
+      path: {kind: text}
+      # The branch the scan's facts should come from; another one checked out is reported.
+      branch: {kind: text}
+      docs: {kind: list}
+      # Person notes: who owns the project and who has a stake in it (D147).
+      people: {kind: links}
+      # The core `goal` notes this project moves forward (D147).
+      goals: {kind: links}
+      # The commit `/synapsidian-projects:project` last read; the next refresh reports what changed since.
+      scanned_commit: {kind: text, pattern: '[0-9a-f]{7,40}'}
+
+  # How part of a project should work: a living document edited in place, git keeps its history
+  # (D100). Always a project's, so its own folder is only the fallback `Projects/`.
+  spec:
+    folder: Projects
+    filename: "{title}"
+    fields:
+      project: {required: true, kind: link}
+      status: {required: true, kind: text, enum: [draft, current, retired], default: draft}
+    folder_by: {field: project, folder: "Projects/{project}/Specs"}
+
+  # One change to a project, proposed → doing → done (or dropped), with the specs it touches,
+  # the decisions it rests on and the tasks that carry it out (D100, D108).
+  change:
+    folder: Projects
+    filename: "{date} {title}"
+    fields:
+      project: {required: true, kind: link}
+      status: {required: true, kind: text, enum: [proposed, doing, done, dropped], default: proposed}
+      specs: {kind: links}
+      decisions: {kind: links}
+      tasks: {kind: links}
+      done_on: {kind: date}
+    folder_by: {field: project, folder: "Projects/{project}/Changes"}
+
+  # The investigation of one bug, investigating → fixed (or wontfix): symptom, repro, what was
+  # tried, root cause, fix (D111).
+  debug:
+    folder: Projects
+    filename: "{date} {title}"
+    fields:
+      project: {required: true, kind: link}
+      status: {required: true, kind: text, enum: [investigating, fixed, wontfix], default: investigating}
+    folder_by: {field: project, folder: "Projects/{project}/Debug"}
+
+  # A blameless postmortem, draft → final; `date` is the day it happened and names the file,
+  # today when left out (D111).
+  incident:
+    folder: Projects
+    filename: "{date} {title}"
+    fields:
+      project: {required: true, kind: link}
+      status: {required: true, kind: text, enum: [draft, final], default: draft}
+      date: {kind: date}
+    folder_by: {field: project, folder: "Projects/{project}/Incidents"}
+
+  # A stage of a project with a target date, planned → active → done (or dropped). Its tasks are
+  # the ones whose `milestone` links to it; the note keeps its goal, exit criteria and board (D145).
+  milestone:
+    folder: Projects
+    filename: "{title}"
+    fields:
+      project: {required: true, kind: link}
+      status: {required: true, kind: text, enum: [planned, active, done, dropped], default: planned}
+      start: {kind: date}
+      target: {kind: date}
+      done_on: {kind: date}
+    folder_by: {field: project, folder: "Projects/{project}/Milestones"}
+
+  # Written by /synapsidian-projects:architect (D81, D104, D109) from a read-only scan of the hub's
+  # `repo`: an overview per app and a note per large module, named with the app as a prefix
+  # since one project may hold several apps. Generated sections carry a content hash.
+  architecture:
+    folder: Projects
+    filename: "{app} {title}"
+    obsidian_template: false  # only the scan writes it
+    fields:
+      project: {required: true, kind: link}
+      app: {required: true, kind: text}
+      repo: {kind: text}
+      kind: {required: true, kind: text, enum: [overview, domain]}
+      path: {kind: text}
+      scanned_commit: {required: true, kind: text, pattern: '[0-9a-f]{7,40}'}
+      scanned_at: {required: true, kind: date}
+    folder_by: {field: project, folder: "Projects/{project}/Architecture"}
+
+extend:
+  task:
+    fields:
+      project: {kind: link}
+      # The milestone of the same project this task belongs to (D145).
+      milestone: {kind: link}
+    folder_by: {field: project, folder: "Projects/{project}/Tasks"}
+  # MADR 4 (D100, D107): its statuses, the decision's number within its project (from
+  # `synapsidian-projects decision-number`), and a link forward from a superseded decision.
+  # Who decided is the core's `decided_by`.
+  decision:
+    fields:
+      project: {kind: link}
+      status: {enum: [rejected, deprecated]}
+      number: {kind: number, sequence: {per: project}}
+      superseded_by: {kind: link}
+    folder_by: {field: project, folder: "Projects/{project}/Decisions"}
+  research:
+    fields:
+      project: {kind: link}
+    folder_by: {field: project, folder: "Projects/{project}/Research"}
+  howto:
+    fields:
+      project: {kind: link}
+    folder_by: {field: project, folder: "Projects/{project}/Workflows"}
+  note:
+    fields:
+      project: {kind: link}
+    folder_by: {field: project, folder: "Projects/{project}/Notes"}
+  thinking:
+    fields:
+      project: {kind: link}
+    folder_by: {field: project, folder: "Projects/{project}/Thinking"}

@@ -1,0 +1,16 @@
+# Installed into the vault by `synapsidian setup extension --from <this dir>` (D90).
+# Keep `version` equal to .claude-plugin/plugin.json's: skills compare the two to know when to re-install.
+name: synapsidian-projects
+version: 0.12.5
+description: Projects add-on for synapsidian - a hub and kanban board per project, milestones, project notes filed under its folder, MADR decisions numbered per project, specs, changes, bug investigations, postmortems and architecture notes.
+# Community plugins this add-on needs; `synapsidian setup check` lists them with core's (D115).
+plugins:
+  # A click on a project's folder opens its hub, Projects/<P>/<P>.md. Its defaults already match
+  # (a note named like the folder, inside it), so there is nothing to set.
+  folder-notes:
+    name: Folder notes
+  # Excalidraw's companion for its heavy and high-privilege parts: the Mermaid-to-Excalidraw
+  # converter (a project's roadmap or flow turned into an editable drawing), LaTeX and PDF export.
+  # Without it Excalidraw only prompts for it when one of those is used. Nothing to set.
+  excalidraw-extras:
+    name: Excalidraw Extras

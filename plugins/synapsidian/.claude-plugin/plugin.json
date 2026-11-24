@@ -1,0 +1,37 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "synapsidian",
+  "displayName": "Synapsidian",
+  "version": "0.33.1",
+  "description": "Second brain in an Obsidian vault: daily notes and briefs, tasks, meetings, saving from conversations, ingesting articles, videos and documents, research, thinking tools, search and reviews. Every change is a git commit in the vault. Projects come with the synapsidian-projects add-on, work features with synapsidian-work.",
+  "author": {
+    "name": "Szum Tech Team",
+    "email": "szum.tech@gmail.com",
+    "url": "https://github.com/JanSzewczyk"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/JanSzewczyk/synapsidian",
+  "keywords": ["obsidian", "second-brain", "notes", "tasks", "knowledge-management"],
+  "userConfig": {
+    "vault_path": {
+      "type": "directory",
+      "title": "Vault path",
+      "description": "Absolute path of the Obsidian vault the plugin reads and writes, e.g. /Users/you/Synapsidian.",
+      "required": true,
+      "default": "~/Synapsidian"
+    },
+    "auto_approve_vault_edits": {
+      "type": "boolean",
+      "title": "Auto-approve vault edits",
+      "description": "Let Claude write .md/.base/.canvas notes inside the vault without a permission prompt (never About.md, Templates/, CLAUDE.md or .claude/, which always ask). Every change is still a git commit you can revert. Turned off, the scheduled runs stop at the first note edit and wait for you.",
+      "default": true
+    },
+    "session_exclude_paths": {
+      "type": "string",
+      "multiple": true,
+      "title": "Folders kept off the record",
+      "description": "Claude sessions started in these folders (or matching these glob patterns, e.g. ~/Clients/*) never reach the devlog, the evening run or the stand-up. A single session can also opt out by including #off-the-record in a message. Leave empty to log every session.",
+      "required": false
+    }
+  }
+}

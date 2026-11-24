@@ -1,0 +1,110 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "source"
+views:
+  - type: table
+    name: To integrate
+    filters:
+      not:
+        - file.hasProperty("integrated")
+    order:
+      - file.name
+      - source_kind
+      - fetched_at
+      - capture_scope
+      - url
+    sort:
+      - property: fetched_at
+        direction: ASC
+  - type: table
+    name: All sources
+    order:
+      - file.name
+      - source_kind
+      - summary
+      - source_quality
+      - integrated
+      - capture_scope
+      - url
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Articles
+    filters:
+      and:
+        - source_kind == "article"
+    order:
+      - file.name
+      - summary
+      - author
+      - published
+      - url
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Videos
+    filters:
+      and:
+        - source_kind == "youtube"
+    order:
+      - file.name
+      - summary
+      - author
+      - capture_scope
+      - url
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Documents
+    filters:
+      or:
+        - source_kind == "pdf"
+        - source_kind == "document"
+        - source_kind == "slides"
+    order:
+      - file.name
+      - source_kind
+      - summary
+      - capture_scope
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Confluence
+    filters:
+      and:
+        - source_kind == "confluence"
+    order:
+      - file.name
+      - summary
+      - url
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Text and images
+    filters:
+      or:
+        - source_kind == "text"
+        - source_kind == "image"
+        - source_kind == "other"
+    order:
+      - file.name
+      - source_kind
+      - summary
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: By kind
+    groupBy:
+      property: source_kind
+      direction: ASC
+    order:
+      - file.name
+      - summary

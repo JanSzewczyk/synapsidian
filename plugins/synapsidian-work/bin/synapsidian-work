@@ -1,0 +1,28 @@
+#!/bin/sh
+# synapsidian-work <command> [args...]: run one of synapsidian-work's scripts with uv, or print a hook reference.
+# On the Bash PATH while the plugin is enabled, next to synapsidian's own `synapsidian` command.
+set -e
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+
+usage() {
+  echo "usage: synapsidian-work {prs|standup} [args...]" >&2
+  echo "       synapsidian-work hook {morning|meetings|review|schedule}   print the steps a core synapsidian skill adds" >&2
+  echo "       synapsidian-work extension                               print the extension directory for synapsidian setup" >&2
+  echo "       synapsidian-work <command> --help" >&2
+}
+
+[ $# -ge 1 ] || { usage; exit 2; }
+cmd=$1
+shift
+case "$cmd" in
+  prs | standup) exec "$root/hooks/run.sh" "$root/scripts/$cmd.py" "$@" ;;
+  hook)
+    case "${1:-}" in
+      morning | meetings | review | schedule) exec cat "$root/references/hook-$1.md" ;;
+      *) usage; exit 2 ;;
+    esac
+    ;;
+  extension) echo "$root/extension" ;;
+  -h | --help | help) usage; exit 0 ;;
+  *) usage; exit 2 ;;
+esac
