@@ -11,7 +11,7 @@ The `synapsidian` command finds the vault by itself (plugin option `vault_path`)
 
 Question: $ARGUMENTS
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/conventions.md` and `${CLAUDE_PLUGIN_ROOT}/references/ingest.md` first, and `About.md` for what the user works on. If WebSearch or WebFetch is only listed as a deferred tool, load it with ToolSearch before step 2. If there is no question, ask for one.
+Read `${CLAUDE_PLUGIN_ROOT}/references/conventions.md` and `${CLAUDE_PLUGIN_ROOT}/references/ingest.md` first, and `About.md` for what the user works on and their `interests`. If WebSearch or WebFetch is only listed as a deferred tool, load it with ToolSearch before step 2. If there is no question, ask for one.
 
 ## 1. What the vault knows
 

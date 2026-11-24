@@ -3,8 +3,9 @@
 A vault can carry extensions (D90): `<vault>/.synapsidian/extensions/<name>/schema.yaml`, written
 by `synapsidian setup extension` from an add-on plugin such as synapsidian-work. An extension adds
 types (`types:`) and widens existing ones (`extend: <type>:`): `fields:` adds a field or
-gives an existing one more `enum` values, and `folder_by:` gives a type that has none a
-folder that depends on one of its fields (D102). Every extension's types are merged before
+gives an existing one more `enum` values, `folder_by:` gives a type that has none a
+folder that depends on one of its fields (D102), and `sections:` (only on `about`) adds a body
+section or, with `subsection:`, a `###` inside an existing one (D160). Every extension's types are merged before
 any `extend:`, and an `extend:` of a type nothing defines is skipped with a warning (D106).
 A type's own `folder` may hold `{title}`, giving each note a folder of its own (a project
 hub in `Projects/<title>/`). Its `templates/` win over the
@@ -43,6 +44,20 @@ class Field:
     # A number one above the highest this field holds among the type's notes (D110):
     # `{prefix: T, legacy: [ZAD-]}` for task ids, `{per: project}` for a number within a project.
     sequence: Sequence | None = None
+    # The plugin that declared the field: `synapsidian` for the core, else the extension's name.
+    owner: str = "synapsidian"
+
+
+@dataclass(frozen=True, slots=True)
+class Section:
+    """A body section of the `about` note (D160): the interview asks `ask` while it is empty.
+
+    `subsection` set means a `### subsection` inside the existing `## title` section."""
+
+    title: str
+    ask: str
+    owner: str = "synapsidian"
+    subsection: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,6 +86,8 @@ class NoteType:
     folder_by: FolderBy | None = None
     # False for a type only scripts or Claude write: it gets no Obsidian template (D110).
     obsidian_template: bool = True
+    # Only the `about` type has them: the body sections the interview fills (D160).
+    sections: tuple[Section, ...] = ()
 
     def template(self, kind: object = None) -> Path | None:
         """Body template: `<type>-<kind>.md` wins over `<type>.md`; extension dirs win over the core's."""
@@ -139,6 +156,7 @@ def _field(name: str, spec: dict[str, Any]) -> Field:
         enum=tuple(str(v) for v in spec.get("enum", ())),
         pattern=re.compile(pattern) if pattern else None,
         default=spec.get("default"),
+        owner=str(spec.get("owner") or "synapsidian"),
         sequence=Sequence(
             prefix=str(seq.get("prefix") or ""),
             legacy=tuple(str(p) for p in seq.get("legacy") or ()),
@@ -204,13 +222,13 @@ def _extend(raw: dict[str, Any], ext: dict[str, Any], name: str) -> list[str]:
         if type_name not in raw["types"]:
             warnings.append(f"extension {name}: extends type {type_name!r}, which no installed schema defines; skipped")
             continue
-        unknown = set(spec) - {"fields", "folder_by"}
+        unknown = set(spec) - {"fields", "folder_by", "sections"}
         if unknown:
             raise ValueError(f"extension {name}: extend: {type_name} can't set {', '.join(sorted(unknown))}")
         fields = raw["types"][type_name].setdefault("fields", {})
         for fname, fspec in (spec.get("fields") or {}).items():
             if fname not in fields:
-                fields[fname] = fspec
+                fields[fname] = {**fspec, "owner": name}
             elif set(fspec) - {"enum"} or not fields[fname].get("enum"):
                 raise ValueError(f"extension {name}: {type_name}.{fname} exists; only its enum can be widened")
             else:
@@ -218,12 +236,42 @@ def _extend(raw: dict[str, Any], ext: dict[str, Any], name: str) -> list[str]:
                     *fields[fname]["enum"],
                     *(v for v in fspec["enum"] if v not in fields[fname]["enum"]),
                 ]
+        if "sections" in spec:
+            if type_name != "about":
+                raise ValueError(f"extension {name}: extend: {type_name} can't set sections; only about has them")
+            sections = raw["types"][type_name].setdefault("sections", [])
+            for entry in spec["sections"] or ():
+                if warning := _add_section(sections, entry, name):
+                    warnings.append(warning)
         # After the fields, so one `extend:` block can add a field and file notes by it.
         if "folder_by" in spec:
             if raw["types"][type_name].get("folder_by"):
                 raise ValueError(f"extension {name}: {type_name} already has a folder_by")
             raw["types"][type_name]["folder_by"] = spec["folder_by"]
     return warnings
+
+
+def _add_section(sections: list[dict[str, Any]], entry: dict[str, Any], name: str) -> str | None:
+    """Add one `about` section from an extension to the raw list, in place; a warning when it is skipped.
+
+    A new `title` adds a `## title` section. A `title` that exists needs `subsection:`, which adds a
+    `### subsection` inside it; a parent no installed schema defines is skipped (D106)."""
+    title, ask, sub = (str(entry.get(k) or "").strip() for k in ("title", "ask", "subsection"))
+    if not title or not ask:
+        raise ValueError(f"extension {name}: an about section needs a title and an ask")
+    top = {s["title"].casefold() for s in sections if not s.get("subsection")}
+    if sub:
+        if title.casefold() not in top:
+            return f"extension {name}: about section {title!r} to add {sub!r} to isn't defined; skipped"
+        if any(
+            s["title"].casefold() == title.casefold() and (s.get("subsection") or "").casefold() == sub.casefold()
+            for s in sections
+        ):
+            raise ValueError(f"extension {name}: about section {title!r} already has a subsection {sub!r}")
+    elif title.casefold() in top:
+        raise ValueError(f"extension {name}: about section {title!r} exists; add a `subsection:` to extend it")
+    sections.append({"title": title, "ask": ask, "owner": name, **({"subsection": sub} if sub else {})})
+    return None
 
 
 def _folder(type_name: str, spec: dict[str, Any]) -> str:
@@ -272,6 +320,15 @@ def _load(extensions: tuple[tuple[Path, int], ...]) -> Schema:
             template_dirs=tuple(template_dirs),
             folder_by=_folder_by(name, spec, fields, warnings),
             obsidian_template=bool(spec.get("obsidian_template", True)),
+            sections=tuple(
+                Section(
+                    title=str(sec["title"]),
+                    ask=str(sec["ask"]),
+                    owner=str(sec.get("owner") or "synapsidian"),
+                    subsection=str(sec["subsection"]) if sec.get("subsection") else None,
+                )
+                for sec in spec.get("sections") or ()
+            ),
         )
     return Schema(universal, types, tuple(path.parent.name for path, _ in extensions), tuple(warnings))
 

@@ -26,7 +26,7 @@ from pathlib import Path
 
 import yaml
 
-from synapsidianlib import about, config, frontmatter, schema, vault
+from synapsidianlib import about, config, frontmatter, schema, sections, vault
 
 MAX_CHARS = 6000
 RULES_MAX_CHARS = 3000
@@ -38,22 +38,31 @@ def unlink(value: object) -> str:
     return re.sub(r"\[\[([^\]|]+)(?:\|[^\]]+)?\]\]", r"\1", str(value))
 
 
+def show(value: object) -> str:
+    return ", ".join(unlink(v) for v in value) if isinstance(value, list) else unlink(value)
+
+
 def about_sections(vault_root: Path, body_chars: int) -> list[str]:
-    """`### About the user`, then `### Vault rules` when the user wrote any (D92)."""
+    """`### About the user`, then `### Vault rules` when the user wrote any (D94)."""
     path = vault_root / "About.md"
     if not path.is_file():
         return ["### About the user", "- `About.md` is missing; `/synapsidian:setup` creates it."]
     parsed = frontmatter.parse(path.read_text(encoding="utf-8", errors="replace"))
     meta = parsed.meta or {}
     about_fields = schema.load(vault_root).types["about"].fields
-    lines = [f"- {k.replace('_', ' ')}: {unlink(meta[k])}" for k in about_fields if k != "protected" and meta.get(k)]
+    lines = [f"- {k.replace('_', ' ')}: {show(meta[k])}" for k in about_fields if k != "protected" and meta.get(k)]
     rest, rules_section = about.split_rules(parsed.body)
-    # Only what the user wrote: template headings with nothing under them are noise.
-    text = "\n".join(
-        ln for ln in about.strip_comments(rest).splitlines() if ln.strip() and not ln.lstrip().startswith("#")
-    ).strip()
-    if text and body_chars:
-        lines.append(text[:body_chars] + ("..." if len(text) > body_chars else ""))
+    # Only what the user wrote: template headings with nothing under them are noise. Each part keeps its
+    # section (and `###` subsection) as a label, so the text still says who it is about (D160).
+    budget = body_chars
+    for section, sub, text in sections.parts(about.strip_comments(rest)) if body_chars else ():
+        if budget <= 0:
+            break
+        label = " / ".join(x for x in (section, sub) if x)
+        text = "\n  ".join(ln.strip() for ln in text.splitlines() if ln.strip())
+        shown = text[:budget]
+        lines.append(f"- {label + ': ' if label else ''}{shown}{'...' if len(text) > budget else ''}")
+        budget -= len(text)
     out = ["### About the user", *lines]
 
     rules = about.rule_lines(rules_section or "")
@@ -170,7 +179,7 @@ def build(vault_root: Path, today: dt.date, minimal: bool) -> str:
         "there, use the synapsidian skills so frontmatter, linking and the git commit are handled.",
         "",
         # The rules come before the task lists so the MAX_CHARS cut at the end never reaches them.
-        *about_sections(vault_root, 0 if minimal else 700),
+        *about_sections(vault_root, 0 if minimal else 1200),
     ]
     if minimal:
         return "\n".join(out)

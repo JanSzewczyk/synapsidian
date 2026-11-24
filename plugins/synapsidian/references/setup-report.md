@@ -7,7 +7,7 @@ How `/synapsidian:setup` and every add-on's setup end (D154): one short report i
 - <what was already in place and still is, one line each>
 
 ➕ Added in this run
-- <what this run installed, created, moved or configured, one line each, with commits>
+- <what this run installed, created, moved or configured, one line each, with commits; the About sections and fields filled>
 
 ❗ Still needed
 - <what is missing, why it is needed (a few words), and how to add it>

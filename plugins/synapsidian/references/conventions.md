@@ -6,7 +6,7 @@ Rules every synapsidian skill follows when it reads or writes the vault. The not
 
 ## Language and format
 
-- Notes are written in **English**, whatever language the conversation is in.
+- Notes are written in **English**, whatever language the conversation is in (search relies on it). `language` in About.md, shown in the brief, is the language to talk to the user in; only the user's own rules can change the language of notes.
 - Body text is for a human reader: short paragraphs and bullets, no filler. The one-sentence `summary` in the frontmatter is what search, the brief and Bases show, so make it specific ("Decided to keep receipts as PDFs and scan them once a month", not "Notes about receipts").
 - A fact that will go stale (a count, a status, who owns something now) gets a date: `(as of 2026-10-13)`. Timeless facts and decisions do not.
 - Link every person, project, decision, task and concept that has a note: `[[Note title]]`. Link only to notes that exist or that you create in the same run.

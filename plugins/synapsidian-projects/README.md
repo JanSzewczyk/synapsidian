@@ -17,7 +17,7 @@ The projects add-on for the `synapsidian` plugin. Any number of projects in the 
 /synapsidian-projects:setup
 ```
 
-Setup installs the schema extension into the vault (`.synapsidian/extensions/synapsidian-projects/`), which adds the `project` type and the Projects Bases. It moves existing project notes into their project folders and gives every hub its board and views. It also shows where each project's repository is on this device. It ends with a report of what is ready, what it added and what is still needed. Re-run it after every synapsidian-projects update.
+Setup installs the schema extension into the vault (`.synapsidian/extensions/synapsidian-projects/`), which adds the `project` type, the Projects Bases and a `## Projects` section in `About.md` that setup asks you about (skippable). It moves existing project notes into their project folders and gives every hub its board and views. It also shows where each project's repository is on this device. It ends with a report of what is ready, what it added and what is still needed. Re-run it after every synapsidian-projects update.
 
 ## Skills
 

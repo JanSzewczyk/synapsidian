@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import datetime as dt
 
+import pytest
+
 from synapsidianlib import frontmatter, schema
 
 
@@ -209,3 +211,55 @@ def test_fixture_vault_is_schema_valid(fixture_vault):
     s = schema.load(fixture_vault)
     problems = {n.rel: schema.validate(n.meta, n.rel, s) for n in vault.iter_notes(fixture_vault)}
     assert {k: v for k, v in problems.items() if v} == {}
+
+
+def test_extension_sections_add_a_section_or_a_subsection_of_one(tmp_path):
+    raw = {"types": {"about": {"fields": {}, "sections": [{"title": "Who I am", "ask": "Who?"}]}}}
+    warnings = schema.merge_extensions(
+        raw,
+        [
+            (
+                "x",
+                {
+                    "extend": {
+                        "about": {
+                            "sections": [
+                                {"title": "Work", "ask": "What?"},
+                                {"title": "Who I am", "subsection": "Work", "ask": "Where?"},
+                                {"title": "Gone", "subsection": "Y", "ask": "Never."},
+                            ]
+                        }
+                    }
+                },
+            )
+        ],
+    )
+    assert [(s["title"], s.get("subsection"), s.get("owner")) for s in raw["types"]["about"]["sections"]] == [
+        ("Who I am", None, None),
+        ("Work", None, "x"),
+        ("Who I am", "Work", "x"),
+    ]
+    assert warnings == ["extension x: about section 'Gone' to add 'Y' to isn't defined; skipped"]
+    with pytest.raises(ValueError, match="add a `subsection:`"):
+        schema.merge_extension(raw, {"extend": {"about": {"sections": [{"title": "work", "ask": "Dup?"}]}}}, "y")
+    with pytest.raises(ValueError, match="already has a subsection"):
+        schema.merge_extension(
+            raw, {"extend": {"about": {"sections": [{"title": "Who I am", "subsection": "work", "ask": "Dup?"}]}}}, "y"
+        )
+    with pytest.raises(ValueError, match="only about has them"):
+        schema.merge_extension({"types": {"task": {}}}, {"extend": {"task": {"sections": []}}}, "y")
+
+
+def test_installed_schema_records_who_declared_each_about_field_and_section(work_vault, projects_vault):
+    # Both fixtures share one vault; extensions merge in name order, so Projects comes before Work.
+    about = schema.load(work_vault).types["about"]
+    assert about.fields["team"].owner == "synapsidian-work" and about.fields["role"].owner == "synapsidian"
+    assert [(x.title, x.subsection, x.owner) for x in about.sections] == [
+        ("Who I am", None, "synapsidian"),
+        ("Current focus", None, "synapsidian"),
+        ("How I work", None, "synapsidian"),
+        ("Projects", None, "synapsidian-projects"),
+        ("Work", None, "synapsidian-work"),
+        ("Current focus", "Work", "synapsidian-work"),
+    ]
+    assert "working_hours" not in schema.load(None).types["about"].fields
