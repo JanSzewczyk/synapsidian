@@ -2,7 +2,7 @@
   "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "synapsidian-dock",
   "displayName": "Synapsidian Dock",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Dock add-on for the synapsidian plugin: /synapsidian shows a band above the prompt with what is overdue, due today and in progress, with a Tasks button to a pane whose keys close, start, move or drop a task without a Claude turn. A Claude Code mod; needs Claude Code 2.1.299 or later.",
   "author": {
     "name": "Szum Tech Team",
@@ -12,7 +12,7 @@
   "license": "MIT",
   "homepage": "https://github.com/JanSzewczyk/synapsidian",
   "keywords": ["obsidian", "second-brain", "tasks", "mod", "dashboard"],
-  "dependencies": [{ "name": "synapsidian", "version": "~0.33.0" }],
+  "dependencies": [{ "name": "synapsidian", "version": "~0.34.0" }],
   "userConfig": {
     "show_dock_band": {
       "type": "boolean",

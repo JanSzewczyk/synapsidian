@@ -9,6 +9,46 @@ The sections before synapsidian-dock 0.6.0 were reconstructed from git history o
 commits that changed each plugin's version; some versions in between had no release commit of their
 own and are folded into the next one.
 
+## [0.34.0 synapsidian] — 2026-11-24
+
+### Added
+
+- About.md declares its body sections in the schema; an add-on adds its own with `extend: about: sections:` (a section, or a `###` subsection of one).
+- `setup about [--owner P]` lists the questions still empty; setup interviews you about them, each with a Skip, and asks again the next time it runs.
+- `note fill` takes the declared sections of About.md (`--subsection`), never Rules.
+- About fields `language` and `interests`.
+
+### Changed
+
+- The brief labels each About part (1,200 characters instead of 700).
+- `working_hours` moved to synapsidian-work; elsewhere `setup apply` turns it into a line under How I work.
+
+## [0.7.0 synapsidian-work] — 2026-11-24
+
+### Added
+
+- `working_hours` field and a `## Work` section (with `### Work` under Current focus) in About.md; setup interviews you about them.
+
+### Changed
+
+- Requires synapsidian ~0.34.0.
+
+## [0.13.0 synapsidian-projects] — 2026-11-24
+
+### Added
+
+- A `## Projects` section in About.md; setup asks about it.
+
+### Changed
+
+- Requires synapsidian ~0.34.0.
+
+## [0.7.1 synapsidian-dock] — 2026-11-24
+
+### Changed
+
+- Requires synapsidian ~0.34.0.
+
 ## [0.7.0 synapsidian-dock] — 2026-11-17
 
 ### Added
