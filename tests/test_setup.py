@@ -28,9 +28,11 @@ def test_apply_creates_layout_commits_once_and_is_idempotent(run, tmp_path):
         "--about",
         "role=Engineer",
         "--about",
-        "working_hours=9-17",
+        "interests=hiking, chess",
     )
     assert code == 0 and first["commit"]
+    about = (vault / "About.md").read_text()
+    assert "role: Engineer" in about and "- hiking" in about and "## Who I am" in about
     assert not (vault / "Architecture").exists()  # a work folder comes only with the synapsidian-work extension
     assert {"About.md", "Bases/Tasks.base", ".obsidian/types.json", "Templates/Daily.md"} <= set(first["created"])
     assert {"Templates/Generated/Task.md", "Templates/Generated/Meeting - External.md"} <= set(first["created"])
@@ -648,3 +650,75 @@ def test_conflicting_extension_is_refused_before_any_write(run, vault, tmp_path)
     code, out = run("setup", "extension", "--vault", str(vault), "--from", str(bad))
     assert code == 1 and "already exists" in out["error"]
     assert not (vault / ".synapsidian" / "extensions").exists()
+
+
+# --- About sections and the interview (D160) ----------------------------------------------------
+
+
+def sections_of(text: str) -> list[str]:
+    return re.findall(r"^#{2,3} .+$", text, flags=re.M)
+
+
+def test_apply_adds_declared_about_sections_ahead_of_rules_and_keeps_the_users_text(run, tmp_path):
+    vault = tmp_path / "Synapsidian"
+    vault.mkdir()
+    old = "---\ntype: about\nrole: Engineer\n---\n## Who I am\nMe, in my words.\n\n## How I work\nSlowly.\n"
+    (vault / "About.md").write_text(old)
+    _, first = run("setup", "apply", "--vault", str(vault), "--name", "N", "--email", "e@x")
+    text = (vault / "About.md").read_text()
+    assert "About.md" in first["updated"]
+    assert "## Who I am\nMe, in my words.\n" in text and "## How I work\nSlowly.\n" in text
+    assert sections_of(text).index("## Current focus") < sections_of(text).index("## Rules")
+    assert sections_of(text)[-1] == "## Rules"
+    _, second = run("setup", "apply", "--vault", str(vault))
+    assert "About.md" not in second["updated"] and (vault / "About.md").read_text() == text
+
+
+def test_extension_install_adds_its_sections_and_subsections(run, tmp_path):
+    vault = tmp_path / "Synapsidian"
+    run("setup", "apply", "--vault", str(vault), "--name", "N", "--email", "e@x")
+    assert "## Work" not in (vault / "About.md").read_text()
+    code, out = run("setup", "extension", "--vault", str(vault), "--from", str(WORK / "extension"))
+    assert code == 0 and "About.md" in out["updated"]
+    text = (vault / "About.md").read_text()
+    assert sections_of(text).index("### Work") == sections_of(text).index("## Current focus") + 1
+    assert sections_of(text)[-2:] == ["## Work", "## Rules"]
+
+
+def test_apply_moves_working_hours_into_how_i_work_without_the_work_addon(run, tmp_path):
+    vault = tmp_path / "Synapsidian"
+    vault.mkdir()
+    (vault / "About.md").write_text("---\ntype: about\nrole: Engineer\nworking_hours: 9-17\n---\n## How I work\n")
+    run("setup", "apply", "--vault", str(vault), "--name", "N", "--email", "e@x")
+    text = (vault / "About.md").read_text()
+    assert "working_hours" not in text and "- Working hours: 9-17" in text and "role: Engineer" in text
+    run("setup", "extension", "--vault", str(vault), "--from", str(WORK / "extension"))
+    (vault / "About.md").write_text(text.replace("role: Engineer\n", "role: Engineer\nworking_hours: 8-16\n"))
+    run("setup", "apply", "--vault", str(vault))
+    assert "working_hours: 8-16" in (vault / "About.md").read_text()  # a field of the installed schema stays
+
+
+def test_setup_about_lists_what_is_empty_per_owner(run, tmp_path):
+    vault = tmp_path / "Synapsidian"
+    run("setup", "apply", "--vault", str(vault), "--name", "N", "--email", "e@x", "--about", "role=Engineer")
+    run("setup", "extension", "--vault", str(vault), "--from", str(WORK / "extension"))
+    code, out = run("setup", "about", "--vault", str(vault))
+    assert code == 0 and out["owners"] == ["synapsidian", "synapsidian-work"]
+    ask = {(q["owner"], q["section"], q["subsection"]): q["state"] for q in out["questions"]}
+    assert ask == {
+        ("synapsidian", "Who I am", None): "empty",
+        ("synapsidian", "Current focus", None): "empty",
+        ("synapsidian", "How I work", None): "empty",
+        ("synapsidian-work", "Work", None): "empty",
+        ("synapsidian-work", "Current focus", "Work"): "empty",
+    }
+    fields = {f["name"]: (f["owner"], f["empty"]) for f in out["fields"]}
+    assert fields["role"] == ("synapsidian", False) and fields["language"] == ("synapsidian", True)
+    assert fields["team"] == ("synapsidian-work", True) and fields["working_hours"] == ("synapsidian-work", True)
+
+    filled = run("note", "fill", "--file", "About.md", "--section", "Who I am", stdin="Me.\n", vault=vault)
+    assert filled[1]["status"] == "filled", filled
+    _, core = run("setup", "about", "--vault", str(vault), "--owner", "synapsidian")
+    assert {q["owner"] for q in core["questions"]} == {"synapsidian"}
+    assert {q["section"]: q["state"] for q in core["questions"]}["Who I am"] == "filled"
+    assert run("setup", "about", "--vault", str(tmp_path / "none"))[0] != 0

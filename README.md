@@ -117,7 +117,7 @@ In a new session (hooks of a newly installed plugin load at session start):
 /synapsidian:setup
 ```
 
-It checks Obsidian, uv and git, creates the vault layout, configures Obsidian (core plugins, Bases views, daily notes, a Templater template per note type, property types, the required community plugins), makes the vault a git repo, asks a few questions for `About.md`, and offers to register the vault in Obsidian.
+It checks Obsidian, uv and git, creates the vault layout, configures Obsidian (core plugins, Bases views, daily notes, a Templater template per note type, property types, the required community plugins), makes the vault a git repo, interviews you for `About.md` (role, language, interests, who you are, current focus, how you work; every question has a Skip and a later setup asks about what is still empty), and offers to register the vault in Obsidian.
 
 #### 3. Add the add-ons you want
 
@@ -128,7 +128,7 @@ For work, add the add-on (it installs `synapsidian` too if it's missing):
 /synapsidian-work:setup
 ```
 
-It asks for your GitHub repo, Jira project key, work repository path and stand-up days and time (leave any empty to skip that source), installs its schema extension into the vault (`.synapsidian/extensions/synapsidian-work/`), fills the work fields of `About.md` and schedules the stand-up.
+It asks for your GitHub repo, Jira project key, work repository path and stand-up days and time (leave any empty to skip that source), installs its schema extension into the vault (`.synapsidian/extensions/synapsidian-work/`), fills the work fields and the `## Work` section of `About.md` and schedules the stand-up.
 
 For projects:
 

@@ -104,6 +104,10 @@ types:
     folder_by: {field: project, folder: "Projects/{project}/Architecture"}
 
 extend:
+  about:
+    sections:
+      - title: Projects
+        ask: Which projects are you running now, and what is each one for?
   task:
     fields:
       project: {kind: link}

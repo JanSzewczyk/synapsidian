@@ -30,3 +30,10 @@ extend:
       team: {kind: text}
       company: {kind: text}
       manager: {kind: link}
+      working_hours: {kind: text}
+    sections:
+      - title: Work
+        ask: What does your team or company do, and what are you responsible for?
+      - title: Current focus
+        subsection: Work
+        ask: Which work goals or deliveries matter most right now?

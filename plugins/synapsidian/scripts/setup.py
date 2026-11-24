@@ -8,6 +8,7 @@
   setup.py check    [--vault V]
   setup.py apply    [--vault V] [--name N --email E] [--about key=value ...]
   setup.py register [--vault V] [--obsidian-closed]   add the vault to Obsidian's registry (Obsidian must be closed)
+  setup.py about    [--vault V] [--owner PLUGIN]   what the About interview still has to ask (D160)
   setup.py selftest [--vault V]        drive the session hooks end to end against a throwaway vault
   setup.py extension --from DIR [--vault V]   install or update an add-on's schema, templates and bases
 
@@ -16,7 +17,8 @@ Obsidian settings only sets keys the user hasn't set differently (reported as `k
 It generates a Templater template per note type into `Templates/Generated/` (D110, D119),
 rewriting one only while the user hasn't edited it.
 It also renames tasks with a legacy `ZAD-n` id to `Tn`, links included (D93, `task_ids`), and
-appends the empty `## Rules` section to an About note that predates it (D94). In the vault's
+appends the empty `## Rules` section to an About note that predates it (D94) and the empty
+`## sections` and `### subsections` the installed schemas declare for it (D160). In the vault's
 Bases it turns a top-level `file.inFolder("<type folder>")` filter into "this type, outside
 Archive/", so notes filed in project folders show up too (D102); nothing else in a Base changes.
 It moves notes from a folder their type no longer uses to the one the schema gives them
@@ -51,6 +53,7 @@ import yaml
 import sessions
 from synapsidianlib import config, frontmatter, gitops, obsidian_templates, schema, taskids, vault
 from synapsidianlib.about import split_rules
+from synapsidianlib.sections import append_to_section, ensure_part, part_state
 
 UV_LOCATIONS = ("~/.local/bin/uv", "~/.cargo/bin/uv", "/opt/homebrew/bin/uv", "/usr/local/bin/uv")  # as hooks/run.sh
 REQUIRED_HOOKS = {"SessionStart", "SessionEnd", "PreToolUse", "PostToolUse"}
@@ -741,23 +744,73 @@ def about_note(s: schema.Schema, about: dict[str, str]) -> str:
     return frontmatter.dump(meta, template.read_text(encoding="utf-8") if template else "")
 
 
-def add_rules_section(s: schema.Schema, path: Path, changes: Changes) -> None:
-    """Append the template's empty `## Rules` section to an About note that predates it (D94).
+def update_about(s: schema.Schema, path: Path, changes: Changes) -> None:
+    """Bring an existing About note up to date with the installed schemas, leaving the user's text alone.
 
-    Only a note with `type: about` and no Rules heading; the rest of the file is left byte for byte.
+    Appends the empty `## Rules` section to a note that predates it (D94), then each `## section` and
+    `### subsection` the core and the add-ons declare for About that is missing, ahead of `## Rules` (D160).
+    A `working_hours` field the vault's schema no longer has (it moved to synapsidian-work) becomes a
+    line under `## How I work`, so nothing the user said is lost.
     """
     if not path.is_file():
         return
     text = path.read_text(encoding="utf-8")
     parsed = frontmatter.parse(text)
+    if (parsed.meta or {}).get("type") != "about":
+        return
+    new = text
     template = s.types["about"].template()
-    if (parsed.meta or {}).get("type") != "about" or split_rules(parsed.body)[1] is not None or not template:
-        return
-    section = split_rules(template.read_text(encoding="utf-8"))[1]
-    if section is None:
-        return
-    path.write_text(f"{text.rstrip(chr(10))}\n\n## Rules\n{section.strip(chr(10))}\n", encoding="utf-8")
-    changes.updated.append(changes.rel(path))
+    rules = split_rules(template.read_text(encoding="utf-8"))[1] if template else None
+    if split_rules(parsed.body)[1] is None and rules is not None:
+        new = f"{new.rstrip(chr(10))}\n\n## Rules\n{rules.strip(chr(10))}\n"
+    for sec in s.types["about"].sections:
+        new, _ = ensure_part(new, sec.title, sec.subsection, "Rules")
+    meta = dict(frontmatter.parse(new).meta or {})
+    if "working_hours" in meta and "working_hours" not in s.fields_for("about"):
+        hours = str(meta.pop("working_hours") or "").strip()
+        body = frontmatter.parse(new).body
+        if hours:
+            body = append_to_section(body, "How I work", f"- Working hours: {hours}")
+        new = frontmatter.dump(meta, body)
+    if new != text:
+        path.write_text(new, encoding="utf-8")
+        changes.updated.append(changes.rel(path))
+
+
+def cmd_about(vault_root: Path, owner: str | None) -> dict[str, Any]:
+    """What the About interview still has to ask (D160): each declared section with its question and
+    whether it is `empty`, and each frontmatter field with whether it is empty. `owner` keeps one
+    plugin's part (`synapsidian`, `synapsidian-work`, ...). Nothing is written."""
+    path = vault_root / "About.md"
+    if not path.is_file():
+        raise ValueError("About.md is missing; run `setup apply` first")
+    s = schema.load(vault_root)
+    text = frontmatter.normalize_newlines(path.read_text(encoding="utf-8"))
+    meta = frontmatter.parse(text).meta or {}
+    about_type = s.types["about"]
+    fields = about_type.fields
+    return {
+        "ok": True,
+        "rel": "About.md",
+        "owner": owner,
+        "owners": sorted({"synapsidian", *(x.owner for x in about_type.sections), *(f.owner for f in fields.values())}),
+        "questions": [
+            {
+                "owner": sec.owner,
+                "section": sec.title,
+                "subsection": sec.subsection,
+                "ask": sec.ask,
+                "state": part_state(text, sec.title, sec.subsection),
+            }
+            for sec in about_type.sections
+            if owner in (None, sec.owner)
+        ],
+        "fields": [
+            {"name": name, "owner": f.owner, "empty": schema.is_empty(meta.get(name))}
+            for name, f in fields.items()
+            if name != "protected" and owner in (None, f.owner)
+        ],
+    }
 
 
 FOLDER_FILTER = re.compile(r'^(?P<indent>[ \t]+)- file\.inFolder\("(?P<folder>[^"]*)"\)[ \t]*$')
@@ -877,7 +930,7 @@ def cmd_apply(
     for folder in folders(s):
         (vault_root / folder).mkdir(exist_ok=True)
     changes.write_new(vault_root / "About.md", about_note(s, about))
-    add_rules_section(s, vault_root / "About.md", changes)
+    update_about(s, vault_root / "About.md", changes)
     templates = obsidian_templates.sync(vault_root, s)
     changes.created += templates.created
     changes.updated += [*templates.updated, *templates.removed]
@@ -1097,12 +1150,13 @@ def cmd_register(vault_root: Path, obsidian_closed: bool = False) -> dict[str, A
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("cmd", choices=["check", "apply", "register", "selftest", "extension"])
+    parser.add_argument("cmd", choices=["check", "apply", "register", "selftest", "extension", "about"])
     parser.add_argument("--vault")
     parser.add_argument("--from", dest="source", help="extension: the add-on's extension directory")
     parser.add_argument("--data-dir")
     parser.add_argument("--name")
     parser.add_argument("--email")
+    parser.add_argument("--owner", help="about: only this plugin's questions and fields")
     parser.add_argument(
         "--obsidian-closed",
         action="store_true",
@@ -1113,7 +1167,7 @@ def main() -> None:
         action="append",
         default=[],
         metavar="KEY=VALUE",
-        help="About.md field from the vault's schema (core: role, timezone, working_hours)",
+        help="About.md field from the vault's schema (core: role, timezone, language, interests)",
     )
     args = parser.parse_args()
 
@@ -1131,6 +1185,8 @@ def main() -> None:
             case "apply":
                 about = dict(pair.split("=", 1) for pair in args.about if "=" in pair)
                 result = cmd_apply(vault_root, args.name, args.email, about, config.data_dir(args.data_dir))
+            case "about":
+                result = cmd_about(vault_root, args.owner)
             case "register":
                 result = cmd_register(vault_root, args.obsidian_closed)
             case "selftest":

@@ -625,3 +625,25 @@ def test_concurrent_commits_never_sweep_up_each_others_files(vault, tmp_path):
             text=True,
         ).stdout.split()
         assert files == [f"n{i}.md"]
+
+
+def test_note_fill_on_about_takes_only_declared_sections(run, work_vault):
+    about = "---\ntype: about\nrole: Engineer\n---\n## Who I am\n\n\n## Current focus\n\n\n## Rules\n- obey\n"
+    (work_vault / "About.md").write_text(about)
+    fill = lambda *a, text="Text.\n": run("note", "fill", "--file", "About.md", *a, stdin=text, vault=work_vault)  # noqa: E731
+    assert fill("--section", "Who I am")[1]["status"] == "filled"
+    assert fill("--section", "Who I am", text="Other.\n")[1]["status"] == "kept"
+    code, out = fill("--section", "Current focus", "--subsection", "Work", "--before", "Rules")
+    assert code == 0 and out["status"] == "added" and out["subsection"] == "Work"
+    assert fill("--section", "Current focus", "--subsection", "Work", text="Again.\n")[1]["status"] == "kept"
+    text = (work_vault / "About.md").read_text()
+    assert "## Current focus\n\n### Work\nText.\n" in text and text.endswith("## Rules\n- obey\n")
+    # Never Rules, never a section nobody declared, never a subsection of a section that has none.
+    for args in (("--section", "Rules"), ("--section", "Secrets"), ("--section", "Who I am", "--subsection", "X")):
+        assert fill(*args)[0] == 2
+    assert (work_vault / "About.md").read_text() == text
+    assert fill("--section", "Who I am", text="token: ghp_" + "a" * 36 + "\n")[0] == 2
+    (work_vault / "Notes").mkdir(exist_ok=True)
+    (work_vault / "Notes" / "N.md").write_text("---\ntype: note\nsummary: s\n---\n## Notes\n")
+    other = ("--file", "Notes/N.md", "--section", "Notes", "--subsection", "X")
+    assert run("note", "fill", *other, stdin="t\n", vault=work_vault)[0] == 2

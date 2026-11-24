@@ -1,4 +1,4 @@
-"""The user's own vault rules in `About.md` (D92): a `## Rules` section and the `protected` field."""
+"""The user's own vault rules in `About.md` (D94): a `## Rules` section and the `protected` field."""
 
 from __future__ import annotations
 

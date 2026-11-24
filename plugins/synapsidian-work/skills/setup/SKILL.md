@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Set up, update or check the synapsidian-work add-on in the user's synapsidian vault - install its schema extension (1:1, stand-up and retro meetings, the win log, work task sources, a Jira key on projects, About fields for team, company and manager), check which work sources are configured (GitHub repositories, Jira projects, work repositories, stand-up days and time), fill the work fields in About.md, and schedule the stand-up run. Use after installing synapsidian-work, when a synapsidian-work skill says the extension is missing, when the user asks to set up, check or repair the work add-on ("set up synapsidian-work", "skonfiguruj synapsidian-work", "is the work add-on set up"), or with `schedule` to create or fix the stand-up's scheduled task.
+description: Set up, update or check the synapsidian-work add-on in the user's synapsidian vault - install its schema extension (1:1, stand-up and retro meetings, the win log, work task sources, a Jira key on projects, About fields for team, company and manager), check which work sources are configured (GitHub repositories, Jira projects, work repositories, stand-up days and time), fill the work fields and sections of About.md, and schedule the stand-up run. Use after installing synapsidian-work, when a synapsidian-work skill says the extension is missing, when the user asks to set up, check or repair the work add-on ("set up synapsidian-work", "skonfiguruj synapsidian-work", "is the work add-on set up"), or with `schedule` to create or fix the stand-up's scheduled task.
 allowed-tools: Bash(synapsidian *) Bash(synapsidian-work *) Bash(command -v synapsidian) Read AskUserQuestion
 argument-hint: "[check|schedule]"
 ---
@@ -43,7 +43,7 @@ Architecture notes moved to synapsidian-projects with the architect skill (synap
 
 ## 3. About the user
 
-Read `About.md` (`synapsidian note where` gives the vault). For each of `team`, `company`, `manager` that is empty, ask in one AskUserQuestion round (plausible options from what you know, e.g. the git email's domain for the company, plus "Skip"). Write the answers with `synapsidian note set --file About.md --field team="..." ...` (`manager` is the manager's person-note title) and commit (`synapsidian commit --skill synapsidian-work-setup --message "About: work fields" About.md`). Never invent an answer.
+Run the About interview, `synapsidian ref about-interview`, with `--owner synapsidian-work`. It asks, with a Skip each, for what is still empty: the fields `team`, `company`, `manager` and `working_hours`, and the sections `## Work` and `### Work` under `## Current focus`. For the fields, offer plausible options from what you know (e.g. the git email's domain for the company); `manager` is the manager's person-note title. Write the fields with `synapsidian note set --file About.md --field team="..." ...`, the sections with `note fill` as the reference says, and commit once (`synapsidian commit --skill synapsidian-work-setup --message "About: work" About.md`). Never invent an answer. Installing the extension (step 2) already added the empty headings.
 
 ## 4. Schedule the stand-up
 
@@ -57,6 +57,6 @@ The tools can't set the task's permission mode or folder: tell the user to open 
 
 ## 5. Finish
 
-Run `synapsidian setup check` once more and end with the setup report: `synapsidian ref setup-report` gives its three groups (✅ ready, ➕ added in this run, ❗ still needed). Added: the extension version, the About fields written, the stand-up task created or fixed. Still needed: the scheduled task's permission mode and folder (step 4) until the user confirms them, and any plugin in `community_plugins_required` with `required_by: synapsidian-work` that isn't installed and enabled. Options that aren't set are information, not Still needed: list them in one line under the report.
+Run `synapsidian setup check` once more and end with the setup report: `synapsidian ref setup-report` gives its three groups (✅ ready, ➕ added in this run, ❗ still needed). Added: the extension version, the About fields and sections written, the stand-up task created or fixed. Still needed: the scheduled task's permission mode and folder (step 4) until the user confirms them, and any plugin in `community_plugins_required` with `required_by: synapsidian-work` that isn't installed and enabled. Options that aren't set are information, not Still needed: list them in one line under the report.
 
 Then the work skills: `/synapsidian-work:one-to-one`, `/synapsidian-work:one-to-one-triage`, `/synapsidian-work:standup`, `/synapsidian-work:work-brief` (also part of `/synapsidian:morning`), `/synapsidian-work:win`. Architecture notes are `/synapsidian-projects:architect`.

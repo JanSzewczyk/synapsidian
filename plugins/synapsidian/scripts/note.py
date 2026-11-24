@@ -16,7 +16,8 @@
 
 `fill` writes a `## <section>` only when it is empty or missing (a missing one goes before the
 `--before` section, else at the end); a section with any text is kept as it is (`kept`). It
-refuses text that looks like a credential.
+refuses text that looks like a credential. On `About.md` it takes only the sections the schema
+declares (`--section "Current focus" [--subsection Work]`, D160): never `## Rules`.
 
 `new` puts a note in its type's folder, or in its `folder_by` folder when that field is set
 (D102), and refuses a file name that another note already has anywhere in the vault. `set` of
@@ -44,7 +45,7 @@ from pathlib import Path
 from typing import Any
 
 from synapsidianlib import config, frontmatter, gitops, schema, taskids, vault
-from synapsidianlib.sections import fill_section, sections
+from synapsidianlib.sections import fill_part, fill_section, sections
 from validate import secret_problems
 
 # A title that repeats the date its file name starts with: `2026-10-13 2026-10-11 Title.md`.
@@ -297,11 +298,25 @@ def _new_home(
     return destination
 
 
-def cmd_fill(args: argparse.Namespace, vault_root: Path) -> dict[str, Any]:
+def cmd_fill(args: argparse.Namespace, vault_root: Path, s: schema.Schema) -> dict[str, Any]:
     target = (vault_root / args.file).resolve()
-    if not vault.is_editable_note(vault_root, target) or not target.is_file():
+    rel = vault.rel_path(vault_root, target)
+    is_about = rel == "About.md"
+    if not vault.is_editable_note(vault_root, target, about=is_about) or not target.is_file():
         fail(2, f"{args.file} is not a note synapsidian may change")
-    if vault.rel_path(vault_root, target).startswith("Sources/"):
+    if is_about:
+        # Only what the schema declares (D160): `## Rules` and the `protected` list stay the user's alone (D94, D120).
+        wanted = (args.section.strip().casefold(), (args.subsection or "").strip().casefold())
+        declared = s.types["about"].sections
+        if wanted not in {(d.title.casefold(), (d.subsection or "").casefold()) for d in declared}:
+            fail(
+                2,
+                "About.md only takes the sections its schema declares; Rules is the user's own",
+                declared=[f"{d.title} / {d.subsection}" if d.subsection else d.title for d in declared],
+            )
+    elif args.subsection:
+        fail(2, "--subsection is only for About.md")
+    if rel.startswith("Sources/"):
         fail(2, "a source's body is never edited (D75)")
     content = sys.stdin.read() if args.body_file == "-" else Path(args.body_file).read_text(encoding="utf-8")
     if not content.strip():
@@ -313,10 +328,14 @@ def cmd_fill(args: argparse.Namespace, vault_root: Path) -> dict[str, Any]:
     if parsed.meta is None:
         fail(2, parsed.error or "note has no frontmatter")
     # The whole text, not parse().body: the frontmatter stays byte for byte (no YAML re-dump).
-    updated, status = fill_section(text, args.section, content, args.before)
+    if is_about:
+        updated, status = fill_part(text, args.section, args.subsection, content, args.before)
+    else:
+        updated, status = fill_section(text, args.section, content, args.before)
     if status != "kept":
         target.write_text(updated, encoding="utf-8")
-    return {"ok": True, "rel": vault.rel_path(vault_root, target), "section": args.section, "status": status}
+    result = {"ok": True, "rel": rel, "section": args.section, "status": status}
+    return {**result, "subsection": args.subsection} if args.subsection else result
 
 
 def template_section(s: schema.Schema, type_name: str, kind: str | None, title: str) -> str:
@@ -376,6 +395,7 @@ def main() -> None:
     fill = sub.add_parser("fill", help="write a section only when it is empty or missing")
     fill.add_argument("--file", required=True, help="vault-relative path")
     fill.add_argument("--section", required=True, metavar="TITLE", help="the `## TITLE` section to fill")
+    fill.add_argument("--subsection", metavar="TITLE", help="About.md only: the `### TITLE` inside --section")
     fill.add_argument("--before", metavar="TITLE", help="where a missing section goes (default: the end)")
     fill.add_argument("--body-file", default="-", help="file with the text, or - for stdin (default)")
 
@@ -402,7 +422,7 @@ def main() -> None:
         case "archive":
             result = cmd_archive(args, vault_root)
         case "fill":
-            result = cmd_fill(args, vault_root)
+            result = cmd_fill(args, vault_root, s)
         case "section":
             sys.stdout.write(template_section(s, args.type, args.kind, args.section))
             return

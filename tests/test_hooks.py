@@ -319,3 +319,18 @@ def test_approve_asks_before_writing_under_a_protected_path(run, vault, tmp_path
     assert decision(vault / "Journal" / "Public.md") == "allow"
     assert decision(vault / "Personality.md") == "allow"  # a prefix of a name is not the folder
     assert decision(tmp_path / "Personal" / "x.md") is None
+
+
+def test_brief_labels_each_about_section_and_subsection(run, fixture_vault):
+    (fixture_vault / "About.md").write_text(
+        "---\ntype: about\nrole: Engineer\ninterests: [chess, hiking]\nlanguage: Polish\n---\n"
+        "## Who I am\nI build things.\n\n## Current focus\nShip v2.\n\n### Work\nLaunch X.\n\n"
+        "## How I work\n\n\n## Rules\n- Be brief.\n"
+    )
+    _, out = run("brief", "--plain", "--today", "2026-10-16", vault=fixture_vault)
+    assert "- interests: chess, hiking" in out and "- language: Polish" in out
+    assert "- Who I am: I build things." in out
+    assert "- Current focus: Ship v2." in out and "- Current focus / Work: Launch X." in out
+    assert "How I work" not in out.split("### Vault rules")[0]  # an empty section says nothing
+    _, minimal = run("brief", "--plain", "--minimal", vault=fixture_vault)
+    assert "I build things." not in minimal and "- role: Engineer" in minimal

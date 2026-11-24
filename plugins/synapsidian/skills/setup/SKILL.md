@@ -2,14 +2,14 @@
 name: setup
 description: Set up or repair the synapsidian vault end to end - check Obsidian, uv and git, create the layout, configure Obsidian and its community plugins, register the vault and fill in About.md. Use the first time, when the user asks to set up, configure or check the vault ("set up synapsidian", "skonfiguruj vault"), or when another skill reports the vault is missing.
 allowed-tools: Bash(synapsidian *) Bash(obsidian *) Bash(command -v synapsidian-work) Bash(command -v synapsidian-projects) Read AskUserQuestion
-argument-hint: "[check]"
+argument-hint: "[check|about]"
 ---
 
 # Set up the synapsidian vault
 
 The `synapsidian` command takes the vault path from the plugin option `vault_path` (set when the plugin was enabled; change it in `/plugin` → synapsidian → configure).
 
-Arguments: $ARGUMENTS (`check` = report only, change nothing)
+Arguments: $ARGUMENTS (`check` = report only, change nothing; `about` = only the About interview of step 3b, for every plugin installed)
 
 Talk to the user in their language. Everything below is idempotent: re-running it on a working vault changes nothing and says so.
 
@@ -33,12 +33,12 @@ Blocking problems and their fixes, which **the user** runs, not you:
 
 ## 2. About the user
 
-If `about_exists` is false, ask with AskUserQuestion (one round, free text allowed via "Other"): what the user does (`role`: a job title, "student", "freelance designer", anything) and their usual working or focus hours. Each question needs at least two options: offer plausible ones from what you already know plus "Skip". The timezone is detected automatically. Don't invent answers; leave out what the user skips. Don't ask about an employer, team or manager: the vault may be personal, and the synapsidian-work add-on asks for those itself.
+With `about` as the argument, skip to step 3b (run `synapsidian setup apply` first if `about_exists` is false). If `about_exists` is false, ask with AskUserQuestion (one round, free text allowed via "Other") the core fields `role`, `language` and `interests`, worded as in `${CLAUDE_PLUGIN_ROOT}/references/about-interview.md`. Each question needs at least two options: plausible ones from what you already know plus "Skip". The timezone is detected automatically. Don't invent answers; leave out what the user skips. Don't ask about an employer, team or manager: the vault may be personal, and the synapsidian-work add-on asks for those itself. An `About.md` that already exists is not asked here; step 3b covers its empty fields and sections.
 
 ## 3. Apply
 
 ```bash
-synapsidian setup apply [--about role="..." --about working_hours="..."]
+synapsidian setup apply [--about role="..." --about language="..." --about interests="a, b"]
 ```
 
 This creates the folders, `.gitignore`, `About.md`, `Templates/Daily.md`, a Templater template per note type in `Templates/Generated/` (generated from the schema, the add-ons' types included, D110, D119), the `Bases/*.base` views (task kanban board, due this week, calendars of tasks, meetings and goals, people, inbox, ideas, decisions; projects come with the synapsidian-projects add-on), and Obsidian's config:
@@ -63,6 +63,10 @@ For installed required plugins it also writes synapsidian's settings into their 
 Person and goal notes made before synapsidian 0.30.0 have no views of their meetings and tasks (`## Meetings and tasks`, `## Linked work`; D133). Find them with `synapsidian query notes --type person` and `--type goal` (a note whose body lacks the heading) and, on the user's yes, add the section to each: `synapsidian note section --type person --section "Meetings and tasks" | synapsidian note fill --file "<rel>" --section "Meetings and tasks"` (and `--type goal --section "Linked work"`). `fill` keeps a section the user already wrote. One commit for all of them.
 
 Tasks from older versions with `ZAD-n` ids become `Tn` (id, file name and every link to the file, one commit of their own). When `task_ids` isn't null, list what was renamed, any `skipped` task with its reason, and the `mentions_left`: plain-text `ZAD-n` synapsidian left alone because it can't tell its own task from another tool's (a Notion card); offer to change the ones the user says are vault tasks.
+
+### 3b. About you
+
+`About.md` also holds sections the user writes in their own words (`## Who I am`, `## Current focus`, `## How I work`, and one per add-on that declares any). Run the interview of `${CLAUDE_PLUGIN_ROOT}/references/about-interview.md` with `--owner synapsidian`: it asks about the core's empty sections and any core field still empty (set with `note set`), each with a Skip, and commits as `--skill setup`. `apply` already added the empty headings of every installed add-on's sections (`updated` lists `About.md`); each add-on's own setup asks about those. With `check` as the argument, skip this step. In the report, list the sections filled and the migration of an old `working_hours` field into `## How I work` (`apply` does it when synapsidian-work isn't installed; mention it when `About.md` is in `updated`).
 
 ## 4. Register the vault in Obsidian
 

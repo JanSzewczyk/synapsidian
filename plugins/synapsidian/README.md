@@ -23,7 +23,7 @@ Claude Code asks for the vault path. Then, in a new session (hooks of a newly in
 /synapsidian:setup
 ```
 
-It checks Obsidian, uv and git, creates the vault layout, configures Obsidian, makes the vault a git repository, asks a few questions for `About.md`, and ends with a report of what is ready, what it added and what is still needed.
+It checks Obsidian, uv and git, creates the vault layout, configures Obsidian, makes the vault a git repository, asks a few skippable questions for `About.md` (your role, language, interests, then a few lines on who you are, what you focus on and how you work; `/synapsidian:setup about` asks again about anything still empty), and ends with a report of what is ready, what it added and what is still needed.
 
 ## Options
 
@@ -33,7 +33,7 @@ It checks Obsidian, uv and git, creates the vault layout, configures Obsidian, m
 | `auto_approve_vault_edits` | Note edits inside the vault need no permission prompt; `About.md`, `Templates/`, `CLAUDE.md` and `.claude/` always ask (default on) |
 | `session_exclude_paths` | Folders or glob patterns whose Claude sessions never reach the devlog; a single session opts out with `#off-the-record` |
 
-Your own rules for Claude go in the `## Rules` section of `About.md`, and folders Claude must ask about before touching go in its `protected` property. Both override synapsidian's defaults.
+`About.md` has a `## section` per topic and each add-on declares its own (work adds `## Work`, projects add `## Projects`); each add-on's setup interviews you about its sections, with a Skip on every question. Your own rules for Claude go in the `## Rules` section of `About.md`, and folders Claude must ask about before touching go in its `protected` property. Both override synapsidian's defaults.
 
 ## Skills
 

@@ -1,7 +1,7 @@
 ---
 name: setup
 description: Set up, update or check the synapsidian-projects add-on - install its schema extension, move project notes into their project folders, switch Bases to select notes by type and give every project its board and views. Use after installing it, when a projects skill says the extension is missing, or when the user asks to set up or repair it ("set up synapsidian-projects", "skonfiguruj synapsidian-projects", "add boards to my projects").
-allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Bash(command -v synapsidian) Bash(obsidian *) Read Glob
+allowed-tools: Bash(synapsidian *) Bash(synapsidian-projects *) Bash(command -v synapsidian) Bash(obsidian *) Read Glob AskUserQuestion
 argument-hint: "[check]"
 ---
 
@@ -50,6 +50,10 @@ The extension lists the community plugins it needs (`plugins` in its `extension.
 Folder notes needs no settings: its defaults (a note named like its folder, inside it) are the hub's place. Tell the user in one line that a project's hub no longer shows as a file under its folder; clicking the folder opens it. Excalidraw Extras needs none either; without it Excalidraw asks for it the first time a Mermaid diagram is converted.
 
 Installing isn't required of this step: a plugin left out (no CLI, Restricted mode on, the user said not now) goes under Still needed in the report (step 6), with how to add it.
+
+## 2c. About your projects
+
+Installing the extension added an empty `## Projects` section to `About.md` (D160). Run the About interview, `synapsidian ref about-interview`, with `--owner synapsidian-projects`: one question, "which projects are you running now, and what is each one for?", with a Skip. Offer as drafts the titles of the vault's active projects (`synapsidian query notes --type project --where status=active`), if any. Write the answer with `note fill` as the reference says and commit it (`synapsidian commit --skill synapsidian-projects-setup --message "About: projects" About.md`). An unattended run skips this step.
 
 ## 3. Architecture notes into their projects
 
@@ -140,7 +144,7 @@ synapsidian commit --skill synapsidian-projects-setup --message "repositories as
 
 ## 6. Finish
 
-Run `synapsidian setup check` once more and end with the setup report: `synapsidian ref setup-report` gives its three groups (✅ ready, ➕ added in this run, ❗ still needed). Under Added, name:
+Run `synapsidian setup check` once more and end with the setup report: `synapsidian ref setup-report` gives its three groups (✅ ready, ➕ added in this run, ❗ still needed). Under Added, name: the About `## Projects` section when it was filled,
 - the extension version installed, how many notes were moved into project folders (and any skipped), and the Bases switched to type filters;
 - the Obsidian plugins installed;
 - the architecture notes moved, and the hubs created for them;

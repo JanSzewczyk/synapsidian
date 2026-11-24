@@ -201,5 +201,17 @@ types:
     fields:
       role: {kind: text}
       timezone: {kind: text}
-      working_hours: {kind: text}
+      # The language Claude talks to the user in; notes stay English (conventions.md) (D160).
+      language: {kind: text}
+      # Topics `ingest`, `research` and `think ideas` weigh next to `role` (D160).
+      interests: {kind: list}
       protected: {kind: list}
+    # Body sections the setup interview fills while they are empty (D160). An add-on adds its own
+    # with `extend: about: sections:`; `## Rules` is the user's alone and is never asked about.
+    sections:
+      - title: Who I am
+        ask: Who are you and what do you do? A few lines on your background, in your own words.
+      - title: Current focus
+        ask: What are you focusing on right now? The goals or topics that matter most this month.
+      - title: How I work
+        ask: How do you like to work? Your habits, tools, hours and anything Claude should keep in mind.
