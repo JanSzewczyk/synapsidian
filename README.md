@@ -10,7 +10,7 @@
 
 **Claude Code plugins that turn an Obsidian vault into a second brain**
 
-[Plugins](#-plugins) • [Getting Started](#-getting-started) • [Development](#-development) • [Documentation](#-table-of-contents)
+[Plugins](#-plugins) • [Getting Started](#-getting-started) • [Usage](#-usage) • [Development](#-development) • [Documentation](#-table-of-contents)
 
 </div>
 
@@ -57,9 +57,11 @@ Inspired by [eugeniughelbur/obsidian-second-brain](https://github.com/eugeniughe
 - [✨ Features](#-features)
 - [🧩 Plugins](#-plugins)
 - [🎯 Getting Started](#-getting-started)
+- [🚀 Usage](#-usage)
 - [📚 Vault Layout](#-vault-layout)
 - [💻 Development](#-development)
 - [📁 Repository Structure](#-repository-structure)
+- [📐 Conventions](#-conventions)
 - [🤝 Contributing](#-contributing)
 - [📜 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
@@ -163,6 +165,27 @@ claude --plugin-dir plugins/synapsidian --plugin-dir plugins/synapsidian-work
 
 ---
 
+## 🚀 Usage
+
+Skills run on request, as `/<plugin>:<skill>`, or on a schedule once `/synapsidian:schedule` has set it up.
+
+```text
+>> call the dentist about the invoice
+/synapsidian:save
+/synapsidian:find
+/synapsidian:morning
+```
+
+- **`>>` prompt** — saved to the vault's Inbox by a hook, without a Claude turn
+- **`/synapsidian:save`** — files decisions, tasks, people facts, knowledge, how-tos and ideas from the conversation into the right notes
+- **`/synapsidian:find`** — searches the vault and answers with `[[links]]`
+- **`/synapsidian:morning`** — today's brief; scheduled weekdays 09:00, as are `health` (08:15), `evening` (20:00) and the weekly `review` (Fri 16:00). The times are defaults you can move
+- **`/synapsidian-projects:project`** — creates or refreshes a project's hub and board (add-on)
+- **`/synapsidian-work:standup`** — prepares the stand-up note (add-on)
+- **`/synapsidian`** — shows the dock's band above the prompt (add-on)
+
+---
+
 ## 📚 Vault Layout
 
 `Inbox/ Daily/ Tasks/ People/ Meetings/ Decisions/ Notes/ Howtos/ Ideas/ Goals/ Sources/ Research/ Reviews/ Thinking/ Bases/ Templates/ Attachments/ Archive/` plus `About.md`.
@@ -174,6 +197,16 @@ Note types and their fields are defined once in [plugins/synapsidian/schema/type
 ---
 
 ## 💻 Development
+
+### 🧱 Tech Stack
+
+Plugin scripts declare their own dependencies inline (PEP 723) and run with `uv run --script`. The root environment holds only what the tests and lint use.
+
+[![Python](https://img.shields.io/python/required-version-toml?tomlFilePath=https://raw.githubusercontent.com/JanSzewczyk/synapsidian/main/pyproject.toml&logo=python&logoColor=white)](https://www.python.org/) [![uv](https://img.shields.io/badge/uv-DE5FE9?logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
+
+- [![pytest](https://img.shields.io/badge/dynamic/regex?url=https://raw.githubusercontent.com/JanSzewczyk/synapsidian/main/uv.lock&search=name%20%3D%20%22pytest%22%5Cnversion%20%3D%20%22(%5B%5E%22%5D%2B)%22&replace=%241&label=pytest&logo=pytest&logoColor=white)](https://docs.pytest.org/) — the offline test suite in `tests/`
+- [![Ruff](https://img.shields.io/badge/dynamic/regex?url=https://raw.githubusercontent.com/JanSzewczyk/synapsidian/main/uv.lock&search=name%20%3D%20%22ruff%22%5Cnversion%20%3D%20%22(%5B%5E%22%5D%2B)%22&replace=%241&label=Ruff&logo=ruff&logoColor=white)](https://docs.astral.sh/ruff/) — lint and format
+- [![PyYAML](https://img.shields.io/badge/dynamic/regex?url=https://raw.githubusercontent.com/JanSzewczyk/synapsidian/main/uv.lock&search=name%20%3D%20%22pyyaml%22%5Cnversion%20%3D%20%22(%5B%5E%22%5D%2B)%22&replace=%241&label=PyYAML)](https://pyyaml.org/) [![httpx](https://img.shields.io/badge/dynamic/regex?url=https://raw.githubusercontent.com/JanSzewczyk/synapsidian/main/uv.lock&search=name%20%3D%20%22httpx%22%5Cnversion%20%3D%20%22(%5B%5E%22%5D%2B)%22&replace=%241&label=httpx)](https://www.python-httpx.org/) [![trafilatura](https://img.shields.io/badge/dynamic/regex?url=https://raw.githubusercontent.com/JanSzewczyk/synapsidian/main/uv.lock&search=name%20%3D%20%22trafilatura%22%5Cnversion%20%3D%20%22(%5B%5E%22%5D%2B)%22&replace=%241&label=trafilatura)](https://trafilatura.readthedocs.io/) [![markitdown](https://img.shields.io/badge/dynamic/regex?url=https://raw.githubusercontent.com/JanSzewczyk/synapsidian/main/uv.lock&search=name%20%3D%20%22markitdown%22%5Cnversion%20%3D%20%22(%5B%5E%22%5D%2B)%22&replace=%241&label=markitdown)](https://github.com/microsoft/markitdown) — script libraries the tests exercise offline (`source.py` with saved HTML)
 
 ### 🧪 Checks
 
@@ -220,6 +253,16 @@ synapsidian/
 - **`plugins/<name>/.claude-plugin/plugin.json`** — each plugin's manifest; `skills/<skill>/SKILL.md` holds its skills
 - **`docs/`** — the design ([spec.md](docs/spec.md)), why ([decisions.md](docs/decisions.md)) and research notes
 - **`tests/`, `pyproject.toml`, `uv.lock`** — the dev environment; like `docs/`, they sit at the repo root and ship with none of the plugins
+
+---
+
+## 📐 Conventions
+
+- **The core is universal** — nothing in `plugins/synapsidian/` assumes an employer, a team, tickets, pull requests or a code repository; a personal vault with no add-on must fit
+- **Add-ons own their domain** — work features live in `synapsidian-work`, the `project` type and its fields in `synapsidian-projects`
+- **How they meet** — an add-on installs its schema extension into `<vault>/.synapsidian/extensions/<name>/`; core skills reach it only through `<add-on> hook <name>`; add-on skills call the core as `synapsidian ...` and never import its code
+- **Nothing user-specific is hardcoded** — company, ticket, repository and people names come from `userConfig` or `About.md`; examples use placeholders such as `ABC-123`, `web-app` and `Alex`
+- **Versions** — bumped only on request, through `/plugin-release`; the full rules are in [CLAUDE.md](CLAUDE.md)
 
 ---
 
