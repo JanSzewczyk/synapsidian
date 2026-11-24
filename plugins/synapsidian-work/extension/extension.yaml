@@ -1,5 +1,5 @@
 # Installed into the vault by `synapsidian setup extension --from <this dir>` (D90).
 # Keep `version` equal to .claude-plugin/plugin.json's: skills compare the two to know when to re-install.
 name: synapsidian-work
-version: 0.6.3
+version: 0.7.0
 description: Work add-on for synapsidian - 1:1s, stand-up, retros, a win log, pull requests, Jira, email and Slack asks.
