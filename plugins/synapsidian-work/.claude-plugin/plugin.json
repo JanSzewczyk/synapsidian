@@ -1,0 +1,51 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "synapsidian-work",
+  "displayName": "Synapsidian Work",
+  "version": "0.6.3",
+  "description": "Work add-on for the synapsidian plugin: 1:1 notes and prep, the stand-up note, retro meeting notes, a win log for performance reviews, pull requests, Jira tickets, and email and Slack asks in the morning brief.",
+  "author": {
+    "name": "Szum Tech Team",
+    "email": "szum.tech@gmail.com",
+    "url": "https://github.com/JanSzewczyk"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/JanSzewczyk/synapsidian",
+  "keywords": ["obsidian", "second-brain", "one-on-one", "standup", "jira", "github"],
+  "dependencies": [{ "name": "synapsidian", "version": "~0.33.0" }],
+  "userConfig": {
+    "github_repos": {
+      "type": "string",
+      "multiple": true,
+      "title": "GitHub repositories",
+      "description": "owner/name of each repository whose pull requests the morning brief and stand-up read. Leave empty to skip pull requests.",
+      "required": false
+    },
+    "jira_projects": {
+      "type": "string",
+      "multiple": true,
+      "title": "Jira project keys",
+      "description": "Key of each Jira project the brief and stand-up query, e.g. ABC. Leave empty to skip Jira.",
+      "required": false
+    },
+    "work_repo_paths": {
+      "type": "string",
+      "multiple": true,
+      "title": "Work repository paths",
+      "description": "Absolute path of each local clone the stand-up reads `git log` from. Leave empty to skip it.",
+      "required": false
+    },
+    "standup_days": {
+      "type": "string",
+      "title": "Stand-up days",
+      "description": "Weekdays the stand-up happens, comma-separated three-letter names, e.g. mon,tue,wed,thu,fri.",
+      "default": "mon,tue,wed,thu,fri"
+    },
+    "standup_time": {
+      "type": "string",
+      "title": "Stand-up time",
+      "description": "Local time the stand-up starts, HH:MM. The note is prepared an hour before.",
+      "default": "10:00"
+    }
+  }
+}

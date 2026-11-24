@@ -1,0 +1,32 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "incident"
+views:
+  - type: table
+    name: Drafts
+    filters:
+      and:
+        - note.status == "draft"
+    order:
+      - file.name
+      - project
+      - date
+      - summary
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: By project
+    groupBy:
+      property: project
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - date
+      - summary
+    sort:
+      - property: file.name
+        direction: DESC

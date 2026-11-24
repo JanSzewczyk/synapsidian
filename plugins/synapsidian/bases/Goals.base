@@ -1,0 +1,62 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "goal"
+properties:
+  note.progress:
+    displayName: Progress (%)
+views:
+  - type: table
+    name: Active
+    filters:
+      and:
+        - note.status == "active"
+    groupBy:
+      property: horizon
+      direction: ASC
+    order:
+      - file.name
+      - target
+      - progress
+      - summary
+    sort:
+      - property: target
+        direction: ASC
+  - type: kanban
+    name: Board
+    groupBy:
+      property: status
+      direction: ASC
+    groupOrder:
+      - active
+      - paused
+      - achieved
+      - dropped
+    order:
+      - file.name
+      - target
+      - progress
+  - type: calendar
+    name: Calendar
+    filters:
+      and:
+        - note.status == "active"
+    startDate: note.target
+    order:
+      - file.name
+      - progress
+  - type: table
+    name: Near target
+    filters:
+      and:
+        - note.status == "active"
+        - note.target.isTruthy()
+        - note.target <= today() + "30d"
+    order:
+      - file.name
+      - target
+      - progress
+    sort:
+      - property: target
+        direction: ASC

@@ -1,0 +1,15 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "decision"
+views:
+  - type: table
+    name: All decisions
+    order:
+      - file.name
+      - status
+      - summary
+    sort:
+      - property: file.name
+        direction: DESC

@@ -1,0 +1,16 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "research"
+views:
+  - type: table
+    name: All research
+    order:
+      - file.name
+      - question
+      - summary
+      - sources
+    sort:
+      - property: file.name
+        direction: DESC

@@ -1,0 +1,205 @@
+# Note types: the single source of truth (D41).
+# Read by scripts/synapsidianlib/schema.py; the validator, note creation, the brief,
+# Obsidian property types and the skills all derive from this file, plus the
+# extensions installed in the vault (`<vault>/.synapsidian/extensions/*/schema.yaml`, D90).
+# Nothing here may assume a job: work types and values live in the synapsidian-work extension.
+# Nor projects: the `project` type and every `project` field come with synapsidian-projects (D99).
+#
+# Field keys:
+#   required: bool         must be present and non-empty
+#   kind: text | date | link | links | list | number
+#   enum: [...]            allowed values (kind text)
+#   pattern: regex         full match (kind text)
+#   default: value         written by `note.py new` when not given
+#   sequence: {prefix, legacy, per}
+#                          the next number among the type's notes, archived ones included: `prefix`
+#                          before it (T12), `legacy` older prefixes that still count, `per` a link
+#                          field the numbering is kept within (a decision's number per project).
+#                          The Obsidian templates compute it (D110).
+#
+# Type keys:
+#   folder                 vault folder the type lives in; may hold {title}, a folder per note
+#                          (`Projects/{title}`), whose fixed part stays valid for older notes
+#   folder_by: {field, folder}
+#                          when the note's `field` is set, it lives in `folder` instead, a format
+#                          string over that field: `{field: project, folder: "Projects/{project}/Tasks"}`.
+#                          A link value contributes its note title. A note without the field, or
+#                          whose value is a URL, stays in `folder`, which therefore stays valid too
+#                          (D102). Extensions may set it through `extend:`.
+#   filename               format string over fields plus {title}, {date}, {time}
+#   summary: false         `summary` is optional for this type
+#   obsidian_template: false
+#                          only scripts or Claude write this type: `setup apply` generates no
+#                          Templater template for it in Templates/Generated/ (D110, D119)
+#
+# The body template is `templates/<type>-<kind>.md` when the note's `kind` has one, else
+# `templates/<type>.md`; an extension's templates/ win over the core's (D79, D90).
+
+version: 1
+
+universal:
+  type: {required: true, kind: text}
+  created: {required: true, kind: date}
+  summary: {required: true, kind: text}
+  tags: {kind: list}
+  aliases: {kind: list}
+
+types:
+  daily:
+    folder: Daily
+    filename: "{date}"
+    summary: false
+    obsidian_template: false  # Daily notes fills Templates/Daily.md itself
+    fields:
+      date: {required: true, kind: date}
+
+  task:
+    folder: Tasks
+    filename: "{id} {title}"
+    fields:
+      id: {required: true, kind: text, pattern: 'T[1-9][0-9]*', sequence: {prefix: T, legacy: [ZAD-]}}
+      status: {required: true, kind: text, enum: [todo, doing, waiting, done, dropped], default: todo}
+      priority: {required: true, kind: text, enum: [high, medium, low], default: medium}
+      due: {kind: date}
+      source: {kind: text, enum: [save, session, meeting, manual, capture, ingest, research]}
+      source_link: {kind: link}
+      done_on: {kind: date}
+      # D124: a recurring task, every <n> days, weeks, months or years (1w, 2w, 1m, 1y). Closing
+      # it with `note set status=done` files the next one, due one interval after this one's due.
+      repeat: {kind: text, pattern: '[1-9][0-9]*[dwmy]'}
+      # D133: the goal this task moves forward; the goal note's Linked work view lists its tasks.
+      goal: {kind: link}
+      # D144: the tasks that must be done first. While one of them is open, this one is blocked.
+      blocked_by: {kind: links}
+
+  person:
+    folder: People
+    filename: "{title}"
+    fields:
+      role: {kind: text}
+      team: {kind: text}
+      email: {kind: text}
+      # D122: the work values stay (existing notes use them); the others fit a personal vault.
+      relationship: {kind: text, enum: [manager, report, peer, stakeholder, external, family, friend, mentor, other]}
+      # D112: the last time the user met or spoke with them, and when to get back in touch;
+      # a `follow_up` due today or earlier shows in the morning brief.
+      last_contact: {kind: date}
+      follow_up: {kind: date}
+
+  meeting:
+    folder: Meetings
+    filename: "{date} {kind} {title}"
+    fields:
+      date: {required: true, kind: date}
+      kind: {required: true, kind: text, enum: [team, review, external, other], default: other}
+      attendees: {kind: links}
+      event_id: {kind: text}
+
+  decision:
+    folder: Decisions
+    filename: "{date} {title}"
+    fields:
+      status: {required: true, kind: text, enum: [proposed, accepted, superseded], default: accepted}
+      supersedes: {kind: link}
+      decided_by: {kind: links}
+
+  # `kind` picks note-concept.md or note-literature.md (D112); a note without one keeps note.md.
+  note:
+    folder: Notes
+    filename: "{title}"
+    fields:
+      area: {kind: text, enum: [domain, tech, process]}
+      kind: {kind: text, enum: [concept, literature]}
+
+  howto:
+    folder: Howtos
+    filename: "{title}"
+    fields:
+      applies_to: {kind: links}
+
+  idea:
+    folder: Ideas
+    filename: "{date} {title}"
+    fields:
+      status: {required: true, kind: text, enum: [new, exploring, graduated, dropped], default: new}
+      graduated_to: {kind: link}
+
+  # Something the user wants to reach (D112): `/synapsidian:review` reports progress, the morning
+  # brief shows the ones near their target. `progress` is a percentage, 0-100.
+  goal:
+    folder: Goals
+    filename: "{title}"
+    fields:
+      status: {required: true, kind: text, enum: [active, paused, achieved, dropped], default: active}
+      target: {kind: date}
+      progress: {kind: number}
+      horizon: {kind: text, enum: [year, quarter, month]}
+
+  review:
+    folder: Reviews
+    filename: "{period_end} {period} review"
+    obsidian_template: false
+    fields:
+      period: {required: true, kind: text, enum: [week, month, quarter]}
+      period_start: {required: true, kind: date}
+      period_end: {required: true, kind: date}
+
+  # Written only by scripts/source.py; the body is a verbatim copy and is never edited (D75).
+  source:
+    folder: Sources
+    filename: "{fetched_at} {title}"
+    summary: false
+    obsidian_template: false
+    fields:
+      url: {kind: text}
+      source_kind: {required: true, kind: text, enum: [article, pdf, document, slides, youtube, confluence, text, image, other]}
+      content_hash: {required: true, kind: text, pattern: '[0-9a-f]{16}'}
+      fetched_at: {required: true, kind: date}
+      capture_scope: {required: true, kind: text, enum: [full, partial], default: full}
+      author: {kind: text}
+      published: {kind: date}
+      supersedes: {kind: link}
+      # Set by ingest as its last step, after the notes are updated; absent means not integrated yet (D84).
+      integrated: {kind: date}
+      # D130: how far the source can be trusted - primary (official docs, the paper, the people
+      # who did it), secondary (reporting on a primary source), opinion (a take, a forum post).
+      source_quality: {kind: text, enum: [primary, secondary, opinion]}
+
+  research:
+    folder: Research
+    filename: "{date} {title}"
+    obsidian_template: false  # /synapsidian:research writes it, with its sources
+    fields:
+      question: {required: true, kind: text}
+      sources: {kind: links}
+      # D134: a watched dossier is refreshed on this cadence (`/synapsidian:research watch`); `refreshed`
+      # is the day of the last refresh, its creation day until then.
+      watch: {kind: text, enum: [weekly, monthly, quarterly]}
+      refreshed: {kind: date}
+
+  # Output of /synapsidian:think (D79); `kind` picks the body template thinking-<kind>.md.
+  thinking:
+    folder: Thinking
+    filename: "{date} {kind} {title}"
+    obsidian_template: false
+    fields:
+      kind: {required: true, kind: text, enum: [challenge, brainstorm, topic, patterns, distill, learn, ideas]}
+      about: {kind: links}
+
+  capture:
+    folder: Inbox
+    filename: "{date} {time} {title}"
+    summary: false
+    fields:
+      source_url: {kind: text}
+
+  about:
+    folder: ""
+    filename: "About"
+    summary: false
+    obsidian_template: false
+    fields:
+      role: {kind: text}
+      timezone: {kind: text}
+      working_hours: {kind: text}
+      protected: {kind: list}

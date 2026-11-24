@@ -1,0 +1,4 @@
+{
+  "description": "synapsidian-dock: the /synapsidian pane and the band above the prompt",
+  "modules": ["./register.ts"]
+}

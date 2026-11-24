@@ -1,0 +1,43 @@
+# Search benchmark (spec §10.7). Each question must find `expect` in the top 5.
+# Written separately from the fixture notes; test_find.py asserts no question shares
+# more than one content word with its target's title, so the set can't leak answers.
+- q: why did we decide to do excel downloads before powerpoint
+  expect: Decisions/2026-09-30 Spreadsheet format before slides.md
+- q: where should fetched backend data live in the frontend, pinia or something else
+  expect: Decisions/2026-08-12 Server state in query cache.md
+- q: who is the PM responsible for reporting roadmap
+  expect: People/Anna Nowak.md
+- q: who runs my weekly one to one
+  expect: People/Mikael Berg.md
+- q: who wrote the regression endpoints in django
+  expect: People/Tomasz Wiśniewski.md
+- q: what remains of the gender difference after controlling for job level and tenure
+  expect: Notes/Adjusted pay gap.md
+- q: european law about reporting salary differences above five percent
+  expect: Notes/EU pay transparency directive.md
+- q: shares summed to 99.9 percent, where do we round numbers
+  expect: Notes/Rounding in statistics service.md
+- q: how do we hide unfinished work from customers until launch
+  expect: Notes/Feature flags.md
+- q: destructuring props loses tracking
+  expect: Notes/Vue reactivity pitfalls.md
+- q: use real tenant data from the staging API locally
+  expect: Howtos/Run the app against staging.md
+- q: openapi schema changed, rebuild typescript client
+  expect: Howtos/Regenerate API types.md
+- q: ship an urgent production fix outside the sprint
+  expect: Howtos/Release hotfix.md
+- q: narrative paragraph under charts so HR understands coefficients
+  expect: Ideas/2026-10-01 Explain the regression in plain words.md
+- q: switch report filtering without the mouse
+  expect: Ideas/2026-09-15 Keyboard shortcuts for filters.md
+- q: comment on the technical design for the spreadsheet download before thursday
+  expect: Tasks/T1 Review export TDD.md
+- q: rebuild the sidebar with new design tokens
+  expect: Tasks/T2 Migrate filter panel.md
+- q: what did my manager say about promotion criteria
+  expect: Meetings/2026-10-07 1-1 Mikael Berg.md
+- q: one customer must never see another organisation's salaries
+  expect: Notes/Tenant isolation.md
+- q: variable pay capped at 150 percent multiplier
+  expect: Notes/Bonus calculation.md

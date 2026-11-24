@@ -1,0 +1,74 @@
+name: Tests ✅
+
+# The Python tests of the plugins' scripts (tests/, offline: saved HTML, a fixture vault, real git
+# repos in temp folders), Ruff, and the dock mod's own tests. The dock needs Claude Code, which
+# `claude plugin test` ships with.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # The newest Python the locked dependencies install on: 3.15 has no onnxruntime wheels yet
+  # (markitdown pulls it in). Raise it when they appear.
+  PYTHON_VERSION: "3.14"
+
+jobs:
+  pytest:
+    name: Pytest 🧪
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 📚
+        uses: actions/checkout@v7
+      - name: Set up uv 🐍
+        uses: astral-sh/setup-uv@v10.4.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - name: Install dependencies 📦
+        run: uv sync --locked
+      - name: Run the tests 🧪
+        run: uv run pytest
+
+  lint:
+    name: Ruff 🧹
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 📚
+        uses: actions/checkout@v7
+      - name: Set up uv 🐍
+        uses: astral-sh/setup-uv@v10.4.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - name: Install dependencies 📦
+        run: uv sync --locked
+      - name: Check lint 🧹
+        run: uv run ruff check plugins tests
+      - name: Check formatting 🎨
+        run: uv run ruff format --check plugins tests
+
+  dock:
+    name: Dock Mod 🪟
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 📚
+        uses: actions/checkout@v7
+      - name: Set up Node.js 🟢
+        uses: actions/setup-node@v7
+        with:
+          node-version: 26
+      - name: Install Claude Code 🤖
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Test the dock 🧪
+        working-directory: plugins/synapsidian-dock
+        run: claude plugin test

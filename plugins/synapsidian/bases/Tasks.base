@@ -1,0 +1,73 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "task"
+properties:
+  note.id:
+    displayName: ID
+  note.status:
+    displayName: Status
+  note.priority:
+    displayName: Priority
+  note.due:
+    displayName: Due
+  note.summary:
+    displayName: Summary
+views:
+  - type: kanban
+    name: Board
+    filters:
+      and:
+        - note.status != "dropped"
+        - or:
+            - note.status != "done"
+            - note.done_on >= today() - "14d"
+    groupBy:
+      property: status
+      direction: ASC
+    groupOrder:
+      - todo
+      - doing
+      - waiting
+      - done
+    order:
+      - file.name
+      - priority
+      - due
+  - type: calendar
+    name: Calendar
+    filters:
+      and:
+        - note.status != "dropped"
+    startDate: note.due
+    order:
+      - file.name
+      - status
+      - priority
+  - type: table
+    name: Due this week
+    filters:
+      and:
+        - note.status != "done"
+        - note.status != "dropped"
+        - note.due <= today() + "7d"
+    order:
+      - file.name
+      - due
+      - priority
+      - status
+    sort:
+      - property: due
+        direction: ASC
+  - type: table
+    name: Done
+    filters:
+      and:
+        - note.status == "done"
+    order:
+      - file.name
+      - done_on
+    sort:
+      - property: done_on
+        direction: DESC

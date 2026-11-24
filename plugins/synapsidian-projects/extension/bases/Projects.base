@@ -1,0 +1,32 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "project"
+views:
+  - type: table
+    name: Active
+    filters:
+      and:
+        - note.status == "active"
+    order:
+      - file.name
+      - kind
+      - summary
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+  - type: kanban
+    name: By status
+    groupBy:
+      property: status
+      direction: ASC
+    groupOrder:
+      - active
+      - paused
+      - done
+      - dropped
+    order:
+      - file.name
+      - summary

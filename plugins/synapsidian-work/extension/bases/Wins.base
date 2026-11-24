@@ -1,0 +1,49 @@
+filters:
+  and:
+    - not:
+        - file.inFolder("Archive")
+    - note.type == "win"
+properties:
+  note.date:
+    displayName: Date
+  note.impact:
+    displayName: Impact
+  note.summary:
+    displayName: Summary
+views:
+  - type: table
+    name: Last 6 months
+    filters:
+      and:
+        - note.date >= today() - "183d"
+    order:
+      - file.name
+      - date
+      - impact
+      - summary
+    sort:
+      - property: date
+        direction: DESC
+  - type: table
+    name: Large
+    filters:
+      and:
+        - note.impact == "large"
+    order:
+      - file.name
+      - date
+      - summary
+      - evidence
+    sort:
+      - property: date
+        direction: DESC
+  - type: table
+    name: All
+    order:
+      - file.name
+      - date
+      - impact
+      - summary
+    sort:
+      - property: date
+        direction: DESC

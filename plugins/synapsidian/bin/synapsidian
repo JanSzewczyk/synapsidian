@@ -1,0 +1,28 @@
+#!/bin/sh
+# synapsidian <command> [args...]: run one of the plugin's scripts with uv.
+# On the Bash PATH while the plugin is enabled, so skills (synapsidian-work's too) can call `synapsidian find ...`.
+set -e
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+
+usage() {
+  echo "usage: synapsidian {note|find|block|commit|brief|validate|setup|sessions|when|query|health|source|frames|pages} [args...]" >&2
+  echo "       synapsidian ref <name>   print references/<name>.md (for add-on skills, which can't see this plugin's root)" >&2
+  echo "       synapsidian <command> --help" >&2
+}
+
+[ $# -ge 1 ] || { usage; exit 2; }
+cmd=$1
+shift
+case "$cmd" in
+  note | find | block | commit | brief | validate | setup | sessions | when | query | health | source | frames | pages) ;;
+  ref)
+    case "${1:-}" in
+      "" | *[!a-z0-9-]*) usage; exit 2 ;;
+    esac
+    [ -f "$root/references/$1.md" ] || { echo "synapsidian: no reference named $1" >&2; exit 2; }
+    exec cat "$root/references/$1.md"
+    ;;
+  -h | --help | help) usage; exit 0 ;;
+  *) usage; exit 2 ;;
+esac
+exec "$root/hooks/run.sh" "$root/scripts/$cmd.py" "$@"
