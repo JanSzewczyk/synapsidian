@@ -5,7 +5,7 @@ name = "synapsidian-plugin"
 version = "0.0.0"
 requires-python = ">=3.12"
 # Script dependencies the tests exercise offline (source.py with saved HTML).
-dependencies = ["pyyaml>=6.0.2", "httpx>=0.28.1", "trafilatura>=2.3.1", "markitdown>=0.1.8"]
+dependencies = ["pyyaml>=6.0.4", "httpx>=0.28.1", "trafilatura>=2.3.1", "markitdown>=0.1.8"]
 
 [dependency-groups]
 dev = ["pytest>=8.3", "ruff>=0.7"]
