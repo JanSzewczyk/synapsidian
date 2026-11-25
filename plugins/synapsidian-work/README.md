@@ -18,7 +18,7 @@ The work add-on for the `synapsidian` plugin: 1:1 notes and prep, the stand-up n
 /synapsidian-work:setup
 ```
 
-Setup checks the work sources, installs the schema extension into the vault (`.synapsidian/extensions/synapsidian-work/`, kept in the vault's git so the vault still validates on a device without synapsidian-work), fills `team`, `company` and `manager` in `About.md`, schedules the stand-up, and ends with a report of what is ready, what it added and what is still needed. Re-run it after every synapsidian-work update: it re-installs the extension when its version changed.
+Setup checks the work sources, installs the schema extension into the vault (`.synapsidian/extensions/synapsidian-work/`, kept in the vault's git so the vault still validates on a device without synapsidian-work), fills `team`, `company`, `manager` and `working_hours` and the `## Work` sections in `About.md`, schedules the stand-up, and ends with a report of what is ready, what it added and what is still needed. Re-run it after every synapsidian-work update: it re-installs the extension when its version changed.
 
 ## Options
 

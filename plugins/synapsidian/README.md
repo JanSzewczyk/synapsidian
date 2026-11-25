@@ -4,7 +4,7 @@ A second brain in an Obsidian vault, for any vault: personal or work. It covers 
 
 ## Requirements
 
-- [Claude Code](https://claude.com/claude-code) on macOS
+- [Claude Code](https://claude.com/claude-code). Developed and tested on macOS; setup also finds Obsidian on Windows and Linux (D157), and the hooks need a POSIX shell (`/bin/sh`)
 - [Obsidian](https://obsidian.md) 1.14 or later (core Bases with kanban)
 - [uv](https://docs.astral.sh/uv/), which runs the Python scripts and fetches Python 3.12+ and each script's libraries itself
 - git
