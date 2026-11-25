@@ -408,7 +408,10 @@ def main() -> None:
     vault_root = config.write_vault(args.vault)
     if vault_root is None or not vault_root.is_dir():
         fail(2, "vault not found; run /synapsidian:setup", vault=str(vault_root))
-    s = schema.load(vault_root)
+    try:
+        s = schema.load(vault_root)
+    except schema.SchemaError as exc:  # JSON, not a traceback: the dock shows `error` (D161)
+        fail(2, str(exc))
 
     match args.cmd:
         case "new":

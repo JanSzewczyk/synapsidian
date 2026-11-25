@@ -647,3 +647,37 @@ def test_note_fill_on_about_takes_only_declared_sections(run, work_vault):
     (work_vault / "Notes" / "N.md").write_text("---\ntype: note\nsummary: s\n---\n## Notes\n")
     other = ("--file", "Notes/N.md", "--section", "Notes", "--subsection", "X")
     assert run("note", "fill", *other, stdin="t\n", vault=work_vault)[0] == 2
+
+
+# --- A schema that won't load (D161) -----------------------------------------------------------
+
+
+def break_schema(vault: Path, requires: str | None = None) -> None:
+    """Install an extension this core can't read, as a newer core would have."""
+    folder = vault / ".synapsidian" / "extensions" / "newer"
+    folder.mkdir(parents=True)
+    (folder / "schema.yaml").write_text("extend:\n  about:\n    lanes: [a]\n")
+    if requires:
+        (folder / "extension.yaml").write_text(f"name: newer\nversion: 2.0.0\nrequires: {requires}\n")
+
+
+def test_a_schema_that_wont_load_is_a_json_answer_and_commit_and_block_still_work(run, vault):
+    _, task = run("note", "new", "--type", "task", "--title", "T", "--field", "summary=s", vault=vault)
+    run("commit", "--skill", "task", "--message", "add", task["rel"], vault=vault)
+    break_schema(vault)
+    for field in ("due=2026-12-06", "status=doing"):
+        code, out = run("note", "set", "--file", task["rel"], "--field", field, vault=vault)
+        assert code == 2 and out == {"ok": False, "error": "extension newer: extend: about can't set lanes"}
+    code, out = run("block", "check", "--file", task["rel"], vault=vault)
+    assert code == 0 and out["ok"] is True
+    code, out = run("commit", "--skill", "task", "--message", "x", task["rel"], vault=vault)
+    assert code == 0 and out["ok"] is True
+
+
+def test_an_extension_for_a_newer_core_names_the_fix(run, vault):
+    _, task = run("note", "new", "--type", "task", "--title", "T", "--field", "summary=s", vault=vault)
+    break_schema(vault, requires="synapsidian >= 99.0.0")
+    code, out = run("note", "set", "--file", task["rel"], "--field", "due=", vault=vault)
+    assert code == 2 and out["ok"] is False
+    assert out["error"].startswith("extension newer 2.0.0 needs synapsidian >= 99.0.0")
+    assert out["error"].endswith("update the synapsidian plugin")

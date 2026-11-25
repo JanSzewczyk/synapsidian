@@ -41,4 +41,4 @@ Feeds a fake session end to the hook against a throwaway vault, reads the row ba
 
 ## extension
 
-Copies an add-on's `extension.yaml`, `schema.yaml`, `templates/` and `bases/` into `<vault>/.synapsidian/extensions/<name>/`, then runs `apply`, so the new folders, Bases views and property types exist. Both go into one commit (D90). See [Extensions](/synapsidian/concepts/extensions/).
+Copies an add-on's `extension.yaml`, `schema.yaml`, `templates/` and `bases/` into `<vault>/.synapsidian/extensions/<name>/`, then runs `apply`, so the new folders, Bases views and property types exist. Both go into one commit (D90). An extension whose `requires` names a newer core than this one, or whose schema conflicts with the installed ones, is refused before anything is written (D161). See [Extensions](/synapsidian/concepts/extensions/).

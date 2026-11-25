@@ -3,6 +3,10 @@
 name: synapsidian-projects
 version: 0.13.1
 description: Projects add-on for synapsidian - a hub and kanban board per project, milestones, project notes filed under its folder, MADR decisions numbered per project, specs, changes, bug investigations, postmortems and architecture notes.
+# The oldest synapsidian that reads schema.yaml (`extend: about: sections` came in 0.34.0, D160).
+# A core that checks it says to update synapsidian instead of failing on an unknown key (D161).
+# Raise it whenever schema.yaml starts using something a newer core added.
+requires: synapsidian >= 0.34.0
 # Community plugins this add-on needs; `synapsidian setup check` lists them with core's (D115).
 plugins:
   # A click on a project's folder opens its hub, Projects/<P>/<P>.md. Its defaults already match

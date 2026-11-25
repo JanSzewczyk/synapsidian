@@ -30,11 +30,16 @@ All `types:` are merged before any `extend:`. An `extend:` of a type nothing def
 
 `extension.yaml` names the extension and its version, which is kept equal to the plugin's version, and can list Obsidian community plugins the add-on requires. `/synapsidian:setup` then checks them like its own.
 
+`requires` names the oldest core that reads the extension's `schema.yaml`. Raise it when `schema.yaml` starts using something a newer core added. A vault synced between machines can hold an extension installed by a newer core than the one on this machine. The core then refuses to load the schema and says to update synapsidian, instead of failing on a key it doesn't know (D161). `setup extension` refuses to install such an extension.
+
 ```yaml
 name: synapsidian-work
-version: 0.7.0
+version: 0.7.1
 description: …
+requires: synapsidian >= 0.34.0
 ```
+
+A schema that does not load is an answer, not a traceback: `note` prints `{"ok": false, "error": …}` (exit 2), the session brief adds a line saying why, and the dock shows the reason. `commit` and `block` don't read the schema and keep working.
 
 `synapsidian note where` lists the installed extensions. Skills check it to know whether, for example, the vault has projects.
 

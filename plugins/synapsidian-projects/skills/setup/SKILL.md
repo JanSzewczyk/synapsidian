@@ -35,7 +35,9 @@ With `check`, stop here.
 synapsidian setup extension --from "$(synapsidian-projects extension)"
 ```
 
-It copies the extension into `<vault>/.synapsidian/extensions/synapsidian-projects/` (tracked in the vault's git, so the vault keeps validating on a device without the add-on), adds the `project` type, the property types and the `Projects` and `By project` Bases, and makes one commit. The same run:
+An error saying this extension `needs synapsidian >= X.Y.Z` means the synapsidian plugin here is older than this add-on (D161): nothing was installed. Tell the user to update synapsidian (`/plugin`), then run this setup again, and stop.
+
+Otherwise it copies the extension into `<vault>/.synapsidian/extensions/synapsidian-projects/` (tracked in the vault's git, so the vault keeps validating on a device without the add-on), adds the `project` type, the property types and the `Projects` and `By project` Bases, and makes one commit. The same run:
 - **files notes into their folders**, in a commit of its own (`refiled` in the result): each hub `Projects/<Project>.md` moves into `Projects/<Project>/<Project>.md`, and each task, decision, research dossier, how-to, note or thinking note with a `project` moves from its type's flat folder to `Projects/<Project>/<Tasks|Decisions|Research|Workflows|Notes|Thinking>/`. Names don't change, so links keep working. A note whose target is taken stays and is listed under `skipped`: tell the user;
 - **switches old Bases to type filters**: a Base whose top-level filter picks a type by its folder (`file.inFolder("Tasks")`) picks the type outside `Archive/` instead, since a folder filter would miss nested notes. Only that filter line changes (`updated` in the result).
 

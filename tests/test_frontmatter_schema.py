@@ -3,7 +3,9 @@ from __future__ import annotations
 import datetime as dt
 
 import pytest
+import yaml
 
+from conftest import PROJECTS, WORK
 from synapsidianlib import frontmatter, schema
 
 
@@ -263,3 +265,48 @@ def test_installed_schema_records_who_declared_each_about_field_and_section(work
         ("Current focus", "Work", "synapsidian-work"),
     ]
     assert "working_hours" not in schema.load(None).types["about"].fields
+
+
+# --- An extension for a newer core (D161) ------------------------------------------------------
+
+
+def write_manifest(vault, name: str, text: str) -> None:
+    (vault / ".synapsidian" / "extensions" / name / "extension.yaml").write_text(text, encoding="utf-8")
+
+
+def test_an_extension_for_a_newer_core_says_to_update_synapsidian_before_the_merge_fails(tmp_path):
+    # A key this core can't read, as synapsidian-projects 0.13.0 was for core 0.33.1.
+    write_extension(tmp_path, "projects", "extend:\n  task:\n    lanes: [a, b]\n")
+    write_manifest(tmp_path, "projects", "name: projects\nversion: 9.1.0\nrequires: synapsidian >= 99.0.0\n")
+    with pytest.raises(schema.SchemaError) as raised:
+        schema.load(tmp_path)
+    assert str(raised.value).startswith("extension projects 9.1.0 needs synapsidian >= 99.0.0, this is 0.")
+    assert str(raised.value).endswith("; update the synapsidian plugin")
+
+
+def test_a_satisfied_or_missing_requires_loads_and_a_malformed_one_is_refused(tmp_path):
+    write_extension(tmp_path, "projects", PROJECT_FOLDERS)
+    write_manifest(tmp_path, "projects", "name: projects\nrequires: synapsidian >= 0.1\n")
+    assert schema.load(tmp_path).extensions == ("projects",)
+    write_manifest(tmp_path, "projects", "name: projects\n")
+    assert schema.load(tmp_path).extensions == ("projects",)
+    write_manifest(tmp_path, "projects", "name: projects\nrequires: synapsidian 1.0\n")
+    with pytest.raises(schema.SchemaError, match="must read `synapsidian >= X"):
+        schema.load(tmp_path)
+
+
+def test_every_load_failure_is_a_schema_error_and_unknown_extend_keys_stay_errors(tmp_path):
+    write_extension(tmp_path, "typo", "extend:\n  task:\n    feilds: {}\n")
+    with pytest.raises(schema.SchemaError, match="extend: task can't set feilds"):
+        schema.load(tmp_path)
+    write_extension(tmp_path / "yaml", "broken", "extend: [\n")
+    with pytest.raises(schema.SchemaError):
+        schema.load(tmp_path / "yaml")
+
+
+def test_the_add_ons_require_the_core_that_reads_their_schema():
+    for plugin in (PROJECTS, WORK):
+        manifest = yaml.safe_load((plugin / "extension" / "extension.yaml").read_text())
+        assert manifest["requires"] == "synapsidian >= 0.34.0"
+        assert schema.requires_problem(manifest, manifest["name"], "0.33.1")
+        assert schema.requires_problem(manifest, manifest["name"], "0.34.0") is None

@@ -104,7 +104,7 @@ def main() -> None:
         return
     try:
         rel = capture(vault_root, text, dt.datetime.now())
-    except (OSError, RuntimeError, gitops.LockTimeout) as exc:
+    except (OSError, RuntimeError, gitops.LockTimeout, schema.SchemaError) as exc:
         block(f"synapsidian: capture failed ({exc}); the text was not saved.")
         return
     block(f"Captured to {rel} (not sent to Claude). /synapsidian:save inbox files it later.")

@@ -11,6 +11,11 @@ A type's own `folder` may hold `{title}`, giving each note a folder of its own (
 hub in `Projects/<title>/`). Its `templates/` win over the
 core templates. The files live in the vault, so every process that knows the vault (hooks
 included) sees the same schema, whether or not the add-on plugin is installed there.
+
+An extension's `extension.yaml` may say `requires: synapsidian >= X.Y.Z`, the oldest core that
+reads its schema. A vault synced between machines can hold an extension installed by a newer
+core than this one: `load` then raises a `SchemaError` that says to update synapsidian, before
+the merge fails on a key this core doesn't know (D161). Every load failure is a `SchemaError`.
 """
 
 from __future__ import annotations
@@ -25,9 +30,16 @@ from typing import Any
 
 import yaml
 
-from .config import SCHEMA_DIR
+from .config import SCHEMA_DIR, core_version
 
 EXTENSIONS_DIR = Path(".synapsidian") / "extensions"
+REQUIRES_RE = re.compile(r"synapsidian\s*>=\s*(\d+(?:\.\d+){0,2})")
+
+
+class SchemaError(ValueError):
+    """The vault's schema did not load: a broken extension, or one written for a newer core (D161)."""
+
+
 LINK_RE = re.compile(r"\[\[[^\[\]\n]+\]\]")
 URL_RE = re.compile(r"https?://\S+$")
 ILLEGAL_FILENAME_CHARS = re.compile(r'[\\/:*?"<>|#^\[\]]')
@@ -176,9 +188,49 @@ def extension_dirs(vault_root: Path | None) -> list[Path]:
 
 
 def load(vault_root: Path | None = None) -> Schema:
-    """The core schema plus the extensions installed in `vault_root` (none without a vault)."""
-    files = tuple((d / "schema.yaml", (d / "schema.yaml").stat().st_mtime_ns) for d in extension_dirs(vault_root))
-    return _load(files)
+    """The core schema plus the extensions installed in `vault_root` (none without a vault).
+
+    Raises `SchemaError` (a `ValueError`) when it can't load, with a message a person can act on."""
+    try:
+        files = tuple(
+            (d / "schema.yaml", (d / "schema.yaml").stat().st_mtime_ns, _mtime(d / "extension.yaml"))
+            for d in extension_dirs(vault_root)
+        )
+        return _load(files)
+    except SchemaError:
+        raise
+    except (ValueError, yaml.YAMLError, OSError) as exc:
+        raise SchemaError(str(exc)) from exc
+
+
+def _mtime(path: Path) -> int:
+    return path.stat().st_mtime_ns if path.is_file() else -1
+
+
+def version_tuple(text: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in re.findall(r"\d+", text)[:3])
+
+
+def requires_problem(manifest: dict[str, Any], name: str, core: str | None) -> str | None:
+    """Why this core (version `core`) can't read the extension `manifest` describes, or None (D161).
+
+    No `requires`, or a core whose version can't be read, is no problem: the merge still checks."""
+    requires = manifest.get("requires")
+    if requires is None:
+        return None
+    match = REQUIRES_RE.fullmatch(str(requires).strip())
+    if not match:
+        return f"extension {name}: requires {requires!r} must read `synapsidian >= X.Y.Z`"
+    needed = match.group(1)
+    if core is None or version_tuple(core) >= version_tuple(needed):
+        return None
+    version = f" {manifest['version']}" if manifest.get("version") else ""
+    return f"extension {name}{version} needs synapsidian >= {needed}, this is {core}; update the synapsidian plugin"
+
+
+def _manifest(path: Path) -> dict[str, Any]:
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) if path.is_file() else None
+    return data if isinstance(data, dict) else {}
 
 
 def merge_extension(raw: dict[str, Any], ext: dict[str, Any], name: str) -> list[str]:
@@ -300,12 +352,18 @@ def _folder_by(type_name: str, spec: dict[str, Any], fields: dict[str, Field], w
 
 
 @cache
-def _load(extensions: tuple[tuple[Path, int], ...]) -> Schema:
+def _load(extensions: tuple[tuple[Path, int, int], ...]) -> Schema:
     raw = yaml.safe_load((SCHEMA_DIR / "types.yaml").read_text(encoding="utf-8"))
     template_dirs = [SCHEMA_DIR / "templates"]
-    loaded = [(path.parent.name, yaml.safe_load(path.read_text(encoding="utf-8")) or {}) for path, _ in extensions]
+    # Before anything of the extension is read: a key this core doesn't know would fail the merge
+    # with a message that doesn't say the fix is a newer synapsidian (D161).
+    core = core_version()
+    for path, *_ in extensions:
+        if problem := requires_problem(_manifest(path.parent / "extension.yaml"), path.parent.name, core):
+            raise SchemaError(problem)
+    loaded = [(path.parent.name, yaml.safe_load(path.read_text(encoding="utf-8")) or {}) for path, *_ in extensions]
     warnings = merge_extensions(raw, loaded)
-    for path, _mtime in extensions:
+    for path, *_ in extensions:
         template_dirs.insert(0, path.parent / "templates")
     universal = {name: _field(name, spec) for name, spec in raw["universal"].items()}
     types = {}
@@ -330,7 +388,7 @@ def _load(extensions: tuple[tuple[Path, int], ...]) -> Schema:
                 for sec in spec.get("sections") or ()
             ),
         )
-    return Schema(universal, types, tuple(path.parent.name for path, _ in extensions), tuple(warnings))
+    return Schema(universal, types, tuple(path.parent.name for path, *_ in extensions), tuple(warnings))
 
 
 # --- values -----------------------------------------------------------------
