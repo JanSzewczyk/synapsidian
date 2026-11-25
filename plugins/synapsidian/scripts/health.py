@@ -286,11 +286,11 @@ def main() -> None:
         sys.exit(2)
     today = schema.as_date(args.today) if args.today else dt.date.today()
     try:
-        report = check(vault_root, today or dt.date.today(), args.fix)
+        schema.load(vault_root)  # cached: `check` reuses it
     except schema.SchemaError as exc:
         print(json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False))
         sys.exit(2)
-    print(json.dumps(report, ensure_ascii=False))
+    print(json.dumps(check(vault_root, today or dt.date.today(), args.fix), ensure_ascii=False))
 
 
 if __name__ == "__main__":
