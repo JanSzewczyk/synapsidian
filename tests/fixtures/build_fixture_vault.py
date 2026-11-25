@@ -1,4 +1,4 @@
-"""Writes tests/fixtures/vault: ~30 synthetic notes for the search benchmark (spec §10.7).
+"""Writes tests/fixtures/vault: ~30 synthetic notes for the search benchmark (D20; formerly §10.7 of the spec, removed on 2026-11-25).
 
 Run once; the generated files are committed. Notes are written first, the questions in
 search_questions.yaml separately, and test_find.py checks the questions don't leak titles.
