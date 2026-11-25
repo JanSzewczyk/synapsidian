@@ -244,7 +244,7 @@ synapsidian/
 │   ├── synapsidian-work/    # work add-on
 │   ├── synapsidian-projects/ # projects add-on
 │   └── synapsidian-dock/    # dock mod
-├── references/              # decisions.md: the design decisions (D-numbers)
+├── references/              # decisions.md (the D-numbers) and designs not built yet
 ├── tests/                   # pytest suite and a fixture vault
 ├── CHANGELOG.md
 ├── CLAUDE.md                # project rules
@@ -256,7 +256,7 @@ synapsidian/
 
 - **`plugins/<name>/.claude-plugin/plugin.json`** — each plugin's manifest; `skills/<skill>/SKILL.md` holds its skills
 - **`docs/`** — the documentation site (Astro Starlight): pages in `docs/src/content/docs/`, built by `cd docs && npm run build`, deployed to GitHub Pages
-- **`references/`** — [decisions.md](references/decisions.md), the design decisions that skills and scripts cite by number (`D90`)
+- **`references/`** — [decisions.md](references/decisions.md), the design decisions that skills and scripts cite by number (`D90`), and the contract of a design not built yet ([morning-sources.md](references/morning-sources.md), D162)
 - **`tests/`, `pyproject.toml`, `uv.lock`** — the dev environment; like `docs/` and `references/`, they sit at the repo root and ship with none of the plugins
 
 ---

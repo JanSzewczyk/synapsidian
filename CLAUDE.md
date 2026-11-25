@@ -36,6 +36,7 @@ Each add-on lists `dependencies: [{ "name": "synapsidian", "version": "~<core>" 
 The one exception is a mod's `*.test.ts` (today `plugins/synapsidian-dock/tests/`), which
 `claude plugin test` runs only from inside its plugin.
 `references/decisions.md` is the decision log; skills, scripts and references cite its numbers (`D90`).
+A design not built yet keeps its contract beside it (`references/morning-sources.md`, D162) until it moves into a plugin.
 
 `docs/` is the documentation site (Astro Starlight, English only), deployed to GitHub Pages by
 `.github/workflows/docs.yml`:
