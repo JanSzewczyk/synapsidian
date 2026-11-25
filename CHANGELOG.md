@@ -9,6 +9,34 @@ The sections before synapsidian-dock 0.6.0 were reconstructed from git history o
 commits that changed each plugin's version; some versions in between had no release commit of their
 own and are folded into the next one.
 
+## [0.34.2 synapsidian] — 2026-11-25
+
+### Added
+
+- An extension's `extension.yaml` can name the oldest core it needs: `requires: synapsidian >= X.Y.Z`. An older core refuses to load the schema with a message that says to update synapsidian, and `setup extension` refuses to install such an extension (D161).
+
+### Fixed
+
+- A vault schema that won't load (a broken extension, or one for a newer core) no longer ends in a Python traceback. `note`, `health` and `source` answer `{"ok": false, "error": …}` with exit 2. The `>>` capture says why it failed. The session brief adds one line about it and keeps the rest.
+
+## [0.7.2 synapsidian-work] — 2026-11-25
+
+### Changed
+
+- The extension requires synapsidian 0.34.0 or later (`requires` in `extension.yaml`). `/synapsidian-work:setup` tells you to update synapsidian when the core is older.
+
+## [0.13.2 synapsidian-projects] — 2026-11-25
+
+### Changed
+
+- The extension requires synapsidian 0.34.0 or later (`requires` in `extension.yaml`). `/synapsidian-projects:setup` tells you to update synapsidian when the core is older.
+
+## [0.7.3 synapsidian-dock] — 2026-11-25
+
+### Fixed
+
+- When synapsidian fails without a JSON answer, the toast shows the error itself (the last line of its output) instead of the first lines of a Python traceback.
+
 ## [0.34.1 synapsidian] — 2026-11-25
 
 ### Changed
