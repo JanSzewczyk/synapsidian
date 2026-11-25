@@ -4,32 +4,51 @@
 
 One local marketplace (`.claude-plugin/marketplace.json`, `synapsidian`) with four plugins:
 
-- `plugins/synapsidian/`: the core. Vault layout, schema, notes, tasks, meetings, save, find,
-  ingest, research, think, evening, review, recap, schedule, hooks.
-- `plugins/synapsidian-work/`: the work add-on (`dependencies: ["synapsidian"]`). 1:1s, stand-up, work
-  brief (PRs, Jira, email and Slack asks), its own setup.
-- `plugins/synapsidian-projects/`: the projects add-on (`dependencies: ["synapsidian"]`; D98-D111,
-  D139-D152, D154).
-  - It owns the `project` type and every `project` field: hubs live in
+- `plugins/synapsidian/`: the core. The `synapsidian` CLI (`bin/`, `scripts/`), the schema, Bases and
+  templates, hooks (session brief, `>>` capture, session queue, vault-edit approval, validation),
+  the `research-deep` workflow, and 16 skills: `capture`, `daily`, `evening`, `find`, `health`,
+  `ingest`, `meeting`, `morning`, `recap`, `research`, `review`, `save`, `schedule`, `setup`, `task`,
+  `think`.
+- `plugins/synapsidian-work/`: the work add-on. Skills `setup`, `work-brief` (PRs, Jira, email and
+  Slack asks), `standup`, `one-to-one`, `one-to-one-triage` and `win` (the brag log in `Wins/`);
+  1:1, stand-up and retro meeting kinds.
+- `plugins/synapsidian-projects/`: the projects add-on (D98-D111, D139-D152, D154).
+  - It owns the `project` type: hubs live in
     `Projects/<Project>/<Project>.md` with a kanban board, and project notes are filed under
     that folder.
   - Skills: `setup`, `project` (hubs, a read-only repository scan), `milestone` (stages with
     a target date), `decide` (MADR decisions), `map` (Excalidraw mind maps), `spec`, `change`,
     `debug`, `incident` and `architect` (architecture notes, any language, a Vue profile). Its
     scripts (`scripts/projects.py`, `repos.py`, `maps.py`, `flows.py`, `progress.py`, `architect.py`) never import
-    `synapsidianlib`; they read `synapsidian query` JSON on stdin instead.
+    `synapsidianlib`. `decision-number`, `map`, `flow` and `progress` read `synapsidian query` JSON on
+    stdin; `scan`, `repo` and `architect` read the repository and the add-on's state folder.
   - It only ever reads code repositories.
-- `plugins/synapsidian-dock/`: the dock add-on (`dependencies: ["synapsidian"]`; D156), a Claude Code mod
+- `plugins/synapsidian-dock/`: the dock add-on (D156), a Claude Code mod
   (`hooks/register.ts`): a band above the prompt (`/synapsidian` shows it, ✕ hides it) with a Tasks
   button to a task pane. No skills, no
   schema extension. It meets the core only through `synapsidian brief --json`, `synapsidian note set` and
   `synapsidian commit` (on PATH, or the installed synapsidian's `bin/synapsidian` where the desktop app leaves it
   off), and writes nothing without a key press.
 
+Each add-on lists `dependencies: [{ "name": "synapsidian", "version": "~<core>" }]`, a `~` range on the core.
+
 `tests/`, `docs/`, `references/`, `pyproject.toml` and `uv.lock` sit at the repo root and ship with none of them.
-`references/decisions.md` is the decision log; skills, scripts and references cite its numbers (`D90`).
 The one exception is a mod's `*.test.ts` (today `plugins/synapsidian-dock/tests/`), which
 `claude plugin test` runs only from inside its plugin.
+`references/decisions.md` is the decision log; skills, scripts and references cite its numbers (`D90`).
+
+`docs/` is the documentation site (Astro Starlight, English only), deployed to GitHub Pages by
+`.github/workflows/docs.yml`:
+- Pages live in `docs/src/content/docs/`: one page per skill under `skills/` (core) and
+  `extensions/<work|projects|dock>/` (add-ons), one per CLI command under `cli/`. The sidebar is in
+  `docs/astro.config.mjs`. `tests/test_docs_site.py` fails when a skill or command has no page.
+- `cd docs && npm run check && npm run build` (the build also fails on a broken internal link).
+- Archived releases follow the core version: `versions` in `astro.config.mjs` and a snapshot folder
+  (`docs/src/content/docs/0.34/`) written by `starlight-versions` on the first `npm run dev`. Never
+  edit a snapshot.
+- The changelog pages (`/changelog/` for the core, `/extensions/<add-on>/changelog/`) are generated
+  from the root `CHANGELOG.md` by `starlight-changelogs` (`docs/src/content.config.ts`).
+- A change to a skill, command, option or schema field also updates its page here.
 
 ## The core is universal (D88, D90)
 
@@ -45,20 +64,25 @@ a personal vault with no job, no team and no Jira, must get a plugin that fits t
 - **Work features go in `synapsidian-work`.** Anything tied to a job lives in `plugins/synapsidian-work/`.
   Its options are its own `userConfig`; an empty or unsubstituted option switches that source
   off silently (D86): never an error, never a prompt, never mentioned in a report.
-- **How the two meet (D90)**, and only these ways:
-  - Schema: synapsidian-work's `extension/` (types, `extend:` of core fields, templates, bases) is
+- **How the core and the add-ons meet (D90)**, and only these ways:
+  - Schema: an add-on's `extension/` (types, `extend:` of core or add-on types, templates, bases) is
     installed into the vault by `synapsidian setup extension` at `<vault>/.synapsidian/extensions/<name>/`.
-    The core merges whatever is installed there. Core `schema/types.yaml` holds no work types
-    or values.
-  - Core skills reach the add-on only through `command -v synapsidian-work` and
-    `synapsidian-work hook <name>` (a printed reference). Where options are needed, the hook says to
-    invoke a synapsidian-work skill, since only synapsidian-work's skills see its `${user_config.*}`.
-  - synapsidian-work skills call the core through `synapsidian ...` on PATH and read core references with
-    `synapsidian ref <name>`; `${CLAUDE_PLUGIN_ROOT}` in a synapsidian-work skill is synapsidian-work's root.
-  - synapsidian-work's scripts never import `synapsidianlib`: a plugin can't import another plugin's code
-    (separate cache copies). Copy the few helpers into `worklib/` instead.
+    The core merges whatever is installed there. Core `schema/types.yaml` holds no work or project
+    types or values. synapsidian-work extends synapsidian-projects' `project` with `jira`; an
+    `extend:` of a type nothing defines is skipped (D106).
+  - Core skills reach an add-on only through `command -v <add-on>` and `<add-on> hook <name>` (a
+    printed reference): `synapsidian-work hook morning|meetings|review|schedule`,
+    `synapsidian-projects hook review`. The one direct call is `synapsidian-projects progress` in
+    `review`. Where options are needed, the hook says to invoke a synapsidian-work skill, since only
+    synapsidian-work's skills see its `${user_config.*}`.
+  - Add-on skills call the core through `synapsidian ...` on PATH and read core references with
+    `synapsidian ref <name>`; `${CLAUDE_PLUGIN_ROOT}` in an add-on skill is that add-on's root. Each
+    add-on's own `bin/` (`synapsidian-work`, `synapsidian-projects`) also prints its `extension`
+    directory; `synapsidian-projects section <title>` prints a hub template section.
+  - Add-on scripts never import `synapsidianlib`: a plugin can't import another plugin's code
+    (separate cache copies). synapsidian-work copies the few helpers into `worklib/`.
 - **Nothing user-specific is hardcoded** in anything read at runtime: skills, `references/`,
-  `schema/`, `bases/`, `scripts/`, `hooks/`, templates, in either plugin. That means no company
+  `schema/`, `bases/`, `scripts/`, `hooks/`, templates, in any plugin. That means no company
   or product names, ticket prefixes or keys, app or repository names, people's names, meeting
   cadences or times, vault paths, home-directory paths, or Polish strings in what the plugins
   write. Such values come from `userConfig` or `About.md`, or are a neutral default the user
@@ -77,8 +101,9 @@ synapsidian-work or needs an option.
 ## Versions
 
 Versions are bumped only on request, through `/plugin-release` (see the plugin development section
-below). When synapsidian-work's version changes, keep `extension/extension.yaml`'s `version` equal
-to its plugin version; `/synapsidian-work:setup` re-installs the extension when they differ.
+below). When synapsidian-work's or synapsidian-projects' version changes, keep its
+`extension/extension.yaml` `version` equal to the plugin version; the add-on's `setup` skill
+re-installs the extension when they differ.
 
 <!-- BEGIN:plugin-dev -->
 ## Plugin development
