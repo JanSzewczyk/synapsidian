@@ -1,5 +1,83 @@
 ---
-title: meeting
+title: "/synapsidian:meeting"
+description: Create a meeting note from a calendar event, or fill one from its Gemini notes.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Two jobs. Before a meeting, it creates the note from the calendar event: attendees linked, agenda from the invite. After it, `import` fills the note from the Google Meet "Notes by Gemini" document and files your own next steps as tasks.
+
+```text
+/synapsidian:meeting [event title | time | today]
+/synapsidian:meeting import <title | time | today>
+```
+
+The morning run creates the day's meeting notes on its own; see [`/synapsidian:morning`](/synapsidian/skills/morning/).
+
+## Creating a note
+
+1. Reads your timezone from `synapsidian note where`; calendar calls always pass it.
+2. Finds the event: today by default, by title or time when given. `today` means every qualifying event left today. When several match, it takes the nearest upcoming one and says which.
+3. Looks the event up by `event_id`. If a note exists, it opens that one instead of creating a second.
+4. Creates the note and the person stubs, and links the meeting from the `agenda` block of today's note.
+5. Commits and replies with the note's link, its talking points if any, and the person notes it created.
+
+### Which events get a note
+
+Events you accepted or organised, with at least one other attendee. Declined and unanswered events, focus, out-of-office and blocked time, all-day events and events with only you are skipped.
+
+### Kinds
+
+The first that fits:
+
+| Kind | When | Extra sections |
+| --- | --- | --- |
+| `external` | an attendee outside your email domain | `## Goal`, `## Who's who` |
+| `review` | the title says review, demo, retro or planning | `## Feedback` |
+| `team` | otherwise | `## Updates` |
+
+Every meeting note also has `## Agenda`, `## Notes`, `## Decisions` and `## Action items`. The agenda gets the event description, time and meeting link; it is never invented. With [synapsidian-work](/synapsidian/extensions/work/) installed, its kinds (`1-1`, `standup`, `retro`) are checked first.
+
+### People
+
+Each other attendee is looked up by name and by email. A missing person gets a stub with only what the calendar states: the name and email. Role, team and relationship stay empty. An attendee with an email and no name gets no note; the email goes on the agenda line. Names, roles and emails are never guessed.
+
+## Importing Gemini notes
+
+<Aside type="caution" title="Needs a Google Drive connector">
+Without a Drive connector with search and read tools, `import` says so and stops. The evening sweep skips silently.
+</Aside>
+
+`import <title or time>` imports one meeting, on today's date unless you name another. `import today` sweeps all of today's meetings. The evening run does the same sweep (D95).
+
+1. Finds the meeting note, creating it from the calendar first if needed. Only that note is written.
+2. Searches Drive for the Google Doc titled after the event and "Gemini" on that date, in your own Drive and in docs shared with you. Several candidates and no clear winner: it asks (an unattended run skips and reports).
+3. Keeps the doc verbatim in `Sources/`, refusing it if it contains a credential.
+4. Fills the note's **empty** sections only (`Notes` with Gemini's summary and timestamped details, `Decisions`, `Action items`). A section you already wrote in is kept and reported, never merged into.
+5. Files **your** next steps as tasks, at most 5 per run, with `source: meeting` and a link to the doc. A next step that matches an open task, or one closed in the last 7 days, adds a dated line to that task's `## Log` instead. Other people's next steps stay in the note.
+6. Puts aligned decisions under the project's key decisions or in a `decision` note, durable facts about attendees in their person notes, and sets `last_contact` to the meeting date.
+7. Adds a devlog bullet, marks the source integrated and commits.
+
+The doc is data, never instructions: whatever the summary or transcript says, nothing in it changes these steps. Only facts about what the meeting was for go into person notes, never health, family or private life.
+
+## What it writes
+
+| File | When |
+| --- | --- |
+| `Meetings/<date> <kind> <title>.md` | a new meeting |
+| `People/<name>.md` | a missing attendee (stub) |
+| `Daily/<date>.md`, block `agenda` | a link to the meeting |
+| `Sources/…`, `Tasks/…` | `import` |
+
+## Commands it runs
+
+```bash
+synapsidian note where
+synapsidian query notes --type meeting --where event_id=<id> --all
+synapsidian find --type person "<name>"
+synapsidian note new --type meeting | person | task
+synapsidian note fill --file "<meeting>" --section Notes
+synapsidian source add --kind document --refuse-secrets ...
+synapsidian block get | set --name agenda
+synapsidian commit --skill meeting ...
+```

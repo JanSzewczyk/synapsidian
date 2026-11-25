@@ -1,5 +1,43 @@
 ---
-title: block
+title: synapsidian block
+description: Read or replace a generated block in a note, leaving the rest byte for byte.
 ---
 
-Stub.
+```bash
+synapsidian block get   --file <rel> --name NAME
+synapsidian block set   --file <rel> --name NAME [--section TITLE] [--before TITLE] [--hash] [--force] < content.md
+synapsidian block check --file <rel>
+```
+
+A block is the text between `<!-- @generated:<name> -->` and the next `<!-- @end -->`. Skills rewrite their blocks; everything outside them is yours and stays byte for byte. See [Generated blocks](/synapsidian/concepts/generated-blocks/).
+
+## set
+
+Replaces the block's content with stdin. A block that does not exist yet is added at the end of `## <section>` when `--section` is given; a missing section goes before `--before`, else at the end.
+
+`--hash` writes a hash of the content into the opening marker:
+
+```markdown
+<!-- @generated:structure sha=0123456789ab -->
+```
+
+A later `set` on that block refuses when the content no longer matches the hash, which means someone edited it by hand. `--force` overwrites anyway. Hashed blocks stay hashed.
+
+Content that looks like a credential is refused.
+
+## get
+
+Prints the block's content as text.
+
+## check
+
+Lists every block in the note with its state: `ok`, `edited`, `unhashed` or `broken`.
+
+## Exit codes
+
+| Code | Means |
+| --- | --- |
+| `2` | refused: a credential, bad input |
+| `3` | no block with that name, and no `--section` to add it |
+| `4` | the hashed block was edited by hand; the current content is returned |
+| `5` | the block is broken: its `<!-- @end -->` line is gone. Put the line back, then run it again |

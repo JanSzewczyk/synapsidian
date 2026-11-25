@@ -1,5 +1,59 @@
 ---
-title: quick-start
+title: Quick start
+description: From an installed plugin to a vault that keeps itself current.
 ---
 
-Stub.
+import { Steps } from '@astrojs/starlight/components';
+
+<Steps>
+
+1. **Set up the vault.** In a new session:
+
+   ```text
+   /synapsidian:setup
+   ```
+
+   Answer its questions about you, or skip them; they come back next time. At the end, say yes to scheduling the runs.
+
+2. **Set the scheduled tasks to auto.** In the desktop app, open **Scheduled** and, for each synapsidian task, set the permission mode to **auto** and the folder to the vault. Without this the runs stop at their first step and wait. See [Scheduled runs](/synapsidian/configuration/scheduled-runs/).
+
+3. **Capture something.** Type a prompt that starts with `>>`:
+
+   ```text
+   >> look into the export format for the report
+   ```
+
+   It goes to `Inbox/` and is committed. Claude never sees it.
+
+4. **Add a task.**
+
+   ```text
+   /synapsidian:task add renew the domain by Friday
+   ```
+
+   You get `Tasks/T1 Renew the domain.md`, due on Friday's date. Open `Bases/Tasks.base` in Obsidian for the board.
+
+5. **Work as usual, then save.** At the end of a piece of work:
+
+   ```text
+   /synapsidian:save
+   ```
+
+   Decisions, how-tos, facts and tasks from the conversation go into notes, and one line goes into today's devlog.
+
+6. **Let the runs do the rest.** At 20:00 the evening run turns the day's sessions into devlog bullets. At 09:00 on weekdays the morning run writes today's brief and agenda. On Friday afternoon the review sums up the week.
+
+7. **Sort the Inbox now and then.**
+
+   ```text
+   /synapsidian:save inbox
+   ```
+
+</Steps>
+
+## Then try
+
+- [`/synapsidian:find`](/synapsidian/skills/find/) "what did I decide about the export format?"
+- [`/synapsidian:ingest`](/synapsidian/skills/ingest/) with a link to an article worth keeping
+- [`/synapsidian:research`](/synapsidian/skills/research/) for a question you want answered and kept
+- [`/synapsidian:think challenge`](/synapsidian/skills/think/) before a decision you are unsure about

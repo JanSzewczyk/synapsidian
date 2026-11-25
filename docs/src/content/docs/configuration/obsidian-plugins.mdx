@@ -1,5 +1,53 @@
 ---
-title: obsidian-plugins
+title: Obsidian plugins
+description: The community plugins synapsidian requires, recommends, and does not need.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Everything synapsidian reads and writes is core Obsidian: Bases (tables and kanban boards), Properties, Daily notes and Backlinks. Setup turns those on. On top of them it requires four community plugins (D91, D110, D115).
+
+`/synapsidian:setup` installs and enables them through the Obsidian CLI when it can, after asking once, and writes its settings into each plugin's `data.json`, keeping any value you chose. Otherwise it files a task with the steps.
+
+## Required
+
+| Plugin | Why | Settings synapsidian applies |
+| --- | --- | --- |
+| **Git** (`obsidian-git`) | commits *your* edits on a timer, so they get history and undo too | auto commit every 30 minutes, push disabled (the vault has no remote), message `vault: manual edits {{date}}` |
+| **Excalidraw** (`obsidian-excalidraw-plugin`) | sketches and diagrams in notes; drawings are `.excalidraw.md` files synapsidian never treats as notes | folder `Attachments`, compression off so drawings stay plain text |
+| **Templater** (`templater-obsidian`) | notes you make in Obsidian come out the way synapsidian writes them, from a template per type in `Templates/Generated/` | template folder `Templates/Generated`, a hotkey entry per template, every synapsidian folder excluded on file creation |
+| **Calendar Bases** (`calendar-bases`) | a Calendar view for Bases: tasks by `due`, meetings by `date`, goals by `target`; dragging a note changes its date | none |
+
+[synapsidian-projects](/synapsidian/extensions/projects/) adds two: **Folder notes**, so a click on a project's folder opens its hub, and **Excalidraw Extras**, which turns Mermaid roadmaps into editable drawings.
+
+## Recommended
+
+**Claudian** (`realclaudian`) runs Claude Code in Obsidian's sidebar, with the vault as its working directory, so `/synapsidian:save` or `/synapsidian:find` run beside the note you have open. Setup offers it and installs it only on a yes.
+
+## Optional
+
+| Plugin | For |
+| --- | --- |
+| **Omnisearch** | better in-app search when you look something up yourself; `find` does not use it |
+| **Importer** | a one-off move from Notion, Evernote, Apple Notes and others into a folder of its own, then `/synapsidian:save inbox` files it |
+| **Obsidian Web Clipper** (browser) | one click saves a page's link and your selection to `Inbox/` as a capture, for `/synapsidian:save inbox` to ingest |
+
+For the Web Clipper, make a template named `synapsidian capture`: behavior *Create a new note*, location `Inbox`, properties `type: capture`, `created`, `source_url: {{url}}`, content `{{selection}}`. Clip only the link and your selection: synapsidian fetches the page itself, so deduplication keeps working.
+
+## Not needed
+
+| Plugin | Instead |
+| --- | --- |
+| Kanban | Bases has a core kanban view; dragging a card changes the note's `status` |
+| Dataview | Bases views over frontmatter. If you keep it, leave JavaScript queries off (D114) |
+| QuickAdd | Templater's *Create* command per template |
+| Tasks | tasks are notes with properties, not checkboxes (D114) |
+| Linter | it reformats frontmatter on save and fights synapsidian's format: avoid it |
+
+## Making notes yourself
+
+Command palette → **Templater: Create new note from template** → a template from `Templates/Generated/`. Answer the prompts; the note lands where `synapsidian note new` would put it, a task as `Tasks/T<n> <title>.md`. A template you edit is kept when synapsidian updates the others. For your own variant, copy one into `Templates/` and change the copy.
+
+<Aside type="caution" title="Keep the Templater trigger off">
+Leave **Trigger Templater on new file creation** off. With it on, Templater runs the code in every new Markdown file, including copies of web pages in `Sources/`. synapsidian never needs it, and cannot see the switch. Turn off the core **Templates** plugin too if it points at a folder holding `Templates/Generated/`: it would paste the templates as raw code (D118).
+</Aside>

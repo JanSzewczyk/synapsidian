@@ -1,5 +1,36 @@
 ---
-title: generated-blocks
+title: Generated blocks
+description: The parts of a note a skill rewrites, and the parts that are yours.
 ---
 
-Stub.
+A skill that keeps part of a note current (today's brief, the devlog) writes it between two markers:
+
+```markdown
+## Brief
+<!-- @generated:brief -->
+- **Needs attention**
+  - [[T7 Renew the domain]]: due today, high
+<!-- @end -->
+```
+
+Only the text between `<!-- @generated:<name> -->` and the next `<!-- @end -->` is regenerated, with [`synapsidian block set`](/synapsidian/cli/block/). Everything outside these blocks is yours and stays byte for byte. Claude never edits a block by hand.
+
+## In the daily note
+
+| Block | Section | Written by |
+| --- | --- | --- |
+| `brief` | `## Brief` | `morning`, or `daily` when the morning run has not written it |
+| `agenda` | `## Agenda` | `morning`, `daily`, `meeting` |
+| `devlog` | `## Devlog` | `evening`, `save`, `ingest`, `research`, `think`, `meeting import` |
+| `overnight` | `## Written overnight` | `morning` |
+| `health` | `## Vault health` | `health` |
+
+`## Notes` in the daily note has no block: it is your own section.
+
+## Hand edits
+
+A block written with `--hash` carries a hash of its content in the opening marker. If you edit such a block by hand, the next `set` refuses instead of overwriting your edit; the skill reports it. `--force` overwrites anyway.
+
+## A broken block
+
+If a block loses its `<!-- @end -->` line, the skill that owns it refuses to read or write it, rather than guess where it ended and risk replacing your text. [`/synapsidian:health`](/synapsidian/skills/health/) lists it under `broken_blocks`. Put the line back where the block should end.

@@ -1,5 +1,59 @@
 ---
-title: vault-layout
+title: Vault layout
+description: The folders synapsidian creates and what goes in each.
 ---
 
-Stub.
+`/synapsidian:setup` creates these folders. Each note type has its own, so a note's place follows from its type.
+
+| Folder | Holds | Written by |
+| --- | --- | --- |
+| `Inbox/` | raw captures, `<date> <time> <title>` | `>>` prompts, `capture`, Web Clipper; new notes you make in Obsidian |
+| `Daily/` | one note per day, `YYYY-MM-DD` | `daily`, `morning`, `evening`, `save`, `health` |
+| `Tasks/` | `T<n> <title>` | `task`, `save`, `meeting import`, `evening` |
+| `People/` | one note per person | `meeting`, `save`, `evening` |
+| `Meetings/` | `<date> <kind> <title>` | `meeting`, `morning` |
+| `Decisions/` | `<date> <title>` | `save`, `evening`, `ingest` |
+| `Notes/` | knowledge: concepts, literature notes | `save`, `ingest`, `research` |
+| `Howtos/` | steps that worked | `save`, `evening`, `ingest` |
+| `Ideas/` | `<date> <title>` | `save`, `ingest` |
+| `Goals/` | what you want to reach | you, `save` |
+| `Sources/` | verbatim copies of ingested material, never edited | `ingest`, `research`, `save inbox`, `meeting import` |
+| `Research/` | cited dossiers, `<date> <title>` | `research` |
+| `Reviews/` | `<period_end> <period> review` | `review` |
+| `Thinking/` | `<date> <mode> <subject>` | `think` |
+| `Bases/` | the `.base` views: boards, tables, calendars | `setup` |
+| `Templates/` | `Daily.md`, and `Generated/` with a Templater template per type | `setup` |
+| `Attachments/` | images, drawings, files embedded in notes | Obsidian, `ingest` |
+| `Archive/` | notes moved out of the way; nothing is deleted | `save inbox`, you |
+
+At the root sits `About.md`, which every session reads. See [About.md](/synapsidian/configuration/about/).
+
+## Add-ons
+
+An add-on's types bring their folders. [synapsidian-work](/synapsidian/extensions/work/) adds `Wins/`. [synapsidian-projects](/synapsidian/extensions/projects/) adds `Projects/`, one folder per project:
+
+```text
+Projects/
+└── Web app/
+    ├── Web app.md        # the hub, with its kanban board
+    ├── Tasks/
+    ├── Decisions/
+    ├── Specs/
+    ├── Changes/
+    ├── Milestones/
+    └── …
+```
+
+With the projects add-on, a note that has a `project` lives under its project's folder.
+
+## Hidden parts
+
+| Path | Holds |
+| --- | --- |
+| `.git/` | the vault's history |
+| `.git/synapsidian/` | state that is not a note: the session queue, saved sessions, locks, video frames; inside `.git`, so never committed |
+| `.obsidian/` | Obsidian's settings; setup writes a few keys, and per-device files are git-ignored |
+| `.synapsidian/extensions/<name>/` | the add-ons' schema extensions |
+| `.trash/` | files deleted in Obsidian |
+
+Obsidian is set to put new notes in `Inbox/` and attachments in `Attachments/`, to use the shortest wikilinks, and to update links on rename.

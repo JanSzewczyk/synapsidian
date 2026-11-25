@@ -1,5 +1,49 @@
 ---
-title: troubleshooting
+title: Troubleshooting
+description: Common problems and their fixes.
 ---
 
-Stub.
+Start with `/synapsidian:setup check`: it reports Obsidian, git, uv, the hooks, the plugins and the session queue, without changing anything.
+
+## "vault not found; run /synapsidian:setup"
+
+The vault path does not point at a folder. Check `vault_path` in `/plugin` → synapsidian → configure, with the folder's exact spelling, and run `synapsidian note where`.
+
+## A skill says the vault is not a git repository
+
+Run `/synapsidian:setup`; it makes the vault a repository. It needs a git identity: give the name and email when asked.
+
+## Nothing happens on `>>`, or no brief at session start
+
+Hooks load only in a new session after a plugin is installed or updated. Start one, then run `synapsidian setup selftest`. If uv is missing from where the hooks look (`~/.local/bin`, `~/.cargo/bin`, `/opt/homebrew/bin`, `/usr/local/bin` or PATH), install it. The desktop app does not read your shell profile.
+
+## The evening run logs nothing
+
+- No sessions in the queue: the `SessionEnd` hook needs `jq` or `python3`. `setup check` shows the queue under `automation`.
+- The session was off the record: its folder is in `session_exclude_paths`, or it had `#off-the-record`.
+- Its work was already saved with `/synapsidian:save`.
+
+## A scheduled run never finishes
+
+It waits on a permission prompt. Set the task's permission mode to **auto**, and its folder to the vault, in **Scheduled** in the desktop app. See [Scheduled runs](/synapsidian/configuration/scheduled-runs/).
+
+## A run "failed" writing About.md, a template or CLAUDE.md
+
+Intended. Those files always ask before an edit, and an unattended run cannot answer (D120). Edit them yourself, or ask in an interactive session.
+
+## A block refuses to update
+
+- Exit `4`: the block was edited by hand and carries a hash. Move your text outside the block, or let the skill overwrite it.
+- Exit `5`: the block lost its `<!-- @end -->` line. Put it back where the block should end.
+
+## A new note shows JavaScript
+
+The core **Templates** plugin pasted a Templater template without running it. Turn it off (setup does this when the folder holds only synapsidian's templates) and use **Templater: Create new note from template**.
+
+## Obsidian does not show the vault
+
+Obsidian opens only folders it knows. Quit Obsidian and run `synapsidian setup register`, or choose *Open folder as vault*.
+
+## An add-on's notes or fields are refused
+
+Its extension is not installed in the vault. Run the add-on's setup (`/synapsidian-work:setup`, `/synapsidian-projects:setup`). `synapsidian note where` lists the installed extensions.

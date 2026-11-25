@@ -1,5 +1,20 @@
 ---
-title: frames
+title: synapsidian frames
+description: Scene-change frames of a YouTube video, for Claude to look at.
 ---
 
-Stub.
+```bash
+synapsidian frames URL [--max 24] [--threshold 0.2] [--max-minutes 180]
+```
+
+Used by [`/synapsidian:ingest … visual`](/synapsidian/skills/ingest/) when what is on screen matters (D74).
+
+It downloads the video stream (at most 720p) into `<vault>/.git/synapsidian/frames/<video id>/` and takes one frame per scene change, plus evenly spaced frames where scenes are sparse. Then it samples them down to `--max` across the whole video and deletes the video. ffmpeg comes from a Python wheel; nothing is installed system-wide.
+
+Frame folders older than two days are removed on every run, and git never sees them.
+
+```json
+{ "ok": true, "video": "…", "duration": 1234, "scene_changes": 41, "frames": [{ "path": "…", "at": "12:30" }], "dir": "…" }
+```
+
+Exit `2`: not a YouTube link. Exit `4`: the download or extraction failed.

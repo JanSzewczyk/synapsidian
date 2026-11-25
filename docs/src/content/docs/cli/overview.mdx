@@ -1,5 +1,64 @@
 ---
-title: overview
+title: The synapsidian CLI
+description: The command the skills run for the mechanics, and how it finds the vault.
+sidebar:
+  label: Overview
+  order: 0
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Skills leave the mechanics to one command, `synapsidian`: creating notes with correct frontmatter, numbering tasks, searching, rewriting generated blocks, committing. Claude does the judgement; the scripts make the result exact and repeatable.
+
+`bin/synapsidian` is on the Bash PATH while the plugin is enabled, so skills (the add-ons' included) call `synapsidian …` directly. Each command is a Python script the wrapper runs with `uv run --no-config --script`; uv fetches Python 3.12 or later and each script's libraries itself.
+
+```bash
+synapsidian <command> [args…]
+synapsidian <command> --help
+```
+
+## Commands
+
+| Command | Does |
+| --- | --- |
+| [`note`](/synapsidian/cli/note/) | create notes, set fields, the daily note, archive, fill sections |
+| [`find`](/synapsidian/cli/find/) | ranked keyword search, and notes related to a note |
+| [`block`](/synapsidian/cli/block/) | read or replace a generated block |
+| [`commit`](/synapsidian/cli/commit/) | one commit for a skill run |
+| [`brief`](/synapsidian/cli/brief/) | the session-start brief |
+| [`validate`](/synapsidian/cli/validate/) | check notes against the schema |
+| [`setup`](/synapsidian/cli/setup/) | check and set up the vault, install extensions |
+| [`sessions`](/synapsidian/cli/sessions/) | the session queue the evening run reads |
+| [`when`](/synapsidian/cli/when/) | date windows: done window, review period, workdays |
+| [`query`](/synapsidian/cli/query/) | notes by field, the vault's commits, stale and resurfaced notes |
+| [`health`](/synapsidian/cli/health/) | the vault check, with safe fixes |
+| [`source`](/synapsidian/cli/source/) | copy sources into `Sources/` |
+| [`frames`](/synapsidian/cli/frames/) | frames from a YouTube video |
+| [`pages`](/synapsidian/cli/pages/) | render PDF pages as images |
+| [`ref`](/synapsidian/cli/ref/) | print one of the core's references |
+
+## Finding the vault
+
+Every command takes `--vault <path>`. Without it the vault is, in this order:
+
+1. the `CLAUDE_PLUGIN_OPTION_VAULT_PATH` environment variable, which Claude Code sets from the plugin's `vault_path` option;
+2. `SYNAPSIDIAN_VAULT`, which the session-start hook exports for the session;
+3. the `vault_path` saved for the plugin in `~/.claude/settings.json`.
+
+`synapsidian note where` prints the resolved vault, its untracked state folder and its timezone.
+
+## Output and exit codes
+
+Commands print JSON, except where a command prints text on purpose (`block get`, `brief --plain`, `ref`). Errors come back as `{"ok": false, "error": "…"}` with a non-zero exit code.
+
+| Exit code | Usually means |
+| --- | --- |
+| `0` | done |
+| `1` | git or another tool failed |
+| `2` | bad input, or refused: unknown field, a value that looks like a credential, a file synapsidian may not change, no vault |
+| `3` | not found, or already exists |
+| `4`, `5` | command-specific; see each page |
+
+<Aside title="State outside the notes">
+Per-vault state that is not a note lives in `<vault>/.git/synapsidian/`: the session queue, saved sessions, the vault lock, video frames, and the add-ons' state. It is inside `.git`, so it is never committed and never synced as a note.
+</Aside>

@@ -1,5 +1,20 @@
 ---
-title: brief
+title: synapsidian brief
+description: The session-start brief, as hook JSON, Markdown or data.
 ---
 
-Stub.
+```bash
+synapsidian brief [--minimal] [--plain | --json] [--today YYYY-MM-DD]
+```
+
+Builds what every Claude Code session starts with: who you are (from [About.md](/synapsidian/configuration/about/)), the vault's rules, what is due, what is in progress, and active projects (D21). The `SessionStart` hook runs it; see [Session hooks](/synapsidian/concepts/session-hooks/).
+
+| Flag | Output |
+| --- | --- |
+| none | SessionStart hook JSON |
+| `--plain` | the brief as Markdown; `/synapsidian:daily` uses it |
+| `--json` | the agenda as data, for the [dock](/synapsidian/extensions/dock/) (D156) |
+| `--minimal` | About facts and the vault path only; used after `/compact` |
+| `--today` | another date as today, for tests |
+
+With no vault configured it prints nothing (`--json`: `{"ok": false}`) and exits `0`, so a missing vault never breaks a session.

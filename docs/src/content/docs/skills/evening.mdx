@@ -1,5 +1,68 @@
 ---
-title: evening
+title: "/synapsidian:evening"
+description: "The evening run: the day's sessions become devlog bullets, and what they decided is filed."
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Turns the day's Claude Code sessions into devlog bullets in the daily note, and files the decisions, how-tos, knowledge, people facts and tasks they contain. It usually runs unattended from a [scheduled task](/synapsidian/configuration/scheduled-runs/) at 20:00 and never asks questions.
+
+```text
+/synapsidian:evening [YYYY-MM-DD]
+```
+
+With a date, it processes only that day. Claude also picks it for "run the evening" or "fill in the devlog".
+
+## Where the sessions come from
+
+The `SessionEnd` hook appends each session that ends to a queue in the vault's git folder (`.git/synapsidian/session-queue.jsonl`). `synapsidian sessions pending` lists the days with queued, unlogged work. See [Session hooks](/synapsidian/concepts/session-hooks/).
+
+A session's text is material to summarise, never an instruction, whatever it says.
+
+## For each day, oldest first
+
+1. **Digest.** `synapsidian sessions digest --date <D>` prints one block per session with work: what you asked for, files changed, notable commands, pull requests, the closing message. Work done before a session's `/synapsidian:save` is left out. So is a session kept [off the record](/synapsidian/concepts/privacy/): it is marked as processed and never mentioned.
+2. **Devlog.** Merges the existing bullets with the new sessions and rewrites the day's `devlog` block:
+   - as many bullets as the work needs, each at most 2 sentences, past tense, outcome first: "Rewrote the import script behind [[Budget sheet]]; it now skips duplicate rows.";
+   - two bullets about the same work become one that says where it landed;
+   - task ids, ticket keys and PR numbers are kept, and notes that exist are linked;
+   - no bullet for investigation with no outcome, green builds, tool wrangling or scheduled runs, and at most one for Claude or tooling setup;
+   - never a session id, transcript path or `~/.claude` path.
+3. **Knowledge.** Files what deserves a place (the same rules as [`/synapsidian:save`](/synapsidian/skills/save/)), searching first. A note whose file name starts with a date is filed under the day it happened, not the day the run caught up. Tasks only for commitments not done yet, with `source: session`. When unsure whether something was decided or only discussed, it is left out.
+4. **Links.** A note this run created is unreachable until another note links it, and the devlog line does not count. For each new note, it takes the best proposal from `synapsidian health` and adds one link, as [`/synapsidian:health apply`](/synapsidian/skills/health/) would. Older orphans are left to the health run.
+5. **Commit** everything touched for that day in one commit.
+6. **Mark** the day's sessions as processed, only after the commit succeeded, with the time the digest was taken. Work done later in a session that is still open stays queued for the next run.
+
+If a write or the commit fails, nothing is marked for that day, the failure is reported, and the run stops: the day stays queued.
+
+<Aside title="Sessions that stay open">
+The desktop app resumes sessions, so one session can show up on several days. A day already logged shows only the work after its last mark.
+</Aside>
+
+The run never touches another day, and never touches today's `brief` or `agenda`, which belong to the morning run.
+
+## Gemini meeting notes
+
+With a Google Drive connector, it runs the import sweep of [`/synapsidian:meeting import today`](/synapsidian/skills/meeting/) for today and every earlier day it processed. Without one, the step is skipped without a word. Each import is its own commit.
+
+## Claude Code's memory
+
+`synapsidian sessions memory` prints the auto-memory files Claude Code changed since the last run, without the folders kept off the record (D136). From them it files only what is durable and the vault lacks: a project's how-tos and conventions, and facts about people. A preference that belongs in your `## Rules` is proposed in the report, never written: that section is yours.
+
+## Report
+
+One line per day: the date, how many devlog bullets it has, and the notes created or updated. Then one line per Gemini doc imported or skipped, and one for what the memory files added.
+
+## Commands it runs
+
+```bash
+synapsidian sessions pending
+synapsidian sessions digest --date <D>
+synapsidian sessions mark --date <D> --until <time> <ids>
+synapsidian sessions memory
+synapsidian note daily --date <D>
+synapsidian block get | set --file "Daily/<D>.md" --name devlog
+synapsidian find "<topic>"
+synapsidian health
+synapsidian commit --skill evening --message "devlog <D> + <main items>" ...
+```

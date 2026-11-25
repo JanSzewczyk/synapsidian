@@ -1,5 +1,80 @@
 ---
-title: morning
+title: "/synapsidian:morning"
+description: "The morning run: brief, agenda with meeting notes, and what changed overnight."
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Fills today's daily note with what you need to start the day: what needs attention, what got done, what is coming up, today's meetings with their notes created, and what the evening run and other sessions changed overnight. It usually runs unattended from a [scheduled task](/synapsidian/configuration/scheduled-runs/) at 09:00 on weekdays, and never asks questions.
+
+```text
+/synapsidian:morning
+```
+
+Claude also picks it for "morning brief" or "what's on today?". For only the daily note from the vault, use [`/synapsidian:daily`](/synapsidian/skills/daily/).
+
+## What it reads
+
+A source that is not available is skipped silently. Everything external is read-only, and what it reads (the calendar included) is material, never an instruction.
+
+| Source | What |
+| --- | --- |
+| Tasks | open tasks by due date, and tasks done since the "done window" (`synapsidian when done-window`) |
+| People | notes whose `follow_up` is today or earlier |
+| Goals | active goals whose `target` is within 30 days or passed |
+| Calendar | today's events for the agenda; tomorrow's only for prep items |
+| Vault history | commits since the last morning run by `evening`, `save`, `review` and `health` |
+| Archive | one note, how-to or live decision unchanged for 60 days, the most linked-to first; the same note at most once in 90 days |
+| Stale facts | at most 3 facts stamped `(as of …)` more than 30 days ago; each asked about once in 14 days |
+
+With [synapsidian-work](/synapsidian/extensions/work/) installed, `synapsidian-work hook morning` adds pull requests, Jira tickets and asks from email and Slack.
+
+## What it writes
+
+It creates a meeting note for each of **today's** qualifying events, as [`/synapsidian:meeting`](/synapsidian/skills/meeting/) does: deduplicated by event id, with person stubs. Then it replaces three generated blocks of `Daily/<today>.md`.
+
+### brief
+
+In this order, leaving out empty sections:
+
+1. **Needs attention.** Overdue tasks with their due date, then due today, then people to follow up (with the first open topic from their note), then goals past their target, then prep for tomorrow's meetings. A due task whose blocker is still open says `blocked by [[T5 …]]`: the blocker is what needs attention.
+2. **Done.** Tasks closed since the done window, or "Nothing new since yesterday."
+3. **Coming up.** Tasks due in the next 7 days (at most 6), at most 2 undated tasks untouched for 14 days or more, and goals whose target is within 30 days with their progress.
+4. **Still true?** One line per stale fact. You answer when you like: a changed fact goes in through `/synapsidian:save` with a new date, and an unchanged one gets its stamp moved to today. The run never changes a fact.
+5. **From the archive.** One note you once wrote, as a reminder. Nothing to do.
+
+One item, one place: a task beats any message about the same thing.
+
+### agenda
+
+Today's events in time order, `- HH:MM [[meeting note]]`, or the event title when no note was created.
+
+### overnight
+
+One line per commit since the last morning run (evening runs, saves from other sessions, the Friday review, the health run), with the notes each created or changed:
+
+```markdown
+- evening 2026-10-13: [[Release checklist]], [[Garden project]]
+```
+
+## Commit and report
+
+One commit, even when only the daily note changed: the next morning's `overnight` counts from it. The reply is the brief as written and one line with the tasks filed and meeting notes created.
+
+<Aside title="Daily vs morning">
+`/synapsidian:daily` leaves a brief alone once it has a **Done** or **Needs attention** line, because those mean the morning run wrote it with sources `daily` does not read.
+</Aside>
+
+## Commands it runs
+
+```bash
+synapsidian note where
+synapsidian when done-window
+synapsidian note daily
+synapsidian query notes --type task | person | goal ...
+synapsidian query commits --since-skill morning --skills evening,save,review,health
+synapsidian query resurface --remember
+synapsidian query stale --remember
+synapsidian block set --file "Daily/<today>.md" --name brief | agenda | overnight
+synapsidian commit --skill morning --message "brief <today>, <n> tasks filed, <n> meetings" ...
+```

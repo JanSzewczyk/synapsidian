@@ -1,5 +1,60 @@
 ---
-title: review
+title: "/synapsidian:review"
+description: Weekly, monthly or quarterly review note, with a safe health pass.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Writes a review note for the week every Friday, for the month on the last Friday of the month, and for the quarter on the last Friday of the quarter: what got done, decisions, goals, open threads, patterns and contradictions. It also runs a safe [health](/synapsidian/skills/health/) pass. It usually runs unattended from a [scheduled task](/synapsidian/configuration/scheduled-runs/) at 16:00 on Fridays.
+
+```text
+/synapsidian:review [week | month | quarter] [YYYY-MM-DD]
+```
+
+For a summary in chat that writes nothing, use [`/synapsidian:recap`](/synapsidian/skills/recap/).
+
+## Which review
+
+`synapsidian when review` gives the kind and the period from the date. A kind you name overrides it and keeps that kind's period. When the scheduled run missed its Friday and fires on the weekend or the Monday after, the result says `catch_up_for`, and the run reviews that missed period. The note is named after the period's last day, so it carries that Friday's date.
+
+## Steps
+
+1. **Health.** `synapsidian health --fix` applies the safe fixes the weekday run missed. Everything else, stuck tasks included (`doing` or `waiting` with no change for over 14 days), goes into the review as a list.
+2. **Gather.** The `devlog` of every daily note in the period; tasks done, still open and created; decisions and meetings created; active projects when the vault has them; goals and their progress log lines dated in the period. A month or quarter review builds on the week reviews instead of re-reading every day.
+3. **Write** `Reviews/<period_end> <kind> review.md`.
+4. **Commit** the review and every file the health pass fixed, and reply with its Summary and Open threads.
+
+The daily note is not edited: the next morning run lists the review under "Written overnight".
+
+## The review note
+
+| Section | Holds |
+| --- | --- |
+| Summary | 3 to 5 sentences on what the period was about |
+| Done | what moved, grouped by project when the vault has projects, otherwise by topic |
+| Decisions | the decisions made, one line each |
+| Goals | each active or paused goal with its progress, target and what moved; then the goals achieved |
+| Open threads | overdue tasks, stuck work, things promised and not done |
+| Patterns | themes that recur across at least three notes or days and were never named (D19); "none found" rather than invented |
+| Contradictions | notes that now disagree, each with both links |
+| Vault health | how many fixes, and the issues worth your attention |
+
+<Aside title="The review only lists">
+A goal past its target, or with nothing logged all period, gets the choice it needs: a new target, `paused` or `dropped`. A stuck task gets: still live, back to `todo` with a date, or dropped. The review lists them; you decide. Contradictions are reported, never fixed on this basis.
+</Aside>
+
+## Add-ons
+
+- `synapsidian-work hook review` adds the work add-on's steps, such as wins for the period.
+- When the vault has the projects extension, `synapsidian-projects hook review` adds per-project progress, built with `synapsidian-projects progress`.
+
+## Commands it runs
+
+```bash
+synapsidian when review [--date D]
+synapsidian health --fix
+synapsidian block get --file "Daily/<date>.md" --name devlog
+synapsidian query notes --type task | decision | meeting | goal | review ...
+synapsidian note new --type review --title "<kind> review" --field period=<kind> --field period_start=<start> --field period_end=<end>
+synapsidian commit --skill review --message "<kind> review <end>, <n> health fixes" ...
+```

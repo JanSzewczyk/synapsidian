@@ -1,5 +1,42 @@
 ---
-title: find
+title: "/synapsidian:find"
+description: Search the vault and answer from it, citing notes as links.
 ---
 
-Stub.
+Answers a question from what the vault holds, citing every claim with the note it came from. It writes nothing.
+
+```text
+/synapsidian:find <question or keywords>
+```
+
+Claude also uses it when you ask what you know, decided or planned about something ("what did we decide about the export format?"), and before it creates a note, to check the note does not exist yet.
+
+## How it searches
+
+The search runs in an Explore subagent (D131), so the notes it reads stay out of your conversation. You get the answer and the links, not the notes' text.
+
+1. Notes are in English and the search matches words, not meaning, so a question in another language is turned into English keywords first. Names, ticket keys and product terms stay as they are.
+2. It runs the ranked search, `synapsidian find "<question>"`. A question that clearly means one kind of note adds `--type` (task, person, decision, meeting, howto, note, idea, goal, or project with the projects add-on). Archived or source material adds `--all`.
+3. When the top hits miss, it searches again with other words: synonyms, a likely title, a person's or project's name, a ticket key. Two or three searches are normal. Exact strings such as error messages fall back to a plain text search.
+4. It reads the notes that look relevant and follows links one hop when the answer is spread out.
+5. It answers in your language, short, with each claim cited as `[[Note title]]`.
+
+When nothing turns up, it says so and lists what it searched for, for example "searched: 'export format', 'XLSX', 'ABC-123'; 0 matching notes". It never says a note does not exist without searching.
+
+## What relates to a note
+
+Ask "what's related to X" and it runs `synapsidian find --related "<note title>"`. The result lists the notes most like it and whether each already links to it. The unlinked ones come first: they are the connections the vault is missing.
+
+## After the answer
+
+- If the answer shows a note is stale or wrong, it says so and offers to fix it.
+- When the answer pulls three or more notes into something none of them says alone, it offers to keep it as a concept note through [`/synapsidian:save`](/synapsidian/skills/save/).
+
+## Commands it runs
+
+```bash
+synapsidian find "<query>" [--type <type>] [--all]
+synapsidian find --related "<note title>"
+```
+
+See [`synapsidian find`](/synapsidian/cli/find/) for how the ranking works.

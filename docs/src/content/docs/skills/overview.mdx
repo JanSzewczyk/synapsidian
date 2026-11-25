@@ -1,5 +1,53 @@
 ---
-title: overview
+title: Skills overview
+description: The 16 skills of the core plugin at a glance.
+sidebar:
+  label: Overview
+  order: 0
 ---
 
-Stub.
+Every skill is a slash command, `/synapsidian:<name>`. Claude can also pick one on its own when what you ask matches it ("save this", "what's on today?"). The scheduled runs call the same skills unattended.
+
+Each run that changes the vault ends with one git commit, `synapsidian(<skill>): …`, so you can see and undo what it did.
+
+## Capture and notes
+
+| Skill | Does | Writes |
+| --- | --- | --- |
+| [`capture`](/synapsidian/skills/capture/) | drops text into the Inbox as given | `Inbox/` |
+| [`save`](/synapsidian/skills/save/) | files what matters from the conversation; `inbox` sorts the captures | notes, tasks, devlog |
+| [`task`](/synapsidian/skills/task/) | adds, updates, closes or lists tasks | `Tasks/` |
+| [`meeting`](/synapsidian/skills/meeting/) | a meeting note from the calendar; `import` fills it from Gemini notes | `Meetings/`, `People/` |
+| [`daily`](/synapsidian/skills/daily/) | today's note with a brief from the vault | `Daily/` |
+
+## Knowledge
+
+| Skill | Does | Writes |
+| --- | --- | --- |
+| [`find`](/synapsidian/skills/find/) | answers from the vault with links | nothing |
+| [`ingest`](/synapsidian/skills/ingest/) | takes in an article, video, document or image and updates the notes it touches | `Sources/`, notes |
+| [`research`](/synapsidian/skills/research/) | vault first, then the web for the gaps, as a cited dossier | `Research/`, `Sources/` |
+| [`think`](/synapsidian/skills/think/) | challenge, brainstorm, topic, patterns, distill, learn, ideas, graduate | `Thinking/` |
+| [`recap`](/synapsidian/skills/recap/) | summarises a period in chat | nothing |
+
+## Runs
+
+Usually started by a [scheduled task](/synapsidian/configuration/scheduled-runs/), never asking questions.
+
+| Skill | When | Writes |
+| --- | --- | --- |
+| [`health`](/synapsidian/skills/health/) | weekdays 08:15 | safe fixes, `## Vault health` in the daily note |
+| [`morning`](/synapsidian/skills/morning/) | weekdays 09:00 | brief, agenda, overnight; today's meeting notes |
+| [`evening`](/synapsidian/skills/evening/) | every day 20:00 | devlog from the day's sessions; what they decided |
+| [`review`](/synapsidian/skills/review/) | Fridays 16:00 | a week, month or quarter review |
+
+## Setup
+
+| Skill | Does |
+| --- | --- |
+| [`setup`](/synapsidian/skills/setup/) | sets up or repairs the vault, Obsidian and its plugins, and `About.md` |
+| [`schedule`](/synapsidian/skills/schedule/) | creates or checks the scheduled tasks |
+
+## Add-on skills
+
+The add-ons bring their own skills under their own prefix: `/synapsidian-work:*` and `/synapsidian-projects:*`. See [Extensions](/synapsidian/extensions/overview/).

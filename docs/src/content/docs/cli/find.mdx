@@ -1,5 +1,30 @@
 ---
-title: find
+title: synapsidian find
+description: Ranked keyword search over the vault, and the notes most like a note.
 ---
 
-Stub.
+```bash
+synapsidian find "<query>" [--type TYPE] [--limit 8] [--all]
+synapsidian find --related "<note title or path>" [--type TYPE]
+synapsidian find --eval questions.jsonl [--all]
+```
+
+## Ranking
+
+Each note is scored with BM25 per field (title, aliases, summary, tags, body), weighted so a hit in the title or summary outweighs one buried in the body. The output is JSON hits, each with the note's title, type, summary, a snippet and its absolute `path`.
+
+The search matches words, not meaning. Notes are written in English, so [`/synapsidian:find`](/synapsidian/skills/find/) turns a question in another language into English keywords first and searches more than once.
+
+| Flag | Effect |
+| --- | --- |
+| `--type` | only notes of that type |
+| `--limit` | how many hits (default 8) |
+| `--all` | include `Archive/` and `Sources/` |
+
+## --related
+
+The notes most like the given one (D127), each with `linked`: whether the two already link to each other. Unlinked hits are the connections the vault is missing; `save` and the evening run use them to link new notes.
+
+## --eval
+
+Measures search quality over a JSONL file of `{"q": "…", "expect": ["Title"]}` lines and reports recall@1, recall@5 and MRR. For development.

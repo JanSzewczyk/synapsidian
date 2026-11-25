@@ -1,5 +1,65 @@
 ---
-title: file-structure
+title: File structure
+description: How the repository and the core plugin are laid out.
 ---
 
-Stub.
+## The repository
+
+```text
+synapsidian/
+├── .claude-plugin/
+│   └── marketplace.json      # the marketplace: four plugins
+├── .github/                  # workflows (plugin checks, tests, docs) and Dependabot
+├── docs/                     # this site (Astro Starlight)
+├── plugins/
+│   ├── synapsidian/          # the core
+│   ├── synapsidian-work/     # work add-on
+│   ├── synapsidian-projects/ # projects add-on
+│   └── synapsidian-dock/     # dock mod
+├── references/
+│   └── decisions.md          # the design decisions, D1 onwards
+├── tests/                    # pytest suite and a fixture vault
+├── CHANGELOG.md              # one section per plugin release
+├── CLAUDE.md                 # rules for working on the repository
+├── pyproject.toml            # dev environment: tests and lint
+└── uv.lock
+```
+
+`docs/`, `references/`, `tests/`, `pyproject.toml` and `uv.lock` ship with none of the plugins.
+
+## The core plugin
+
+```text
+plugins/synapsidian/
+├── .claude-plugin/plugin.json   # manifest and the three options
+├── bin/synapsidian              # the CLI wrapper, on the Bash PATH
+├── hooks/
+│   ├── hooks.json               # the five hooks
+│   ├── run.sh                   # finds uv, runs a script
+│   ├── capture.sh               # >> prompts
+│   └── session-end.sh           # the session queue
+├── scripts/                     # one Python script per command, plus synapsidianlib/
+├── schema/
+│   ├── types.yaml               # every note type and field
+│   └── templates/               # body templates per type and kind
+├── bases/                       # the .base views copied into the vault
+├── references/                  # shared rules skills read
+├── skills/<name>/SKILL.md       # the 16 skills
+└── workflows/research-deep.js   # the deep research workflow
+```
+
+| Folder | Holds |
+| --- | --- |
+| `scripts/` | `note`, `find`, `block`, `commit`, `brief`, `validate`, `setup`, `sessions`, `when`, `query`, `health`, `source`, `frames`, `pages`, plus `approve.py` and `capture.py` for the hooks |
+| `scripts/synapsidianlib/` | the shared library: config, schema, frontmatter, blocks, links, git, vault, sources, task ids, dates, credentials, the Templater generator |
+| `references/` | `conventions`, `extraction`, `ingest`, `meetings`, `meeting-import`, `about-interview`, `obsidian-plugins`, `setup-report`, `think-<mode>` |
+
+Each script declares its own dependencies inline (PEP 723) and runs with `uv run --script`.
+
+## The add-ons
+
+| Plugin | Has |
+| --- | --- |
+| `synapsidian-work` | `skills/`, `scripts/` (`prs.py`, `standup.py`, `worklib/`), `extension/`, `references/hook-*.md`, `bin/synapsidian-work` |
+| `synapsidian-projects` | `skills/`, `scripts/` (`projects.py`, `repos.py`, `maps.py`, `flows.py`, `progress.py`, `architect.py`), `extension/`, `references/`, `bin/synapsidian-projects` |
+| `synapsidian-dock` | `hooks/hooks.json` and `hooks/register.ts` (the mod), `tests/` |

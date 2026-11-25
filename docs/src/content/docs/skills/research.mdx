@@ -1,5 +1,89 @@
 ---
-title: research
+title: "/synapsidian:research"
+description: Vault first, then the web for the gaps, kept as a cited dossier in Research/.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Researches a question and keeps the answer: first what the vault already knows, then the web for the gaps only. The result is a dossier in `Research/` with every finding cited, the 2 to 5 sources it rests on kept in `Sources/`, and the notes it touches updated.
+
+```text
+/synapsidian:research <question> [deep]
+/synapsidian:research refresh <dossier>
+/synapsidian:research watch
+```
+
+For material you already have, use [`/synapsidian:ingest`](/synapsidian/skills/ingest/). For a question only the vault can answer, use [`/synapsidian:find`](/synapsidian/skills/find/).
+
+## Steps
+
+### 1. What the vault knows
+
+Searches in at least three phrasings, sources and earlier research included. It notes what the vault already answers, what may be stale and what is missing. If the vault answers fully and nothing looks stale, it answers from the vault and writes nothing.
+
+When the question touches your own code and the code is at hand, it checks what the code does today, read-only: imports and call sites, not just package names.
+
+### 2. The web, for the gaps only
+
+<Aside type="caution" title="Queries never carry vault content">
+Search queries come from the question, never from your notes (D25). Ticket keys, customer names, internal hostnames, unreleased product names and people's names stay out, even when the question contains them. A question that is private through and through is answered from the vault, the code or your documents instead.
+</Aside>
+
+| Depth | How |
+| --- | --- |
+| default | 2 to 4 aimed searches, the best pages read; extended search when results are thin or old |
+| parallel | a question that splits (compare A, B and C) gets one subagent per thread, 3 to 5 |
+| `deep` | always split into threads, extended searches, and disagreement looked for on purpose (benchmarks against claims, independent against vendor) |
+
+Primary sources (official docs, specs, changelogs, papers, maintainers) beat summaries of them. For anything version- or time-sensitive, the newest authoritative source wins.
+
+### 3. Keep the sources
+
+The 2 to 5 sources the answer depends on (D72) are copied with `synapsidian source fetch` and read to check that the cited claims are really there. Every other page stays a URL in the dossier.
+
+### 4. Write the dossier
+
+`Research/<date> <title>.md`, type `research`, with these sections:
+
+| Section | Holds |
+| --- | --- |
+| Answer | the direct answer, with the confidence it deserves |
+| Key findings | one cited bullet per finding; each quote checked with `source quote-check` (D125) |
+| Disagreements | who says what, and which source is trusted more and why |
+| Open questions | what stays unknown and what would settle it |
+| What the vault already knew | the notes from step 1, and what changed about them |
+| Sources | the kept source notes, then the other URLs |
+
+### 5. Integrate and commit
+
+Findings are worked into existing notes as ingest does, at most about 12. The run adds a devlog bullet, makes one commit, and answers you: the short answer first, then the dossier, sources, notes changed and open questions.
+
+## research-deep
+
+For the widest sweep, the plugin ships a workflow, `/synapsidian:research-deep <question>` (D138). An interactive session runs it in the background through four phases:
+
+1. **Vault**: what the vault knows.
+2. **Angles**: up to 5 angles on the question.
+3. **Search**: parallel web searches, one per angle.
+4. **Verify**: each claim (up to 30) checked against its page by a separate agent.
+
+Its report marks each claim `supported`, `unverified` or `refuted`. `/synapsidian:research` then writes the dossier: refuted claims stay out, unverified ones are marked. A scheduled or headless run cannot start a workflow, so there `deep` uses the subagent sweep.
+
+## Refresh and watch
+
+A question that keeps moving (a library's state, prices, a regulation) can be watched (D134). After a run, Claude offers once to set `watch` to `weekly`, `monthly` or `quarterly` on the dossier.
+
+- **`refresh <dossier>`** searches only for what changed since the dossier's `refreshed` date (or `created`), with the same query rules. It adds a section "What changed since &lt;date&gt;", corrects the Answer if a finding overturns it (the old wording stays, struck through), and sets `refreshed` to today.
+- **`watch`**, also a scheduled run on Monday mornings, refreshes at most three dossiers whose interval has passed, oldest first, unattended.
+
+## Commands it runs
+
+```bash
+synapsidian find "<words>" [--all]
+synapsidian source fetch "<url>"
+synapsidian source quote-check --file "<source>" "<words>" ...
+synapsidian note new --type research --title "<title>" --field question="<question>" --field summary="<answer>" --field sources="<a>,<b>"
+synapsidian note set --file "<dossier>" --field watch=monthly | refreshed=<today>
+synapsidian query watched
+synapsidian commit --skill research --message "<question>: <n> sources, <m> notes updated" ...
+```

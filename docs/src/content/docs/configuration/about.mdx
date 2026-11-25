@@ -1,5 +1,70 @@
 ---
-title: about
+title: About.md
+description: The note every session reads - who you are, how you work, and your rules for Claude.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+`About.md` sits at the vault's root. The session-start hook puts it in front of every Claude Code session, so Claude knows who it works for. Setup creates it and interviews you to fill it (D160).
+
+```markdown
+---
+type: about
+created: 2026-11-24
+role: Product designer
+timezone: Europe/Berlin
+language: English
+interests: [typography, accessibility]
+protected: [Journal]
+---
+## Who I am
+
+## Current focus
+
+## How I work
+
+## Rules
+```
+
+## Fields
+
+| Field | Holds |
+| --- | --- |
+| `role` | what you do: a job title, "student", "freelance designer", anything |
+| `timezone` | detected by setup; calendar calls and dates use it |
+| `language` | the language Claude talks to you in; notes stay in English |
+| `interests` | topics Claude weighs when it ingests, researches and ranks ideas |
+| `protected` | folders or files Claude must ask about before touching |
+
+## Sections
+
+| Section | Asked |
+| --- | --- |
+| `## Who I am` | who you are and what you do, in your own words |
+| `## Current focus` | what matters most right now |
+| `## How I work` | habits, tools, hours, anything Claude should keep in mind |
+| `## Rules` | never asked: it is yours |
+
+An add-on can declare its own sections, which its setup asks about: [synapsidian-work](/synapsidian/extensions/work/) adds `## Work` and a `### Work` under Current focus, and [synapsidian-projects](/synapsidian/extensions/projects/) adds `## Projects`.
+
+## The interview
+
+`/synapsidian:setup` (or `/synapsidian:setup about`) asks about the empty fields and sections in one round of at most four questions. Each has up to two drafted answers, taken only from what Claude already knows (your git email, earlier answers, notes in the vault), plus **Skip**. A skipped question comes back the next time setup runs. Only your answers are written, in your words. A section you already wrote is never overwritten.
+
+After a **Current focus** answer, the core offers once to turn what you named into up to three goals or tasks.
+
+## Rules
+
+`## Rules` holds your own rules for Claude in this vault, one per line. Every session reads them, and they override synapsidian's defaults wherever they conflict:
+
+```markdown
+## Rules
+- Write notes about my health in the language I dictate them in.
+- Never create notes about people from my family.
+```
+
+They cannot switch off the schema: a rule that asks for a note the schema would reject makes Claude ask you instead.
+
+<Aside title="Only you change these">
+Claude never writes `## Rules` or the `protected` list; `synapsidian note set` and `note fill` refuse to. Editing `About.md` always asks first, because what it says reaches every session. `/synapsidian:think learn` proposes rules for you to paste.
+</Aside>

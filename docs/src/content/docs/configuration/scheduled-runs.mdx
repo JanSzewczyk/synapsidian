@@ -1,5 +1,40 @@
 ---
-title: scheduled-runs
+title: Scheduled runs
+description: The desktop scheduled tasks that keep the vault current, and how to set them up.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+The recurring runs are scheduled tasks in the Claude Code desktop app. [`/synapsidian:schedule`](/synapsidian/skills/schedule/) creates and checks them.
+
+| Task id | Default (local) | Runs |
+| --- | --- | --- |
+| `synapsidian-health` | `15 8 * * 1-5`: weekdays 08:15 | `/synapsidian:health` |
+| `synapsidian-morning` | `0 9 * * 1-5`: weekdays 09:00 | `/synapsidian:morning` |
+| `synapsidian-evening` | `0 20 * * *`: every day 20:00 | `/synapsidian:evening` |
+| `synapsidian-review` | `0 16 * * 5`: Fridays 16:00 | `/synapsidian:review` |
+| `synapsidian-research-watch` | `30 8 * * 1`: Mondays 08:30 | `/synapsidian:research watch`, only when a dossier is watched |
+
+[synapsidian-work](/synapsidian/extensions/work/) adds a stand-up task, an hour before your `standup_time` on your `standup_days`.
+
+## Two settings you make yourself
+
+<Aside type="caution">
+The tools cannot set these. Open **Scheduled** in the desktop app's sidebar and, for each synapsidian task:
+
+1. **Permission mode: auto.** In the default mode every run stops at its first skill call and waits for a person. Never bypass permissions.
+2. **Folder: the vault.** `synapsidian note where` prints its path. A task takes the folder of the session that created it; if that is a code checkout, the runs break when the folder moves.
+</Aside>
+
+## Changing the times
+
+Edit a task's schedule in the app, or ask `/synapsidian:schedule` to. Your times and titles are kept; `check` only fixes a missing task, a wrong prompt or a wrong folder. Keep the order: health before the morning brief, so the brief lists the health commit.
+
+## When a run did not happen
+
+- **The app was closed.** Tasks run only while the desktop app is open. A run missed while the computer slept fires on the next launch.
+- **The evening run missed days.** It catches up every day still in its queue, oldest first.
+- **The Friday review missed.** Run on the weekend or Monday, it reviews that Friday (`catch_up_for`).
+- **A run is stuck in `running`**, or its commit is missing: it waits on a permission prompt. Set the permission mode to **auto**.
+
+`/synapsidian:schedule check` reports each task's status and last run.
