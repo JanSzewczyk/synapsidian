@@ -49,8 +49,16 @@ def about_sections(vault_root: Path, body_chars: int) -> list[str]:
         return ["### About the user", "- `About.md` is missing; `/synapsidian:setup` creates it."]
     parsed = frontmatter.parse(path.read_text(encoding="utf-8", errors="replace"))
     meta = parsed.meta or {}
-    about_fields = schema.load(vault_root).types["about"].fields
+    try:
+        about_fields = schema.load(vault_root).types["about"].fields
+    except schema.SchemaError as exc:
+        # The session still gets its brief, and says why the schema is missing (D161).
+        about_fields, problem = schema.load().types["about"].fields, str(exc)
+    else:
+        problem = ""
     lines = [f"- {k.replace('_', ' ')}: {show(meta[k])}" for k in about_fields if k != "protected" and meta.get(k)]
+    if problem:
+        lines.append(f"- The vault's schema did not load, so synapsidian can't write notes: {problem}")
     rest, rules_section = about.split_rules(parsed.body)
     # Only what the user wrote: template headings with nothing under them are noise. Each part keeps its
     # section (and `###` subsection) as a label, so the text still says who it is about (D160).

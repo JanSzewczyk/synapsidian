@@ -39,6 +39,8 @@ synapsidian setup extension --from "$(synapsidian-work extension)"
 
 It copies the extension into `<vault>/.synapsidian/extensions/synapsidian-work/` (tracked in the vault's git, so the vault keeps validating on a device without synapsidian-work), adds the `One-to-ones` Bases view and the property types, and makes one commit. An unchanged extension makes no commit. Re-run it after every synapsidian-work update.
 
+An error saying this extension `needs synapsidian >= X.Y.Z` means the synapsidian plugin here is older than this add-on (D161): nothing was installed. Tell the user to update synapsidian (`/plugin`), then run this setup again, and stop.
+
 Architecture notes moved to synapsidian-projects with the architect skill (synapsidian-work 0.3.0, D109). If `synapsidian setup check` lists `architecture` under `unknown_types` after this step, send the user to `/synapsidian-projects:setup`, which installs the type and moves the notes into their projects.
 
 ## 3. About the user

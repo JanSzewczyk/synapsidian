@@ -881,6 +881,9 @@ def cmd_extension(vault_root: Path, source: Path, data_dir: Path) -> dict[str, A
     name = str(manifest.get("name") or "")
     if not re.fullmatch(r"[a-z][a-z0-9-]*", name):
         raise ValueError(f"{source}/extension.yaml needs a `name` like synapsidian-work")
+    # An extension this core can't read would break every note write once installed (D161).
+    if problem := schema.requires_problem(manifest, name, config.core_version()):
+        raise ValueError(problem)
     if not vault_root.is_dir():
         raise ValueError("vault does not exist yet; run apply first")
     # Merge into the core plus the other installed extensions first: a conflict fails before any write.

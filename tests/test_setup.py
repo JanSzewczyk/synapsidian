@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 from dataclasses import replace
 from pathlib import Path
@@ -649,6 +650,17 @@ def test_conflicting_extension_is_refused_before_any_write(run, vault, tmp_path)
     (bad / "schema.yaml").write_text("types:\n  task: {folder: Tasks, filename: '{title}'}\n")
     code, out = run("setup", "extension", "--vault", str(vault), "--from", str(bad))
     assert code == 1 and "already exists" in out["error"]
+    assert not (vault / ".synapsidian" / "extensions").exists()
+
+
+def test_an_extension_for_a_newer_core_is_refused_before_any_write(run, vault, tmp_path):
+    run("setup", "apply", "--vault", str(vault), "--name", "N", "--email", "e@x")
+    newer = tmp_path / "newer"
+    shutil.copytree(WORK / "extension", newer)
+    text = (newer / "extension.yaml").read_text().replace("synapsidian >= 0.34.0", "synapsidian >= 99.0.0")
+    (newer / "extension.yaml").write_text(text)
+    code, out = run("setup", "extension", "--vault", str(vault), "--from", str(newer))
+    assert code == 1 and "needs synapsidian >= 99.0.0" in out["error"], out
     assert not (vault / ".synapsidian" / "extensions").exists()
 
 

@@ -285,7 +285,12 @@ def main() -> None:
         print(json.dumps({"ok": False, "error": "vault not found; run /synapsidian:setup"}))
         sys.exit(2)
     today = schema.as_date(args.today) if args.today else dt.date.today()
-    print(json.dumps(check(vault_root, today or dt.date.today(), args.fix), ensure_ascii=False))
+    try:
+        report = check(vault_root, today or dt.date.today(), args.fix)
+    except schema.SchemaError as exc:
+        print(json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False))
+        sys.exit(2)
+    print(json.dumps(report, ensure_ascii=False))
 
 
 if __name__ == "__main__":

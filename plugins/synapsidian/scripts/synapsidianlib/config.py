@@ -27,6 +27,15 @@ DATA_ENV_VARS = ("CLAUDE_PLUGIN_DATA", "SYNAPSIDIAN_DATA")
 PLUGIN_NAME = "synapsidian"
 
 
+def core_version() -> str | None:
+    """This synapsidian's version, from its plugin.json; None when it can't be read."""
+    try:
+        manifest = json.loads((PLUGIN_ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        return str(manifest["version"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def true_case(path: Path) -> Path:
     """`path` with every existing component spelled as it is on disk (absolute, resolved)."""
     path = path.resolve()

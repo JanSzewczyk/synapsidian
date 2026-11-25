@@ -727,6 +727,9 @@ def main() -> None:
         extra = {"fallback": FALLBACK} if exc.code == 4 else {}
         print(json.dumps({"ok": False, "error": str(exc), **extra}, ensure_ascii=False))
         sys.exit(exc.code)
+    except schema.SchemaError as exc:
+        print(json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False))
+        sys.exit(2)
     print(json.dumps(result, ensure_ascii=False, default=str))
 
 

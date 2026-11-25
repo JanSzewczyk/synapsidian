@@ -334,3 +334,16 @@ def test_brief_labels_each_about_section_and_subsection(run, fixture_vault):
     assert "How I work" not in out.split("### Vault rules")[0]  # an empty section says nothing
     _, minimal = run("brief", "--plain", "--minimal", vault=fixture_vault)
     assert "I build things." not in minimal and "- role: Engineer" in minimal
+
+
+def test_the_brief_still_answers_when_the_schema_wont_load(run, vault):
+    # An extension installed by a newer core (D161): the session and the dock keep their brief.
+    folder = vault / ".synapsidian" / "extensions" / "newer"
+    folder.mkdir(parents=True)
+    (folder / "schema.yaml").write_text("extend:\n  about:\n    lanes: [a]\n")
+    (vault / "About.md").write_text("---\ntype: about\nrole: Engineer\n---\n")
+    code, out = run("brief", "--plain", vault=vault)
+    assert code == 0 and "role: Engineer" in out
+    assert "The vault's schema did not load, so synapsidian can't write notes: extension newer" in out
+    code, out = run("brief", "--json", vault=vault)
+    assert code == 0 and out["ok"] is True

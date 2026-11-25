@@ -35,7 +35,7 @@ Pull requests also run:
 
 ## Versions and releases
 
-Versions are bumped only on request, through `/plugin-release`, which proposes the bump from the diff and writes the `CHANGELOG.md` section, `## [<version> <plugin>] — <date>`. Release tags are `<plugin>--v<version>`. An add-on's `extension.yaml` version stays equal to its plugin version.
+Versions are bumped only on request, through `/plugin-release`, which proposes the bump from the diff and writes the `CHANGELOG.md` section, `## [<version> <plugin>] — <date>`. Release tags are `<plugin>--v<version>`. An add-on's `extension.yaml` version stays equal to its plugin version; its `requires: synapsidian >= X.Y.Z` names the oldest core that reads its `schema.yaml`, raised when the schema uses something a newer core added (D161).
 
 ## This site
 
