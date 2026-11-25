@@ -1,4 +1,4 @@
-# Search benchmark (spec §10.7). Each question must find `expect` in the top 5.
+# Search benchmark (D20; formerly spec §10.7, removed 2026-11-25). Each question must find `expect` in the top 5.
 # Written separately from the fixture notes; test_find.py asserts no question shares
 # more than one content word with its target's title, so the set can't leak answers.
 - q: why did we decide to do excel downloads before powerpoint

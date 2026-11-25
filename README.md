@@ -88,8 +88,8 @@ Each plugin's README lists its skills, options and hooks.
 
 Before you begin, ensure you have the following installed:
 
-- **macOS** and [Claude Code](https://claude.com/claude-code)
-- **[Obsidian](https://obsidian.md)** 1.14 or later (core Bases with kanban); `brew install --cask obsidian`
+- [Claude Code](https://claude.com/claude-code). synapsidian is developed and tested on **macOS**. Setup also finds Obsidian on Windows and Linux (D157); the hooks need a POSIX shell (`/bin/sh`)
+- **[Obsidian](https://obsidian.md)** 1.14 or later (core Bases with kanban); on macOS `brew install --cask obsidian`
 - **[uv](https://docs.astral.sh/uv/)** — runs the Python scripts; it fetches Python 3.12+ and each script's libraries itself, e.g. trafilatura, markitdown, youtube-transcript-api, pypdfium2, and for `visual` yt-dlp with a bundled ffmpeg
 - **Git** for version control
 - **synapsidian-work only** — [`gh`](https://cli.github.com) for pull requests, the Atlassian connector for Jira, Gmail and Slack connectors for asks
@@ -100,12 +100,14 @@ Four Obsidian community plugins are required and set up by `/synapsidian:setup`:
 
 #### 1. Add the marketplace and the core plugin
 
-From a Claude Code session, with the path of your clone of this repository:
+From a Claude Code session:
 
 ```text
-/plugin marketplace add <path to this repo>
+/plugin marketplace add JanSzewczyk/synapsidian
 /plugin install synapsidian@synapsidian
 ```
+
+To work from a clone of this repository instead, use its path: `/plugin marketplace add <path to this repo>`.
 
 Claude Code asks for the vault path (default `~/Synapsidian`; give the folder's exact spelling).
 
