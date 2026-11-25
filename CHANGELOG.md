@@ -9,6 +9,30 @@ The sections before synapsidian-dock 0.6.0 were reconstructed from git history o
 commits that changed each plugin's version; some versions in between had no release commit of their
 own and are folded into the next one.
 
+## [0.34.1 synapsidian] — 2026-11-25
+
+### Changed
+
+- README: developed and tested on macOS; setup also finds Obsidian on Windows and Linux, and the hooks need a POSIX shell (`/bin/sh`).
+
+## [0.7.1 synapsidian-work] — 2026-11-25
+
+### Fixed
+
+- The setup skill's description and the README name `working_hours` and the `## Work` sections among the About fields setup fills.
+
+## [0.13.1 synapsidian-projects] — 2026-11-25
+
+### Fixed
+
+- `/synapsidian-projects:architect` no longer advertises a `[module]` argument it never read; it takes `<project> [app]`.
+
+## [0.7.2 synapsidian-dock] — 2026-11-25
+
+### Fixed
+
+- The README requires synapsidian 0.34.x, as the manifest's `~0.34.0` does, instead of "0.32.0 or later".
+
 ## [0.34.0 synapsidian] — 2026-11-24
 
 ### Added

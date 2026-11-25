@@ -2,7 +2,7 @@
   "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "synapsidian-work",
   "displayName": "Synapsidian Work",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Work add-on for the synapsidian plugin: 1:1 notes and prep, the stand-up note, retro meeting notes, a win log for performance reviews, pull requests, Jira tickets, and email and Slack asks in the morning brief.",
   "author": {
     "name": "Szum Tech Team",
