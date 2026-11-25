@@ -1,0 +1,232 @@
+---
+/* The four plugins with their current versions, read from each plugin.json at build time
+   (the build runs in docs/, so the plugins sit one folder up). */
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const version = (name: string) =>
+  JSON.parse(readFileSync(resolve(process.cwd(), `../plugins/${name}/.claude-plugin/plugin.json`), "utf8")).version as string;
+
+const plugins = [
+  {
+    name: "synapsidian",
+    role: "Core",
+    note: "Daily notes, tasks, meetings, saving, ingesting, research, thinking tools, search and reviews. Fits any vault, personal or work.",
+    docs: "/getting-started/introduction/",
+    changelog: "/changelog/",
+  },
+  {
+    name: "synapsidian-work",
+    role: "Add-on",
+    note: "1:1 notes and prep, the stand-up note, a win log, and pull requests, Jira, email and Slack asks in the morning brief.",
+    docs: "/extensions/work/",
+    changelog: "/extensions/work/changelog/",
+  },
+  {
+    name: "synapsidian-projects",
+    role: "Add-on",
+    note: "A hub with a kanban board per project, milestones, MADR decisions, specs, postmortems, architecture notes and mind maps.",
+    docs: "/extensions/projects/",
+    changelog: "/extensions/projects/changelog/",
+  },
+  {
+    name: "synapsidian-dock",
+    role: "Add-on",
+    note: "What is due, in a band above the prompt, and a task pane whose keys change a task without a Claude turn.",
+    docs: "/extensions/dock/",
+    changelog: "/extensions/dock/changelog/",
+  },
+].map((p) => ({ ...p, version: version(p.name) }));
+---
+
+<div class="plugins">
+  {
+    [
+      { title: "Core", items: plugins.slice(0, 1) },
+      { title: "Add-ons, each on top of the core", items: plugins.slice(1) },
+    ].map((g) => (
+      <section class="group">
+        <h3 class="group-title">{g.title}</h3>
+        <ul>
+          {g.items.map((p) => (
+            <li data-role={p.role.toLowerCase()}>
+              <a class="name" href={base + p.docs}>
+                {p.name}
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+              <p class="note">{p.note}</p>
+              <a class="version" href={base + p.changelog} aria-label={`${p.name} ${p.version} changelog`}>
+                <span class="num">v{p.version}</span>
+                <span class="log">changelog</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  /* Starlight prose adds margin-top between siblings; the component spaces itself */
+  .plugins :is(section, h3, ul, li, p, a, span, svg) {
+    margin-top: 0 !important;
+  }
+  .plugins {
+    display: grid;
+    gap: 1.75rem;
+    margin: 1.75rem 0 0;
+  }
+  .group-title {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin: 0 0 0.5rem;
+    font-family: var(--sl-font);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+  .group-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--sl-color-hairline-shade);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+  li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "name"
+      "note"
+      "version";
+    gap: 0.4rem;
+    align-items: baseline;
+    margin: 0;
+    padding: 0.9rem 0.75rem;
+    border-radius: 0.625rem;
+    transition: background-color 0.15s;
+  }
+  li:hover,
+  li:focus-within {
+    background: color-mix(in srgb, var(--sl-color-accent) 6%, transparent);
+  }
+  li[data-role="core"] {
+    background: color-mix(in srgb, var(--sl-color-accent) 7%, transparent);
+    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 28%, transparent);
+  }
+  li[data-role="core"]:hover,
+  li[data-role="core"]:focus-within {
+    background: color-mix(in srgb, var(--sl-color-accent) 11%, transparent);
+  }
+
+  .name {
+    grid-area: name;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    justify-self: start;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    color: var(--sl-color-white);
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 0.25rem;
+  }
+  li[data-role="core"] .name {
+    font-size: 1.2rem;
+  }
+  .name svg {
+    color: var(--sl-color-text-accent);
+    opacity: 0;
+    translate: -0.25rem 0;
+    transition:
+      opacity 0.15s,
+      translate 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .name:hover,
+  .name:focus-visible {
+    color: var(--sl-color-text-accent);
+  }
+  .name:hover svg,
+  .name:focus-visible svg {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .note {
+    grid-area: note;
+    margin: 0;
+    max-width: 62ch;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    line-height: 1.55;
+  }
+
+  .version {
+    grid-area: version;
+    justify-self: start;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.1rem 0.55rem;
+    border: 1px solid var(--sl-color-hairline-shade);
+    border-radius: 999px;
+    font-family: var(--sl-font-mono);
+    font-size: 0.72rem;
+    color: var(--sl-color-gray-3);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      border-color 0.15s,
+      color 0.15s;
+  }
+  .num {
+    color: var(--sl-color-gray-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .version:hover,
+  .version:focus-visible {
+    border-color: color-mix(in srgb, var(--sl-color-accent) 50%, transparent);
+    color: var(--sl-color-text-accent);
+  }
+  .version:hover .num,
+  .version:focus-visible .num {
+    color: var(--sl-color-text-accent);
+  }
+  :is(.name, .version):focus-visible {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Wide: one row per plugin, name | what it does | version */
+  @media (min-width: 44rem) {
+    li {
+      grid-template-columns: 13.5rem minmax(0, 1fr) auto;
+      grid-template-areas: "name note version";
+      column-gap: 1.5rem;
+      align-items: center;
+    }
+    .version {
+      justify-self: end;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .name svg {
+      transition: none;
+    }
+  }
+</style>

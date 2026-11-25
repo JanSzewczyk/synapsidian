@@ -101,6 +101,8 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
     ".landing-section > .landing-lead",
     ".flow .group-title",
     ".flow li",
+    ".plugins .group-title",
+    ".plugins li",
     ".why-intro",
     ".why > div",
     ".start-copy",
@@ -220,6 +222,22 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
     line-height: 1.7;
     background: none;
     border: 0;
+  }
+  /* Narrow screens: the commands are wider than the box, so the button moves up beside the
+     label instead of covering the scrolled text */
+  @media (max-width: 40rem) {
+    .install-label {
+      min-height: 2rem;
+      display: flex;
+      align-items: center;
+    }
+    .install-box pre {
+      padding-right: 1rem;
+    }
+    .install-box .copy-btn {
+      top: calc(-2rem - 0.4rem);
+      right: 0;
+    }
   }
   .install-box code {
     background: none;
