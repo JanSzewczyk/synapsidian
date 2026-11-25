@@ -1,21 +1,5 @@
 /* Landing page (template: splash). Hero and flow live in their own components. */
 
-/* Soft blue glow behind the hero */
-[data-has-hero] .hero {
-  position: relative;
-}
-[data-has-hero] .hero::before {
-  content: "";
-  position: absolute;
-  inset: -6rem 0 auto 0;
-  height: 30rem;
-  background:
-    radial-gradient(50% 60% at 18% 0%, color-mix(in srgb, var(--sl-color-accent) 15%, transparent), transparent 70%),
-    radial-gradient(40% 55% at 85% 20%, color-mix(in srgb, var(--sl-color-accent) 9%, transparent), transparent 70%);
-  mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
-  pointer-events: none;
-  z-index: -1;
-}
 [data-has-hero] .hero h1 {
   font-weight: 700;
   letter-spacing: -0.03em;

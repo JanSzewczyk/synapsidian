@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-25T00:00:00Z",
+  "title": "Design System: Synapsidian docs",
+  "extensions": {
+    "colorMeta": {
+      "clay": { "role": "primary", "displayName": "Logo Clay", "canonical": "#d97757", "tonalRamp": ["#3a1d12", "#5c2614", "#9a4526", "#b4532f", "#d97757", "#e8a68a", "#f3cbb9", "#fbe8df"] },
+      "clay-deep": { "role": "primary", "displayName": "Deep Clay", "canonical": "#b4532f", "tonalRamp": ["#3a1d12", "#5c2614", "#9a4526", "#b4532f", "#d97757", "#e8a68a", "#f3cbb9", "#fbe8df"] },
+      "clay-text-dark": { "role": "primary", "displayName": "Clay Text (dark)", "canonical": "#e8a68a" },
+      "clay-text-light": { "role": "primary", "displayName": "Clay Text (light)", "canonical": "#9a4526" },
+      "clay-low-dark": { "role": "primary", "displayName": "Clay Wash (dark)", "canonical": "#3a1d12" },
+      "clay-low-light": { "role": "primary", "displayName": "Clay Wash (light)", "canonical": "#fbe8df" },
+      "clay-high-dark": { "role": "primary", "displayName": "Clay Ink (dark)", "canonical": "#f3cbb9" },
+      "clay-high-light": { "role": "primary", "displayName": "Clay Ink (light)", "canonical": "#5c2614" },
+      "mermaid-wash": { "role": "primary", "displayName": "Mermaid Wash", "canonical": "#fbf0ea" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#0a0a0a", "tonalRamp": ["#0a0a0a", "#171717", "#262626", "#404040", "#737373", "#a3a3a3", "#d4d4d4", "#f0f0f0"] },
+      "ink-raised": { "role": "neutral", "displayName": "Ink Raised", "canonical": "#171717" },
+      "ink-hairline": { "role": "neutral", "displayName": "Ink Hairline", "canonical": "#262626" },
+      "ink-text": { "role": "neutral", "displayName": "Ink Text", "canonical": "#fafafa" },
+      "ink-text-muted": { "role": "neutral", "displayName": "Ink Text Muted", "canonical": "#d4d4d4" },
+      "grey-quiet": { "role": "neutral", "displayName": "Quiet Grey", "canonical": "#a3a3a3" },
+      "grey-mid": { "role": "neutral", "displayName": "Mid Grey", "canonical": "#737373" },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#ffffff", "tonalRamp": ["#171717", "#404040", "#525252", "#737373", "#d4d4d4", "#e5e5e5", "#f0f0f0", "#ffffff"] },
+      "paper-sidebar": { "role": "neutral", "displayName": "Paper Sidebar", "canonical": "#fafafa" },
+      "paper-raised": { "role": "neutral", "displayName": "Paper Raised", "canonical": "#f0f0f0" },
+      "paper-hairline": { "role": "neutral", "displayName": "Paper Hairline", "canonical": "#e5e5e5" },
+      "paper-text-muted": { "role": "neutral", "displayName": "Paper Text Muted", "canonical": "#404040" },
+      "note-blue": { "role": "status", "displayName": "Note Blue", "canonical": "#3b82f6", "tonalRamp": ["#172554", "#1e3a8a", "#2563eb", "#3b82f6", "#bfdbfe", "#dbeafe"] },
+      "note-blue-light": { "role": "status", "displayName": "Note Blue (light)", "canonical": "#2563eb" },
+      "tip-emerald": { "role": "status", "displayName": "Tip Emerald", "canonical": "#10b981", "tonalRamp": ["#052e1f", "#065f46", "#059669", "#10b981", "#6ee7b7", "#d1fae5"] },
+      "tip-emerald-light": { "role": "status", "displayName": "Tip Emerald (light)", "canonical": "#059669" },
+      "caution-amber": { "role": "status", "displayName": "Caution Amber", "canonical": "#f59e0b", "tonalRamp": ["#3a2a0a", "#78350f", "#d97706", "#f59e0b", "#fcd34d", "#fef3c7"] },
+      "caution-amber-light": { "role": "status", "displayName": "Caution Amber (light)", "canonical": "#d97706" },
+      "danger-red": { "role": "status", "displayName": "Danger Red", "canonical": "#ef4444", "tonalRamp": ["#3f1313", "#7f1d1d", "#dc2626", "#ef4444", "#fca5a5", "#fee2e2"] },
+      "danger-red-light": { "role": "status", "displayName": "Danger Red (light)", "canonical": "#dc2626" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Landing hero H1 only, max 19ch, balanced wrap." },
+      "headline": { "displayName": "Headline", "purpose": "Landing section H2; content H2 uses Starlight's 3xl step at the same weight." },
+      "title": { "displayName": "Title", "purpose": "Flow step names, plugin names, explore row titles." },
+      "body": { "displayName": "Body", "purpose": "Markdown content in the 46rem column." },
+      "label": { "displayName": "Label", "purpose": "Uppercase list-group titles with a trailing hairline." },
+      "mono": { "displayName": "Mono", "purpose": "Commit messages, commands, paths." },
+      "mono-small": { "displayName": "Mono Small", "purpose": "Shas, times, versions, writes pills." }
+    },
+    "shadows": [
+      { "name": "note-lift-dark", "value": "0 14px 28px -22px rgb(0 0 0 / 0.55)", "purpose": "Note cards under the open commit, dark theme." },
+      { "name": "note-lift-light", "value": "0 14px 28px -22px rgb(120 60 30 / 0.35)", "purpose": "Note cards under the open commit, light theme." },
+      { "name": "node-cut", "value": "0 0 0 4px var(--sl-color-black)", "purpose": "Ground-colored ring that cuts the flow connector around each node." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Entrances, reveals, arrow and dot movement." },
+      { "name": "state", "value": "0.15s", "purpose": "Hover and focus color, border and background changes." },
+      { "name": "section-reveal", "value": "0.8s, 14px rise, 0.06s stagger", "purpose": "Landing sections as they enter the viewport; only after the reveal-ready flag." },
+      { "name": "commit-step", "value": "0.16s", "purpose": "Delay between commits landing on the trail, oldest first." },
+      { "name": "note-open", "value": "0.7s clip-path inset reveal", "purpose": "Note cards unclipping under the open commit." }
+    ],
+    "breakpoints": [
+      { "name": "tiny", "value": "30rem" },
+      { "name": "phone", "value": "40rem" },
+      { "name": "rows", "value": "44rem" },
+      { "name": "tables", "value": "50rem" },
+      { "name": "split", "value": "56rem" },
+      { "name": "hero", "value": "64rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Starlight link button, primary variant: white on deep clay.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Get started</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; padding: 0.75rem 1.25rem; color: #fff; background: #b4532f; border: 1px solid #b4532f; border-radius: 0.375rem; font-family: 'Inter Variable', system-ui, sans-serif; font-weight: 500; text-decoration: none; } .ds-btn-primary:hover { filter: brightness(1.1); } .ds-btn-primary:focus-visible { outline: 2px solid #d97757; outline-offset: 2px; }"
+    },
+    {
+      "name": "Copy Button",
+      "kind": "button",
+      "refersTo": "copy-button",
+      "description": "Copies the install commands; turns green with 'Copied' for 1.8s.",
+      "html": "<button type=\"button\" class=\"ds-copy-btn\">Copy</button>",
+      "css": ".ds-copy-btn { min-height: 2rem; padding: 0 0.7rem; border: 1px solid #171717; border-radius: 0.375rem; background: #0a0a0a; color: #d4d4d4; font: 600 0.8125rem 'Inter Variable', system-ui, sans-serif; cursor: pointer; transition: border-color 0.15s, color 0.15s; } .ds-copy-btn:hover { border-color: #d97757; color: #e8a68a; } .ds-copy-btn:focus-visible { outline: 2px solid #d97757; outline-offset: 2px; } .ds-copy-btn:active { transform: scale(0.97); }"
+    },
+    {
+      "name": "Install Box",
+      "kind": "input",
+      "refersTo": "install-box",
+      "description": "Mono command block with its label, in the hero.",
+      "html": "<div class=\"ds-install\"><span class=\"ds-install-label\">Install in Claude Code</span><pre class=\"ds-install-box\"><code>/plugin marketplace add owner/repo\n/plugin install synapsidian@synapsidian</code></pre></div>",
+      "css": ".ds-install { display: grid; gap: 0.4rem; max-width: 34rem; } .ds-install-label { font: 600 0.8125rem 'Inter Variable', system-ui, sans-serif; letter-spacing: 0.02em; color: #a3a3a3; } .ds-install-box { margin: 0; padding: 0.8rem 1rem; border: 1px solid #171717; border-radius: 0.5rem; background: #171717; color: #e5e5e5; font: 0.8rem/1.7 'JetBrains Mono Variable', ui-monospace, monospace; font-variant-ligatures: none; overflow-x: auto; }"
+    },
+    {
+      "name": "Navigation Site Title",
+      "kind": "nav",
+      "refersTo": "sidebar-current",
+      "description": "Brain mark, name in Poppins, by-Szum-Tech pill.",
+      "html": "<div class=\"ds-title\"><a class=\"ds-title-link\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"28\" height=\"28\" aria-hidden=\"true\"><g fill=\"none\" stroke=\"#D97757\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5.6A2.7 2.7 0 0 0 7.4 4.9 2.7 2.7 0 0 0 4.3 8.6 2.8 2.8 0 0 0 3.6 13.4 2.7 2.7 0 0 0 6.2 17.6 2.7 2.7 0 0 0 10.4 19 2.2 2.2 0 0 0 12 18.2 2.2 2.2 0 0 0 13.6 19 2.7 2.7 0 0 0 17.8 17.6 2.7 2.7 0 0 0 20.4 13.4 2.8 2.8 0 0 0 19.7 8.6 2.7 2.7 0 0 0 16.6 4.9 2.7 2.7 0 0 0 12 5.6Z\"/><path d=\"M12 5.6V18.2\"/></g></svg><span>Synapsidian</span></a><a class=\"ds-by\" href=\"#\">by <b>Szum-Tech</b></a></div>",
+      "css": ".ds-title { display: flex; align-items: center; gap: 0.6rem; } .ds-title-link { display: flex; align-items: center; gap: 0.6rem; color: #fafafa; text-decoration: none; font: 600 1.25rem 'Poppins', system-ui, sans-serif; letter-spacing: -0.02em; } .ds-by { font-size: 0.7rem; font-weight: 500; padding: 0.15rem 0.55rem; border: 1px solid #262626; border-radius: 999px; color: #a3a3a3; text-decoration: none; } .ds-by b { color: #e8a68a; font-weight: 600; } .ds-by:hover { color: #e8a68a; border-color: #d97757; } .ds-by:focus-visible { outline: 2px solid #d97757; outline-offset: 2px; }"
+    },
+    {
+      "name": "Path Pill",
+      "kind": "chip",
+      "refersTo": "path-pill",
+      "description": "Mono pill for versions and the folders a skill writes.",
+      "html": "<a class=\"ds-pill\" href=\"#\">Daily/, notes</a>",
+      "css": ".ds-pill { display: inline-flex; padding: 0.1rem 0.55rem; border: 1px solid #171717; border-radius: 999px; font: 0.72rem 'JetBrains Mono Variable', ui-monospace, monospace; color: #a3a3a3; text-decoration: none; white-space: nowrap; transition: border-color 0.15s, color 0.15s; } .ds-pill:hover, .ds-pill:focus-visible { border-color: rgb(217 119 87 / 0.5); color: #e8a68a; } .ds-pill:focus-visible { outline: 2px solid #d97757; outline-offset: 2px; }"
+    },
+    {
+      "name": "Link Card",
+      "kind": "card",
+      "refersTo": "link-card",
+      "description": "Starlight link card: flat, hairline, clay border on hover.",
+      "html": "<a class=\"ds-card\" href=\"#\"><strong>Quick start</strong><span>Set up the vault and file a first note.</span></a>",
+      "css": ".ds-card { display: grid; gap: 0.25rem; padding: 1rem 1.25rem; border: 1px solid #262626; border-radius: 0.5rem; background: #171717; color: #d4d4d4; text-decoration: none; transition: border-color 0.15s, background-color 0.15s; } .ds-card strong { color: #fafafa; font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; } .ds-card:hover { border-color: #d97757; background: #262626; } .ds-card:focus-visible { outline: 2px solid #d97757; outline-offset: 2px; }"
+    },
+    {
+      "name": "Explore Row (primary)",
+      "kind": "card",
+      "refersTo": "explore-row-primary",
+      "description": "Primary landing route on the clay wash with a sliding arrow.",
+      "html": "<a class=\"ds-explore\" href=\"#\"><strong>Getting started</strong><span>Install, set up the vault, first save.</span><span class=\"ds-go\" aria-hidden=\"true\">&rarr;</span></a>",
+      "css": ".ds-explore { position: relative; display: grid; gap: 0.2rem; padding: 1rem 3rem 1rem 1.1rem; border: 1px solid rgb(217 119 87 / 0.45); border-radius: 0.625rem; background: #3a1d12; color: #f3cbb9; text-decoration: none; font-size: 0.875rem; line-height: 1.5; transition: border-color 0.15s, background-color 0.15s; } .ds-explore strong { color: #fafafa; font-family: 'Poppins', system-ui, sans-serif; font-size: 1rem; font-weight: 600; } .ds-go { position: absolute; top: 50%; right: 1.1rem; translate: 0 -50%; color: #a3a3a3; transition: translate 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s; } .ds-explore:hover { background: color-mix(in srgb, #3a1d12 70%, #d97757 30%); border-color: #d97757; } .ds-explore:hover .ds-go, .ds-explore:focus-visible .ds-go { translate: 0.25rem -50%; color: #e8a68a; } .ds-explore:focus-visible { outline: 2px solid #d97757; outline-offset: 2px; }"
+    },
+    {
+      "name": "Commit Trail",
+      "kind": "custom",
+      "refersTo": "note-card",
+      "description": "Signature: a mono git log with a rail, hollow grey dots, one filled clay dot and the note cards it wrote.",
+      "html": "<ol class=\"ds-trail\"><li class=\"ds-commit ds-open\"><span class=\"ds-dot\"></span><p class=\"ds-msg\"><b>synapsidian(save)</b>: decision on export format</p><p class=\"ds-meta\"><span>a41c2e9</span><span>17:42</span></p><div class=\"ds-note\"><p class=\"ds-path\">Decisions/Export as CSV.md <span>new</span></p><p class=\"ds-fm\">type: decision &middot; status: accepted</p><p>Ship CSV first; confirm with <span class=\"ds-lk\">[[Alex]]</span>.</p></div></li><li class=\"ds-commit\"><span class=\"ds-dot\"></span><p class=\"ds-msg\"><b>synapsidian(task)</b>: add T7 Renew the domain</p><p class=\"ds-meta\"><span>9be0713</span><span>14:05</span></p></li></ol>",
+      "css": ".ds-trail { list-style: none; margin: 0; padding: 0; position: relative; font-family: 'JetBrains Mono Variable', ui-monospace, monospace; } .ds-trail::before { content: ''; position: absolute; inset-block: 1.35rem; inset-inline-start: 0.4rem; width: 2px; border-radius: 1px; background: #262626; } .ds-commit { position: relative; padding: 0.75rem 0 0.75rem 1.9rem; } .ds-commit p { margin: 0; } .ds-dot { position: absolute; left: 0; top: 1.05rem; width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 2px solid #404040; background: #0a0a0a; box-sizing: border-box; } .ds-open .ds-dot { border-color: #d97757; background: #d97757; } .ds-msg { font-size: 0.86rem; line-height: 1.5; color: #d4d4d4; } .ds-msg b { font-weight: 600; color: #fafafa; } .ds-open .ds-msg b { color: #e8a68a; } .ds-meta { display: flex; gap: 0.75rem; font-size: 0.72rem; color: #a3a3a3; font-variant-numeric: tabular-nums; } .ds-note { margin-top: 0.8rem; padding: 0.75rem 0.9rem 0.8rem; border: 1px solid #262626; border-radius: 0.5rem; background: #171717; box-shadow: 0 14px 28px -22px rgb(0 0 0 / 0.55); font-size: 0.8rem; line-height: 1.6; color: #d4d4d4; } .ds-path { display: flex; justify-content: space-between; gap: 0.75rem; font-weight: 600; color: #e8a68a; } .ds-path span { font-size: 0.7rem; font-weight: 400; color: #a3a3a3; } .ds-fm { color: #a3a3a3; } .ds-lk { color: #e8a68a; text-decoration: underline; text-decoration-color: rgb(232 166 138 / 0.4); text-underline-offset: 0.18em; }"
+    },
+    {
+      "name": "Flow Node",
+      "kind": "custom",
+      "refersTo": "flow-node",
+      "description": "Numbered circle on the daily-loop connector; fills with deep clay on hover.",
+      "html": "<a class=\"ds-flow\" href=\"#\"><span class=\"ds-node\">2</span><span class=\"ds-label\">Save</span><code>/synapsidian:save</code></a>",
+      "css": ".ds-flow { display: inline-flex; align-items: center; gap: 1rem; padding: 0.8rem 0.75rem; border-radius: 0.625rem; color: #fafafa; text-decoration: none; transition: background-color 0.15s; } .ds-node { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: #3a1d12; border: 1px solid rgb(217 119 87 / 0.55); box-shadow: 0 0 0 4px #0a0a0a; color: #f3cbb9; font-weight: 700; font-size: 0.9rem; transition: background-color 0.15s, color 0.15s; } .ds-label { font: 600 1.05rem/1.3 'Poppins', system-ui, sans-serif; } .ds-flow code { color: #e8a68a; font: 0.82rem 'JetBrains Mono Variable', ui-monospace, monospace; } .ds-flow:hover, .ds-flow:focus-visible { background: rgb(217 119 87 / 0.08); } .ds-flow:hover .ds-node, .ds-flow:focus-visible .ds-node { background: #b4532f; border-color: #b4532f; color: #fff; } .ds-flow:focus-visible { outline: 2px solid #d97757; outline-offset: 1px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Readable Log",
+    "overview": "The site reads like the vault it documents: plain text, hairlines, a git history you can scan. Neutral greys carry everything; Claude's clay, the stroke of the brain logo, is the one hue and marks what acts or what is current. Literal things (commands, note paths, commit shas, versions, the folders a skill writes) are set in JetBrains Mono, so the reader can tell evidence from explanation at a glance.\n\nTwo themes ship and are equal: near-black ground in dark, white in light. Density is documentation density: a 46rem content column, 1.7 body leading, hairline-bordered surfaces at 0.5rem radius, no shadows on cards. The landing page uses the Starlight splash template with its own hero, a commit trail of one day in an example vault.",
+    "keyCharacteristics": [
+      "One accent hue (clay) on neutral greys; status colors live only in asides and badges.",
+      "Poppins for headings, Inter for reading, JetBrains Mono for anything literal.",
+      "Flat surfaces separated by hairlines; depth only where a note lifts off the commit trail.",
+      "Motion is one authored load sequence plus opt-in section reveals; reduced motion shows the end state."
+    ],
+    "rules": [
+      { "name": "The One Clay Rule", "body": "Clay is the only interactive hue. Links, focus, current state, primary action and the newest commit use it; nothing else gets a brand color.", "section": "colors" },
+      { "name": "The Darker Clay Under White Rule", "body": "White text sits on clay-deep, never on Logo Clay (about 3:1).", "section": "colors" },
+      { "name": "The Mono Is Evidence Rule", "body": "Commands, paths, shas, versions and folder names are mono; prose is never mono.", "section": "typography" },
+      { "name": "The No Ligatures Rule", "body": "`code` and `pre` set `font-variant-ligatures: none`, so `>-` and similar stay literal.", "section": "typography" },
+      { "name": "The Hairline Not Shadow Rule", "body": "A surface is separated by a 1px hairline; a shadow is reserved for something the page shows being written.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use clay for every link, focus outline (2px, 2px offset), current state and primary action, and nothing else.",
+      "Do put white text only on clay-deep (#b4532f).",
+      "Do set commands, paths, shas, versions and written folders in JetBrains Mono with ligatures off.",
+      "Do separate surfaces with 1px hairlines and give cards 0.5rem corners and no shadow.",
+      "Do ease state changes over 0.15s and entrances with `cubic-bezier(0.16, 1, 0.3, 1)`.",
+      "Do keep content visible without scripts: hidden reveal states apply only after the `reveal-ready` flag, and reduced motion shows the end state.",
+      "Do define a light-theme override for every grey that must reach 3:1 on white (rail and hollow dots use #a3a3a3)."
+    ],
+    "donts": [
+      "Don't bring back a blue or indigo accent; blue is reserved for note asides.",
+      "Don't put white text on Logo Clay (#d97757).",
+      "Don't add drop shadows to cards, tables or link rows.",
+      "Don't use the uppercase label style as a kicker above a heading; it only names a list group.",
+      "Don't fill light-theme cards with grey; they are white with a hairline."
+    ]
+  }
+}

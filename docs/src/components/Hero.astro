@@ -5,29 +5,53 @@ const { data } = Astro.locals.starlightRoute.entry;
 const { title = data.title, tagline, actions = [] } = data.hero || {};
 
 const t = {
-  stage: "Example day with a synapsidian vault",
+  trail: "Example: one day of commits in a synapsidian vault",
   install: "Install in Claude Code",
   copy: "Copy",
   copied: "Copied",
   copyLabel: "Copy install commands",
 };
 
-type Kind = "draft" | "ready" | "progress" | "done";
-interface Line {
-  cmd: string;
-  arg?: string;
-  out: string;
-  pill: string;
-  kind: Kind;
+interface Note {
+  path: string;
+  change: "A" | "M";
+  meta?: string;
+  body: string;
 }
-const lines: Line[] = [
-  { cmd: "/synapsidian:setup", out: "vault ready, About.md filled in", pill: "setup", kind: "ready" },
-  { cmd: ">>", arg: "ask Alex about the export format", out: "Inbox capture, committed", pill: "inbox", kind: "draft" },
-  { cmd: "/synapsidian:task", arg: "add renew the domain by Friday", out: "T7 Renew the domain, due Fri", pill: "todo", kind: "progress" },
-  { cmd: "/synapsidian:save", out: "2 notes updated, 1 decision filed", pill: "saved", kind: "ready" },
-  { cmd: "/synapsidian:evening", out: "devlog: 4 bullets from 3 sessions", pill: "devlog", kind: "done" },
-  { cmd: "/synapsidian:morning", out: "brief, agenda, 2 meeting notes", pill: "brief", kind: "done" },
+interface Commit {
+  skill: string;
+  msg: string;
+  sha: string;
+  when: string;
+  notes?: Note[];
+}
+// Newest first, as git log prints it. Example content: neutral names, no real vault.
+const commits: Commit[] = [
+  {
+    skill: "save",
+    msg: "decision on export format",
+    sha: "a41c2e9",
+    when: "17:42",
+    notes: [
+      {
+        path: "Decisions/2026-11-25 Export as CSV.md",
+        change: "A",
+        meta: "type: decision · status: accepted",
+        body: 'Ship CSV first; add JSON once <span class="lk">[[Alex]]</span> confirms the format.',
+      },
+      {
+        path: "Daily/2026-11-25.md",
+        change: "M",
+        body: '- Agreed the export format with <span class="lk">[[Alex]]</span> → <span class="lk">[[2026-11-25 Export as CSV]]</span>',
+      },
+    ],
+  },
+  { skill: "task", msg: "add T7 Renew the domain", sha: "9be0713", when: "14:05" },
+  { skill: "capture", msg: "ask Alex about the export format", sha: "3f0d88b", when: "11:20" },
+  { skill: "morning", msg: "brief 2026-11-25", sha: "c72a10e", when: "07:30" },
+  { skill: "evening", msg: "devlog 2026-11-24", sha: "e5b9134", when: "yesterday" },
 ];
+const last = commits.length - 1;
 
 const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin install synapsidian@synapsidian";
 ---
@@ -57,27 +81,43 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
     </div>
   </div>
 
-  <figure class="stage" aria-label={t.stage}>
-    <div class="bar" aria-hidden="true">
-      <span class="dots"><i></i><i></i><i></i></span>
-      <span class="path">Daily/2026-11-25.md</span>
-    </div>
-    <ol class="log">
+  <figure class="trail" aria-label={t.trail}>
+    <figcaption class="trail-head">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5.6A2.7 2.7 0 0 0 7.4 4.9 2.7 2.7 0 0 0 4.3 8.6 2.8 2.8 0 0 0 3.6 13.4 2.7 2.7 0 0 0 6.2 17.6 2.7 2.7 0 0 0 10.4 19 2.2 2.2 0 0 0 12 18.2 2.2 2.2 0 0 0 13.6 19 2.7 2.7 0 0 0 17.8 17.6 2.7 2.7 0 0 0 20.4 13.4 2.8 2.8 0 0 0 19.7 8.6 2.7 2.7 0 0 0 16.6 4.9 2.7 2.7 0 0 0 12 5.6Z" />
+          <path d="M12 5.6V18.2M7.6 8.2C8.8 8 9.6 8.9 9.4 10M5.8 11.6C7.4 11.2 8.6 12 8.6 13.4M8 16C9.2 15.6 10 16.2 10 17.1M16.4 8.2C15.2 8 14.4 8.9 14.6 10M18.2 11.6C16.6 11.2 15.4 12 15.4 13.4M16 16C14.8 15.6 14 16.2 14 17.1" />
+        </g>
+      </svg>
+      <span>git log</span>
+      <span class="head-note">example vault · one commit per run</span>
+    </figcaption>
+    <ol class="commits">
       {
-        lines.map((l, i) => (
-          <li style={`--i:${i}`}>
-            <p class="cmd">
-              <span class="prompt" aria-hidden="true">&gt;</span>
-              <b>{l.cmd}</b>
-              {l.arg && <span class="arg">{l.arg}</span>}
+        commits.map((c, i) => (
+          <li class:list={["commit", { open: c.notes }]} style={`--i:${last - i}`}>
+            <span class="dot" aria-hidden="true" />
+            <p class="msg">
+              <b>synapsidian({c.skill})</b>: {c.msg}
             </p>
-            <p class="res">
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                <path d="m3.5 8.5 3 3 6-7" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <span class="out">{l.out}</span>
-              <span class="pill" data-kind={l.kind}>{l.pill}</span>
+            <p class="meta">
+              <span>{c.sha}</span>
+              <span>{c.when}</span>
             </p>
+            {c.notes && (
+              <ul class="notes">
+                {c.notes.map((n) => (
+                  <li class="note">
+                    <p class="path">
+                      <span>{n.path}</span>
+                      <span class="change">{n.change === "A" ? "new" : "edited"}</span>
+                    </p>
+                    {n.meta && <p class="fm">{n.meta}</p>}
+                    <p class="body" set:html={n.body} />
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))
       }
@@ -162,7 +202,7 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
   }
   @media (min-width: 64rem) {
     .hero {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 28.5rem);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
       gap: 3.5rem;
       padding-block: clamp(2.5rem, 7vh, 5rem) 2rem;
     }
@@ -177,7 +217,7 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
   }
   h1 {
     margin: 0;
-    max-width: 16ch;
+    max-width: 19ch;
   }
   .tagline {
     margin: 0;
@@ -276,130 +316,176 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
     color: var(--sl-color-green-high);
   }
 
-  /* Stage: a terminal that is dark in both themes */
-  .stage {
-    --t-bg: #0b0e15;
-    --t-line: #1e2535;
-    --t-text: #e5e7eb;
-    --t-dim: #9ca3af;
-    --t-cmd: #93c5fd;
+  /* Trail: the vault's git log, newest first. Each run is one commit named after its skill;
+     the newest save is open onto the notes it wrote. Follows the site theme. */
+  .trail {
+    --rail: var(--sl-color-hairline);
+    --dot: var(--sl-color-gray-5);
+    --clay: var(--sl-color-accent);
+    --link: var(--sl-color-text-accent);
     margin: 0;
     min-width: 0;
-    border: 1px solid var(--t-line);
-    border-radius: 0.75rem;
-    background: var(--t-bg);
-    color: var(--t-text);
-    box-shadow:
-      0 1px 0 rgb(255 255 255 / 0.04) inset,
-      0 28px 56px -28px rgb(37 99 235 / 0.45),
-      0 8px 20px -12px rgb(0 0 0 / 0.5);
-    overflow: hidden;
+    font-family: var(--sl-font-mono);
   }
-  .bar {
+  /* In light the rail and hollow dots need about 3:1 against white to read */
+  :root[data-theme="light"] .trail {
+    --rail: #a3a3a3;
+    --dot: #a3a3a3;
+  }
+  .trail-head {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.7rem 1rem;
-    border-bottom: 1px solid var(--t-line);
-    background: #0f1320;
+    gap: 0.5rem;
+    padding-bottom: 0.9rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    font-size: 0.78rem;
+    color: var(--sl-color-gray-2);
   }
-  .dots {
-    display: inline-flex;
-    gap: 0.4rem;
+  .trail-head svg {
+    color: var(--clay);
   }
-  .dots i {
-    width: 0.6rem;
-    height: 0.6rem;
-    border-radius: 50%;
-    background: #2a3246;
+  .head-note {
+    margin-inline-start: auto;
+    color: var(--sl-color-gray-3);
   }
-  .path {
-    font-family: var(--sl-font-mono);
-    font-size: 0.75rem;
-    color: var(--t-dim);
-  }
-  .log {
+  .commits {
     list-style: none;
     margin: 0;
-    padding: 1.1rem 1.1rem 1.25rem;
-    display: grid;
-    gap: 0.95rem;
-    font-family: var(--sl-font-mono);
+    padding: 0;
+    position: relative;
   }
-  .log li {
+  /* the rail */
+  .commits::before {
+    content: "";
+    position: absolute;
+    inset-block: 1.35rem 1.35rem;
+    inset-inline-start: 0.4rem;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--rail);
+  }
+  .commit {
+    position: relative;
     margin: 0;
-    display: grid;
-    gap: 0.3rem;
+    padding: 0.75rem 0 0.75rem 1.9rem;
   }
-  .log p {
+  .commit + .commit {
     margin: 0;
   }
-  .cmd {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 0.5rem;
-    font-size: 0.8rem;
-    line-height: 1.55;
+  .dot {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 1.05rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    border: 2px solid var(--dot);
+    background: var(--sl-color-black);
   }
-  .prompt {
-    color: var(--t-dim);
+  .open .dot {
+    border-color: var(--clay);
+    background: var(--clay);
   }
-  .cmd b {
-    font-weight: 600;
-    color: var(--t-cmd);
+  .commit p {
+    margin: 0;
   }
-  .arg {
-    color: var(--t-text);
+  .msg {
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--sl-color-gray-2);
     overflow-wrap: anywhere;
   }
-  .res {
+  .msg b {
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .open .msg b {
+    color: var(--link);
+  }
+  .meta {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--sl-color-gray-3);
+  }
+  .notes {
+    list-style: none;
+    margin: 0.8rem 0 0.15rem;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .note {
+    margin: 0;
+    padding: 0.75rem 0.9rem 0.8rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+    background: var(--sl-color-gray-7);
+    box-shadow: 0 14px 28px -22px rgb(0 0 0 / 0.55);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+  :root[data-theme="light"] .note {
+    background: #fff;
+    box-shadow: 0 14px 28px -22px rgb(120 60 30 / 0.35);
+  }
+  .path {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.3rem 0.55rem;
-    padding-inline-start: 1.1rem;
-    font-size: 0.74rem;
-    line-height: 1.5;
-    color: var(--t-dim);
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 0.75rem;
+    font-weight: 600;
+    color: var(--link);
+    overflow-wrap: anywhere;
   }
-  .res svg {
+  .change {
     flex: none;
-    color: #34d399;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--sl-color-gray-3);
   }
-  .out {
-    min-width: 0;
+  .fm {
+    margin-top: 0.2rem !important;
+    color: var(--sl-color-gray-3);
   }
-  .pill {
-    padding: 0.05rem 0.5rem;
-    border-radius: 999px;
-    font-size: 0.68rem;
-    font-weight: 500;
-    color: var(--c);
-    background: color-mix(in srgb, var(--c) 14%, transparent);
-    border: 1px solid color-mix(in srgb, var(--c) 38%, transparent);
+  .body {
+    margin-top: 0.35rem !important;
+    color: var(--sl-color-gray-2);
   }
-  .pill[data-kind="draft"] {
-    --c: #a3a3a3;
-  }
-  .pill[data-kind="ready"] {
-    --c: #60a5fa;
-  }
-  .pill[data-kind="progress"] {
-    --c: #fbbf24;
-  }
-  .pill[data-kind="done"] {
-    --c: #34d399;
+  .body :global(.lk) {
+    white-space: nowrap;
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent);
+    text-underline-offset: 0.18em;
   }
 
+  /* Below the two-column width the copy's children join the hero grid, so the commit trail
+     sits right after the actions and the install box follows it. */
+  @media (max-width: 63.99rem) {
+    .hero {
+      gap: 1.25rem;
+    }
+    .copy {
+      display: contents;
+    }
+    .trail {
+      order: 1;
+      margin-block: 0.75rem 0.25rem;
+    }
+    .install {
+      order: 2;
+    }
+  }
   .copy-btn:active {
     transform: scale(0.97);
   }
-  .res svg path {
-    stroke-dasharray: 1;
-  }
 
-  /* One authored moment: the copy settles in, then the session writes itself line by line.
-     Each line is a beat: command, then the check draws, then the status pill lands. */
+  /* One authored moment: the copy settles, then the day's commits land oldest first up the rail,
+     and the newest save opens onto the notes it wrote. Without motion, the end state shows. */
   @media (prefers-reduced-motion: no-preference) {
     .copy > * {
       animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -414,34 +500,38 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
     .copy > :nth-child(4) {
       --k: 3;
     }
-    .stage {
-      animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+    .trail-head {
+      animation: fade 0.5s ease-out 0.15s both;
     }
-    .log li {
-      --d: calc(0.6s + var(--i) * 0.46s);
+    .commits::before {
+      transform-origin: bottom;
+      animation: grow 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
     }
-    .log .cmd {
-      animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) var(--d) both;
+    .commit {
+      --d: calc(0.4s + var(--i) * 0.16s);
     }
-    .log .res {
-      animation: fade 0.3s ease-out calc(var(--d) + 0.22s) both;
+    .commit > .dot {
+      animation: pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) var(--d) both;
     }
-    .res svg path {
-      animation: draw 0.35s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.26s) both;
+    .commit > .msg,
+    .commit > .meta {
+      animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.05s) both;
     }
-    .pill {
-      transform-origin: left center;
-      animation: pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.4s) both;
-    }
-    .log li:last-child .pill {
+    .open > .dot {
       animation:
-        pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.4s) both,
-        ping 1.1s ease-out calc(var(--d) + 0.55s) 1 both;
+        pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) var(--d) both,
+        ping 1.2s ease-out calc(var(--d) + 0.3s) 1 both;
+    }
+    .note {
+      animation: open 0.7s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.45s) both;
+    }
+    .note + .note {
+      animation-delay: calc(var(--d) + 0.6s);
     }
     @keyframes rise {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
       }
     }
     @keyframes fade {
@@ -449,26 +539,33 @@ const installCmd = "/plugin marketplace add JanSzewczyk/synapsidian\n/plugin ins
         opacity: 0;
       }
     }
-    @keyframes draw {
+    @keyframes grow {
       from {
-        stroke-dashoffset: 1;
-      }
-      to {
-        stroke-dashoffset: 0;
+        transform: scaleY(0);
       }
     }
     @keyframes pop {
       from {
         opacity: 0;
-        transform: scale(0.85);
+        transform: scale(0.4);
       }
     }
     @keyframes ping {
       from {
-        box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 45%, transparent);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--clay) 50%, transparent);
       }
       to {
-        box-shadow: 0 0 0 9px transparent;
+        box-shadow: 0 0 0 10px transparent;
+      }
+    }
+    @keyframes open {
+      from {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0 round 0.5rem);
+        transform: translateY(-6px);
+      }
+      to {
+        clip-path: inset(0 0 0 0 round 0.5rem);
       }
     }
   }

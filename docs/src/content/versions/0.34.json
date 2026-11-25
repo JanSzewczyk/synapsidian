@@ -104,9 +104,9 @@
             },
             {
               "label": "Changelog",
-              "link": "/extensions/dock/changelog",
+              "link": "/mods/dock/changelog",
               "attrs": {
-                "data-sl-changelogs-link-base": "extensions/dock/changelog",
+                "data-sl-changelogs-link-base": "mods/dock/changelog",
                 "data-sl-changelogs-link-type": "all"
               }
             }

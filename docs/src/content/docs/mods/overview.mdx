@@ -1,0 +1,28 @@
+---
+title: Claude Code mods
+description: Plugins that change Claude Code's own interface, apart from the add-ons that extend the vault.
+sidebar:
+  label: Overview
+---
+
+An add-on such as [synapsidian-work](/synapsidian/extensions/work/) extends what synapsidian does with the vault: new note types, skills, steps in the morning brief. A mod changes Claude Code itself. It draws on Claude Code's screen from a hooks module, without a skill and without a Claude turn, and adds nothing to the vault's schema.
+
+| Mod | Shows | Options | Setup |
+| --- | --- | --- | --- |
+| [synapsidian-dock](/synapsidian/mods/dock/) | what is due, in a band above the prompt, with a task pane | 1 | none |
+
+## Install
+
+```text
+/plugin install synapsidian-dock@synapsidian
+```
+
+It needs the core plugin and Claude Code 2.1.299 or later. There is nothing to set up.
+
+## How a mod meets the core
+
+Only through the `synapsidian` command, like any other caller: the dock reads `synapsidian brief --json` and writes with `synapsidian note set` and `synapsidian commit` (D156). It writes nothing without a key press.
+
+With the [projects add-on](/synapsidian/extensions/projects/) installed, the dock's Projects tab groups open tasks by project.
+
+The dock follows a `~` range of the core like the add-ons do; see its [changelog](/synapsidian/mods/dock/changelog/).
