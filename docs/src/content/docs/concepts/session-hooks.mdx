@@ -60,7 +60,7 @@ Without this hook, Claude would ask before every note it writes. `approve.py` ap
 The option `auto_approve_vault_edits` turns the hook off. Then the scheduled runs stop at their first note edit and wait for you.
 
 <Aside type="caution">
-An unattended run cannot answer "ask", so a scheduled run that tries to write one of these files fails at that step. That is intended: a line injected into a web page or transcript must not change your instructions on its own.
+An unattended run cannot answer "ask", so a scheduled run that tries to write one of these files fails at that step. This is on purpose, so a line injected into a web page or transcript cannot change your instructions on its own.
 </Aside>
 
 ## Schema check
