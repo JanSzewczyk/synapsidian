@@ -201,6 +201,12 @@ def load(vault_root: Path | None = None) -> Schema:
         raise
     except (ValueError, yaml.YAMLError, OSError) as exc:
         raise SchemaError(str(exc)) from exc
+    except (KeyError, TypeError, AttributeError) as exc:
+        # A schema.yaml of the wrong shape (a type without `filename`, a list where a map goes).
+        where = f" under {vault_root / EXTENSIONS_DIR}" if vault_root else ""
+        raise SchemaError(
+            f"an extension's schema.yaml{where} has the wrong shape ({type(exc).__name__}: {exc})"
+        ) from exc
 
 
 def _mtime(path: Path) -> int:

@@ -251,3 +251,11 @@ def test_every_skill_has_a_description_and_balanced_fences():
         meta = frontmatter.parse(text).meta
         assert meta and meta.get("name") == skill.parent.name and len(meta.get("description", "")) > 80, skill
         assert text.count("```") % 2 == 0, skill
+
+
+def test_health_answers_json_when_the_schema_wont_load(run, vault):
+    folder = vault / ".synapsidian" / "extensions" / "newer"
+    folder.mkdir(parents=True)
+    (folder / "schema.yaml").write_text("extend:\n  about:\n    lanes: [a]\n")
+    code, out = run("health", vault=vault)
+    assert code == 2 and out == {"ok": False, "error": "extension newer: extend: about can't set lanes"}
