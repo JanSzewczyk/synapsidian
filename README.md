@@ -22,7 +22,7 @@ Claude Code plugins that keep a second brain in an Obsidian vault: daily notes, 
 
 One marketplace, four plugins: the core works for any vault, personal or work, and three optional add-ons build on it for work, projects and a task dock. Nothing in the core assumes a job.
 
-Inspired by [eugeniughelbur/obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain), rebuilt for current Claude Code plugin features: skills with progressive disclosure, a single note schema, scripts for the mechanics and Claude for the judgement. See [docs/spec.md](docs/spec.md) for the design and [docs/decisions.md](docs/decisions.md) for why.
+Inspired by [eugeniughelbur/obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain), rebuilt for current Claude Code plugin features: skills with progressive disclosure, a single note schema, scripts for the mechanics and Claude for the judgement. The full documentation is at [janszewczyk.github.io/synapsidian](https://janszewczyk.github.io/synapsidian/); [references/decisions.md](references/decisions.md) records why it is built this way.
 
 ## ✨ Features
 
@@ -234,13 +234,14 @@ plugins/synapsidian-work/bin/synapsidian-work standup window --days tue,thu --ti
 ```text
 synapsidian/
 ├── .claude-plugin/          # marketplace.json: the four plugins
-├── .github/                 # workflows (plugin-checks, tests) and dependabot.yml
-├── docs/                    # spec.md, decisions.md, research/
+├── .github/                 # workflows (plugin-checks, tests, docs) and dependabot.yml
+├── docs/                    # documentation site (Astro Starlight)
 ├── plugins/
 │   ├── synapsidian/         # core: skills, hooks, schema, bases, scripts
 │   ├── synapsidian-work/    # work add-on
 │   ├── synapsidian-projects/ # projects add-on
 │   └── synapsidian-dock/    # dock mod
+├── references/              # decisions.md: the design decisions (D-numbers)
 ├── tests/                   # pytest suite and a fixture vault
 ├── CHANGELOG.md
 ├── CLAUDE.md                # project rules
@@ -251,8 +252,9 @@ synapsidian/
 ### Key Directories
 
 - **`plugins/<name>/.claude-plugin/plugin.json`** — each plugin's manifest; `skills/<skill>/SKILL.md` holds its skills
-- **`docs/`** — the design ([spec.md](docs/spec.md)), why ([decisions.md](docs/decisions.md)) and research notes
-- **`tests/`, `pyproject.toml`, `uv.lock`** — the dev environment; like `docs/`, they sit at the repo root and ship with none of the plugins
+- **`docs/`** — the documentation site (Astro Starlight): pages in `docs/src/content/docs/`, built by `cd docs && npm run build`, deployed to GitHub Pages
+- **`references/`** — [decisions.md](references/decisions.md), the design decisions that skills and scripts cite by number (`D90`)
+- **`tests/`, `pyproject.toml`, `uv.lock`** — the dev environment; like `docs/` and `references/`, they sit at the repo root and ship with none of the plugins
 
 ---
 

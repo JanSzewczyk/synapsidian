@@ -153,7 +153,7 @@ Not asked separately; they follow from earlier answers or the user's global rule
 |---|---|---|---|
 | D47 | Build order | **4 phases from the core** | P1: init (git, folders, schemas, Bases), daily, task, save, capture, find, session-start brief. P2: scheduled runs (morning brief + meeting skeletons, evening devlog + session extraction, Friday review + health). P3: ingest, research, youtube. P4: thinking tools, architect, embeddings after measurement. |
 | D48 | Notion cutover | **One week in parallel, then the user disables the old tasks** | Applies to `morning-brief`, `devlog-rollup`, `standup-brief` scheduled tasks and the `notion-*` skills. |
-| D49 | Next step | **Spec (`docs/spec.md`), review, then build P1** | APIs pinned against current docs in the spec. |
+| D49 | Next step | **Spec (`docs/spec.md`), review, then build P1** | APIs pinned against current docs in the spec. The spec file was removed from the repo on 2026-11-25. |
 
 ## Round 12: spec review (2026-10-13)
 
@@ -175,7 +175,7 @@ Not asked separately; they follow from earlier answers or the user's global rule
 
 ## Phase 2, round 1 (2026-10-13)
 
-Current workflows analysed in [research/notion-workflows.md](research/notion-workflows.md); their rules carry over unless a decision below changes them.
+Current workflows analysed in `research/notion-workflows.md` (removed from the repo on 2026-11-25); their rules carry over unless a decision below changes them.
 
 | # | Topic | Decision | Notes |
 |---|---|---|---|
