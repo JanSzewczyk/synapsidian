@@ -12,6 +12,7 @@ import {
   dueLabel,
   dueOptions,
   factBadges,
+  failureLine,
   facts,
   longDate,
   nextStatuses,
@@ -103,6 +104,8 @@ function stubWorld(
   answers: {
     set?: unknown
     commit?: unknown
+    /** `note` prints this instead of JSON, like a script that crashed. */
+    rawSet?: { exitCode: number; stdout: string; stderr: string }
     noSynapsidian?: boolean
     slow?: boolean
     /** Like the desktop app: `synapsidian` is not on PATH, but the install record names its folder. */
@@ -145,6 +148,7 @@ function stubWorld(
     if (answers.slow) return { deny: 'timed out after 30000 ms' }
     const viaFile = e.argv[0] === '/bin/sh' && e.argv[1] === INSTALLED_SYNAPSIDIAN
     const command = e.argv[0] === 'synapsidian' ? e.argv[1] : viaFile ? e.argv[2] : ''
+    if (command === 'note' && answers.rawSet) return { value: answers.rawSet }
     let answer: unknown = { ok: false, error: 'unexpected command' }
     if (command === 'brief') answer = STATE
     if (command === 'note') answer = answers.set ?? { ok: true, rel: OVERDUE.rel, changed: { status: 'done' } }
@@ -491,6 +495,32 @@ test('a refused change commits nothing and says why', async ($, on) => {
   await pane.select({ key: 'task-status', value: 'dropped' })
   expect(world.runs.some((argv) => isSynapsidian(argv, 'commit'))).toBe(false)
   expect(world.toasts).toEqual(['T33 unchanged: unknown field'])
+})
+
+const TRACEBACK = [
+  'Traceback (most recent call last):',
+  '  File "/home/a/.claude/plugins/cache/local/synapsidian/0.33.1/scripts/note.py", line 426, in <module>',
+  '    main()',
+  '  File "/home/a/.claude/plugins/cache/local/synapsidian/0.33.1/scripts/synapsidianlib/schema.py", line 227, in _extend',
+  '    raise ValueError(f"extension {name}: extend: {type_name} can\'t set {unknown}")',
+  "ValueError: extension synapsidian-projects: extend: about can't set sections",
+  '',
+].join('\n')
+
+test('a script that crashes says its last line, the exception, not the traceback head', async ($, on) => {
+  const world = stubWorld(on, { rawSet: { exitCode: 1, stdout: '', stderr: TRACEBACK } })
+  await start($)
+  const pane = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  await pane.press({ key: 'task-' + OVERDUE.rel })
+  await pane.select({ key: 'task-due', value: 'week' })
+  expect(world.runs.some((argv) => isSynapsidian(argv, 'commit'))).toBe(false)
+  expect(world.toasts).toEqual(["T33 unchanged: ValueError: extension synapsidian-projects: extend: about can't set sections"])
+})
+
+test('without stderr the last line of stdout is shown; with neither, nothing', () => {
+  expect(failureLine('', 'warming up\nsomething broke\n\n')).toBe('something broke')
+  expect(failureLine('  \n', '')).toBe('')
+  expect(failureLine('x'.repeat(400), '')).toHaveLength(300)
 })
 
 test('a note Claude writes in the vault shows under Writes; one outside it does not', async ($, on) => {

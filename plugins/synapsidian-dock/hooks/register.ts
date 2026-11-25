@@ -260,6 +260,20 @@ async function findSynapsidian($): Promise<string | null> {
   return null
 }
 
+/**
+ * What to show for a run that printed no JSON: the last non-empty line of stderr, else of stdout.
+ * A Python traceback ends with the exception and its message, so that line says why (D161).
+ */
+export function failureLine(stderr: string, stdout: string): string {
+  const last = (text: string) =>
+    String(text ?? '')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .pop() ?? ''
+  return (last(stderr) || last(stdout)).slice(0, 300)
+}
+
 /** Run `synapsidian <command> ...` and return its JSON answer (the last line printed). */
 async function runSynapsidian($, command: string, args: Array<string>): Promise<any> {
   try {
@@ -279,7 +293,7 @@ async function runSynapsidian($, command: string, args: Array<string>): Promise<
       if (typeof answer?.ok !== 'boolean') return { ok: false, error: 'synapsidian ' + command + ' answered in another shape; update synapsidian to 0.32.0 or later' }
       return answer
     } catch {
-      return { ok: false, error: (r.stderr || r.stdout || 'no answer from synapsidian ' + command).trim().slice(0, 300) }
+      return { ok: false, error: failureLine(r.stderr, r.stdout) || 'no answer from synapsidian ' + command }
     }
   } catch (error) {
     const text = errorText(error)
