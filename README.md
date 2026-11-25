@@ -216,9 +216,10 @@ uv run pytest
 uv run ruff check plugins tests && uv run ruff format --check plugins tests
 claude plugin validate plugins/synapsidian --strict && claude plugin validate plugins/synapsidian-work --strict && claude plugin validate plugins/synapsidian-projects --strict && claude plugin validate plugins/synapsidian-dock --strict && claude plugin validate .
 (cd plugins/synapsidian-dock && claude plugin test)
+(cd docs && npm ci && npm run check && npm run build)
 ```
 
-Pull requests also run two workflows. [`plugin-checks.yml`](.github/workflows/plugin-checks.yml): manifests and docs against the plugins on disk, a version bump for every changed plugin (with its `CHANGELOG.md` section), that every plugin loads and installs through the Claude Code CLI, the always-on token budget, and a skill audit. [`tests.yml`](.github/workflows/tests.yml): pytest on the newest Python the dependencies install on, Ruff, and the dock mod's tests. Dependabot keeps the actions and the uv lockfile current.
+Pull requests also run three workflows. [`plugin-checks.yml`](.github/workflows/plugin-checks.yml): manifests and docs against the plugins on disk, a version bump for every changed plugin (with its `CHANGELOG.md` section), that every plugin loads and installs through the Claude Code CLI, the always-on token budget, and a skill audit. [`tests.yml`](.github/workflows/tests.yml): pytest on the newest Python the dependencies install on (including `tests/test_docs_site.py`, which fails when a skill or command has no page on the documentation site), Ruff, and the dock mod's tests. [`docs.yml`](.github/workflows/docs.yml): `astro check` and the documentation build, which fails on a broken internal link; on `main` it deploys the site to GitHub Pages. Dependabot keeps the actions, the uv lockfile and the docs' npm packages current.
 
 ### 🛠️ Running scripts directly
 
