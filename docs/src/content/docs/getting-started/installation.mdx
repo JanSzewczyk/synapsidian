@@ -1,5 +1,86 @@
 ---
-title: installation
+title: Installation
+description: What you need, and how to install the core plugin and the add-ons.
 ---
 
-Stub.
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Requirements
+
+| Need | Why |
+| --- | --- |
+| [Claude Code](https://claude.com/claude-code) | runs the skills and hooks; the desktop app runs the scheduled tasks |
+| [Obsidian](https://obsidian.md) 1.14 or later | the vault's app; Bases kanban needs 1.14 |
+| [uv](https://docs.astral.sh/uv/) | runs the Python scripts; it fetches Python 3.12 or later and each script's libraries itself |
+| git | the vault's history and undo |
+| `jq` or `python3` | the session-end hook reads its input with one of them |
+
+Install uv with:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Setup finds Obsidian's files on macOS, Windows and Linux (Flatpak and Snap included).
+
+## Install the core plugin
+
+<Tabs>
+  <TabItem label="Claude Code">
+    ```text
+    /plugin marketplace add JanSzewczyk/synapsidian
+    /plugin install synapsidian@synapsidian
+    ```
+  </TabItem>
+  <TabItem label="Shell">
+    ```bash
+    claude plugin marketplace add JanSzewczyk/synapsidian
+    claude plugin install synapsidian@synapsidian
+    ```
+  </TabItem>
+  <TabItem label="Local clone">
+    ```text
+    /plugin marketplace add <path to your clone>
+    /plugin install synapsidian@synapsidian
+    ```
+  </TabItem>
+</Tabs>
+
+Claude Code asks for the **vault path**: the folder of your Obsidian vault, or a new folder for one. The default is `~/Synapsidian`. Give the folder's exact spelling. See [Options](/synapsidian/configuration/options/) for the other two options.
+
+## Set up the vault
+
+Start a **new** session (a new plugin's hooks load only then) and run:
+
+```text
+/synapsidian:setup
+```
+
+It checks Obsidian, uv and git, creates the layout, configures Obsidian and its community plugins, registers the vault, and asks a few questions for `About.md`. Then it offers to schedule the recurring runs. See [`/synapsidian:setup`](/synapsidian/skills/setup/).
+
+## Add the add-ons you want
+
+Each add-on needs the core and has its own setup, which installs its schema extension into the vault.
+
+```text
+/plugin install synapsidian-work@synapsidian
+/plugin install synapsidian-projects@synapsidian
+/plugin install synapsidian-dock@synapsidian
+```
+
+Then, in a new session, `/synapsidian-work:setup` or `/synapsidian-projects:setup`. The dock has no setup. See [Extensions](/synapsidian/extensions/overview/).
+
+## Updating
+
+```bash
+claude plugin marketplace update synapsidian
+claude plugin update synapsidian@synapsidian
+```
+
+Each plugin pins its version, so you stay on your copy until you update. An add-on requires a `~` range of the core (for example `~0.34.0`); update them together. After an update, run the add-on's setup once: it re-installs its extension when the version changed.
+
+<Aside title="What changed">
+Every release is in the [changelog](/synapsidian/changelog/), one feed per plugin.
+</Aside>
+
+**Next:** [Quick start](/synapsidian/getting-started/quick-start/)

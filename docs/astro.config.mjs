@@ -53,7 +53,11 @@ export default defineConfig({
         // CHANGELOG.md (see src/content.config.ts).
         starlightChangelogs(),
         ...(versions.length ? [starlightVersions({ current: { label: "Latest" }, versions })] : []),
-        starlightLinksValidator({ errorOnLocalLinks: true }),
+        starlightLinksValidator({
+          errorOnLocalLinks: true,
+          // The changelog pages are routes starlight-changelogs adds, not docs entries the validator sees.
+          exclude: ["/synapsidian/changelog/**", "/synapsidian/extensions/*/changelog/**"],
+        }),
       ],
       components: { SiteTitle: "./src/components/SiteTitle.astro", Footer: "./src/components/Footer.astro", Hero: "./src/components/Hero.astro" },
       customCss: ["./src/styles/custom.css", "./src/styles/flow.css", "./src/styles/landing.css"],

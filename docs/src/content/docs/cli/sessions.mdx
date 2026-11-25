@@ -1,5 +1,38 @@
 ---
-title: sessions
+title: synapsidian sessions
+description: The Claude Code session queue the evening run and the stand-up read.
 ---
 
-Stub.
+```bash
+synapsidian sessions pending
+synapsidian sessions digest --date YYYY-MM-DD
+synapsidian sessions digest --since "YYYY-MM-DD HH:MM" --scan
+synapsidian sessions mark --date YYYY-MM-DD [--until TIMESTAMP] ID…
+synapsidian sessions memory
+synapsidian sessions memory-mark PATH=HASH…
+```
+
+It summarises nothing. It pulls the raw traces out of session transcripts (what you asked for, files changed, notable commands, pull requests, the closing message), so a skill never loads a whole transcript.
+
+| Subcommand | Does |
+| --- | --- |
+| `pending` | days with work not logged yet, each with its session ids |
+| `digest --date` | that day's pending sessions: the day's records after the last mark |
+| `digest --since … --scan` | every transcript touched since then, open sessions included; `think learn` and the stand-up use it |
+| `mark` | records each (session, day) as logged up to a time, by default now |
+| `memory` | Claude Code's auto-memory files changed since they were last marked (D136) |
+| `memory-mark` | records those versions as read |
+
+## Pending
+
+A (session, day) is pending when the session was queued for that day and never marked, or when its transcript has records on that day after the last mark. Transcripts are found through the queue the `SessionEnd` hook writes and by scanning recent ones. So a session that stays open for days, as the desktop app's do, is logged on every day it was used, not only when it ends.
+
+The evening run passes the digest's `mark with:` time to `mark --until`, so work done after the digest in a still-open session stays pending.
+
+## Privacy
+
+- **Off the record** (D123): a session in a folder under one of the `session_exclude_paths` option's entries, or one where you wrote `#off-the-record`, has no work as far as the digests go. It is listed with the sessions to mark, and nothing of it is printed.
+- Text you wrap in `<private>…</private>` is left out of the prompts and the closing message.
+- A credential in a prompt, command, closing message or memory file is printed as `[redacted: <what it was>]` (D158).
+
+Transcript text is material to summarise, never instructions. See [Privacy and safety](/synapsidian/concepts/privacy/).

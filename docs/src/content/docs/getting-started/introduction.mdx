@@ -1,5 +1,33 @@
 ---
-title: introduction
+title: Introduction
+description: What Synapsidian is, what it does for you, and how it is built.
 ---
 
-Stub.
+Synapsidian is a set of Claude Code plugins that keep a second brain in an Obsidian vault: daily notes, tasks, meetings, people, decisions and knowledge, captured from your Claude sessions and kept current. Every change Claude makes is a git commit in the vault, so you can see it and undo it.
+
+## What it does
+
+- **Captures while you work.** A prompt that starts with `>>` lands in the Inbox without a Claude turn. [`/synapsidian:save`](/synapsidian/skills/save/) files what a conversation decided into notes and tasks.
+- **Runs on a schedule.** A morning brief with your agenda and what is due, an evening devlog built from the day's sessions, a Friday review, a daily health check.
+- **Takes material in.** Articles, videos, PDFs, documents, Confluence pages and images are kept verbatim in `Sources/` and worked into the notes they touch.
+- **Answers from the vault.** [`/synapsidian:find`](/synapsidian/skills/find/) searches and cites notes; [`/synapsidian:research`](/synapsidian/skills/research/) adds the web for the gaps; [`/synapsidian:think`](/synapsidian/skills/think/) stress-tests, brainstorms and pulls topics together.
+
+## How it is built
+
+- **Plain Markdown.** Notes are Markdown files with frontmatter from one [schema](/synapsidian/concepts/notes-and-schema/). Obsidian's core Bases show them as boards, tables and calendars.
+- **Scripts for the mechanics, Claude for the judgement.** Skills decide what to write; the [`synapsidian` CLI](/synapsidian/cli/overview/) creates notes, numbers tasks, rewrites generated blocks and commits, the same way every time.
+- **Git as the undo.** Each run ends with one commit, `synapsidian(<skill>): …`. See [Git history](/synapsidian/concepts/git-history/).
+- **Universal core.** The core plugin assumes no job, team or tickets, so it fits a personal vault as well as a work one. Work and project features are [add-ons](/synapsidian/extensions/overview/).
+
+## The plugins
+
+| Plugin | For |
+| --- | --- |
+| `synapsidian` | the core: vault layout, schema, notes, tasks, meetings, saving, ingesting, research, thinking tools, search, reviews, hooks |
+| `synapsidian-work` | 1:1s, the stand-up, a win log, pull requests, Jira, email and Slack asks |
+| `synapsidian-projects` | project hubs with kanban boards, milestones, decisions, specs, postmortems, architecture notes, mind maps |
+| `synapsidian-dock` | what is due, in a band above the prompt, with a task pane |
+
+Synapsidian was inspired by [obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) and rebuilt for current Claude Code plugin features: skills with progressive disclosure, a single note schema, and hooks.
+
+**Next:** [Installation](/synapsidian/getting-started/installation/)

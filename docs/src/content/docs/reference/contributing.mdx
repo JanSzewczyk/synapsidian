@@ -1,5 +1,56 @@
 ---
-title: contributing
+title: Contributing
+description: Working on the plugins - checks, conventions, releases and this site.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+The repository's [`CLAUDE.md`](https://github.com/JanSzewczyk/synapsidian/blob/main/CLAUDE.md) holds the rules for working on it. The short version:
+
+## The core stays universal
+
+Nothing in `plugins/synapsidian/` may assume an employer, a team, a manager, tickets, pull requests, stand-ups, 1:1s or a code repository (D88). Work features go in synapsidian-work, project features in synapsidian-projects. Nothing user-specific is hardcoded in anything read at runtime: no company, product, repository or people's names, ticket prefixes, meeting times, vault or home paths. Examples use neutral placeholders: `ABC-123`, `web-app`, `Alex`.
+
+Before adding or changing a skill, script or reference, ask: would this behave correctly for someone whose vault is personal only, with synapsidian-work not installed?
+
+## Checks
+
+```bash
+uv sync
+uv run pytest
+uv run ruff check plugins tests
+uv run ruff format --check plugins tests
+(cd plugins/synapsidian-dock && claude plugin test)
+```
+
+Pull requests also run:
+
+| Workflow | Checks |
+| --- | --- |
+| `plugin-checks.yml` | manifests and docs against the plugins on disk, a version bump with a changelog section for every changed plugin, that every plugin loads and installs, the always-on token budget, a skill audit |
+| `tests.yml` | pytest, Ruff, the dock mod's tests |
+| `docs.yml` | this site: `astro check` and the build, with every internal link validated |
+
+`tests/test_docs_site.py` fails when a skill or CLI command has no page on this site, or a changelog heading would drop out of its feed.
+
+## Versions and releases
+
+Versions are bumped only on request, through `/plugin-release`, which proposes the bump from the diff and writes the `CHANGELOG.md` section, `## [<version> <plugin>] — <date>`. Release tags are `<plugin>--v<version>`. An add-on's `extension.yaml` version stays equal to its plugin version.
+
+## This site
+
+```bash
+cd docs
+npm ci
+npm run dev        # http://localhost:4321/synapsidian/
+npm run check
+npm run build
+```
+
+- Pages are in `docs/src/content/docs/`: one per skill under `skills/` and `extensions/<add-on>/`, one per command under `cli/`. A changed skill, command, option or field updates its page.
+- The changelog pages are generated from `CHANGELOG.md`; never edit them here.
+- Archived versions follow the core plugin's version. To archive the current docs at a release, add `{ slug: "0.35" }` to `versions` in `astro.config.mjs` and start the dev server once. Never edit a snapshot folder.
+
+<Aside title="English only">
+The site, like the notes the plugins write, is in English.
+</Aside>

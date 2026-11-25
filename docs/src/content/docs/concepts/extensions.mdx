@@ -1,5 +1,67 @@
 ---
-title: extensions
+title: Extensions
+description: How add-ons extend the vault's schema and meet the core plugin.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+The core plugin is universal: nothing in it assumes an employer, a team, tickets, pull requests or a code repository (D88). Work and project features live in add-on plugins, which meet the core in a few fixed ways only (D90).
+
+## Schema extensions
+
+An add-on ships an `extension/` folder: `extension.yaml`, `schema.yaml`, `templates/` and `bases/`. Its setup skill installs it into the vault with:
+
+```bash
+synapsidian setup extension --from "$(synapsidian-work extension)"
+```
+
+which copies it to `<vault>/.synapsidian/extensions/<name>/` and runs `setup apply`, so the new folders, Bases and property types exist. The core merges whatever is installed there, so every script, the validator and the Templater templates see the add-on's types.
+
+`schema.yaml` can hold:
+
+| Key | Does |
+| --- | --- |
+| `types:` | new note types; redefining a core type is an error |
+| `extend: <type>: fields:` | a new field on an existing type, or more values for an existing enum |
+| `extend: <type>: folder_by:` | where a note of that type goes when a field is set; one per type |
+| `extend: about: sections:` | sections of `About.md` for its setup to ask about; `subsection:` adds a `###` inside an existing one |
+
+All `types:` are merged before any `extend:`. An `extend:` of a type nothing defines is skipped with a warning, so synapsidian-work can extend the projects add-on's `project` type without requiring it (D106). An extension's templates win over the core's.
+
+`extension.yaml` names the extension and its version, which is kept equal to the plugin's version, and can list Obsidian community plugins the add-on requires. `/synapsidian:setup` then checks them like its own.
+
+```yaml
+name: synapsidian-work
+version: 0.7.0
+description: …
+```
+
+`synapsidian note where` lists the installed extensions. Skills check it to know whether, for example, the vault has projects.
+
+## Hooks into core skills
+
+A core skill reaches an add-on only through its command on PATH:
+
+```bash
+command -v synapsidian-work && synapsidian-work hook morning
+```
+
+`hook <name>` prints a reference of extra steps the core skill follows, each at the step it names. Nothing printed means the add-on is not installed, and the skill goes on without it.
+
+| Hook | Used by |
+| --- | --- |
+| `synapsidian-work hook morning` | the morning brief: pull requests, Jira, asks |
+| `synapsidian-work hook meetings` | meeting notes: 1:1, stand-up and retro kinds |
+| `synapsidian-work hook review` | the review |
+| `synapsidian-work hook schedule` | the scheduled tasks: the stand-up |
+| `synapsidian-projects hook review` | the review: per-project progress |
+
+## The other direction
+
+Add-on skills call the core through `synapsidian …` on PATH and read the core's references with `synapsidian ref <name>`. An add-on's scripts never import the core's Python code: plugins are separate cached copies. The dock meets the core only through `synapsidian brief --json`, `note set` and `commit`.
+
+<Aside title="Options stay silent">
+An add-on's own options (`userConfig`) that are empty switch that source off silently: never an error, never a prompt, never a line in a report (D86).
+</Aside>
+
+See the [add-ons](/synapsidian/extensions/overview/).

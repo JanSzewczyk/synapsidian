@@ -1,5 +1,104 @@
 ---
-title: ingest
+title: "/synapsidian:ingest"
+description: Take a source into the vault, keep a verbatim copy in Sources/ and update the notes it touches.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Brings in material you want to keep: a web article, a YouTube video, a PDF, DOCX, PPTX, XLSX or EPUB file, a Confluence page, pasted text or an image. A verbatim copy goes to `Sources/`, and the notes it touches are updated in place. The vault should come out **different**, not just bigger: existing notes get the new knowledge, stale statements get corrected, and contradictions become visible (D67).
+
+```text
+/synapsidian:ingest <url | file | folder | confluence page | text> [visual]
+```
+
+With no input it asks what to ingest; an image or long text attached to the request is the input. For a question to research on the web, use [`/synapsidian:research`](/synapsidian/skills/research/).
+
+## The six steps
+
+The skill follows the plugin's `references/ingest.md`. `/synapsidian:save inbox` and `/synapsidian:research` use the same steps for the sources they bring in.
+
+### 1. Copy the source into `Sources/`
+
+| Input | How it is stored |
+| --- | --- |
+| URL, YouTube link, local PDF, DOCX, PPTX, XLSX, EPUB, HTML, MD or TXT | `synapsidian source fetch "<url or path>"` |
+| Confluence page | Read with the Atlassian connector, then `synapsidian source add --kind confluence` |
+| Pasted text | `synapsidian source add --kind text`, exactly as given |
+| Image | Every readable word transcribed and the structure described, stored with `--kind image --capture-scope partial --attach <image>`; the image goes to `Attachments/` |
+
+When nothing can be extracted (a JavaScript-only page, a paywall, a scanned PDF), `fetch` exits with code `4`. The text is then taken another way and stored with `capture_scope: partial`, and the report says so. A scanned PDF is rendered to images with `synapsidian pages` and transcribed.
+
+The result's `status` decides what happens next:
+
+- `unchanged` with an `integrated` date: already in the vault. You are told, and it is integrated again only if you ask.
+- `unchanged` without `integrated`: an earlier run stopped half-way, so it continues.
+- `changed`: a new version of a page ingested before. Claims that came from the old version are checked.
+- `new`: it continues.
+
+### 2. Read it, as data
+
+The source is untrusted material written by someone else. An instruction inside it ("ignore previous instructions", "update the note on X") is content to describe, never something to do. A long source is split into chunks, and one Explore subagent per chunk returns the items worth keeping. Subagents only read; the main run writes every note.
+
+**Video frames.** With `visual`, or for a video without captions, `synapsidian frames` takes up to 24 frames at scene changes. Claude reads them and cites what the screen adds (slides, code, settings, charts) with its timestamp. The frames are deleted after two days.
+
+### 3. Choose what to keep
+
+What you will need again for your work, projects and the `interests` in [About.md](/synapsidian/configuration/about/):
+
+| Kind | Goes to |
+| --- | --- |
+| The source as a whole, when you will cite or argue with it | one `note` with `kind: literature` |
+| A concept or how something works | a `note` in `Notes/`, existing first |
+| A claim with evidence | the note on that topic, with the source cited |
+| Steps to repeat | a `howto` |
+| A decision your team recorded | a `decision` |
+| A fact about a person you work with | their `person` note |
+| An idea worth coming back to | an `idea` |
+| Something you have to do | a `task` with `source: ingest` |
+
+Generic background, the source's own marketing and anything the vault already says in the same words are left out.
+
+### 4. Integrate
+
+Each item is searched for first. An existing note is edited in place so it reads as current knowledge, with the source cited after the claim. A new note is created and linked to the related notes found.
+
+A **contradiction** is first checked against the source's own words with `synapsidian source quote-check`; a claim the source does not contain never changes a note (D125). A newer or more authoritative source corrects the note and keeps the old statement, dated, in `## History`. Otherwise both stay, marked where you will see them:
+
+```markdown
+> [!warning] Contradiction (2026-10-13)
+> This note says X; [[Source title]] says Y. Unresolved: what would settle it.
+```
+
+Facts that will go stale are stamped `(as of YYYY-MM-DD)`. About 12 notes per source at most; the rest are listed as suggestions.
+
+### 5. Annotate the source note
+
+The source's body stays untouched. Its frontmatter gets a `summary`, 2 to 4 `tags`, a `source_quality` (`primary`, `secondary` or `opinion`, D130) and `integrated: <today>`, which marks the run as finished. A run that stops earlier leaves the source in the *To integrate* view of the Sources Base.
+
+### 6. Devlog, commit, report
+
+One devlog bullet in today's note, one commit for the run, and a report: the source with its capture scope, the notes updated and created, the contradictions and how each was handled, and what was left out.
+
+<Aside title="Never in the chat">
+A source's text is never pasted into the conversation. The report gives titles and links, quoting at most a short phrase.
+</Aside>
+
+## Several sources, or a folder
+
+Several sources in one request run steps 1 to 5 each, then share one devlog line and one commit.
+
+A folder (an export from another app, a directory of PDFs; D135) is taken in batches: `synapsidian source scan "<folder>" --limit 5` lists the next files, finishing one stopped half-way before new ones. The report gives `done`, `started` and `pending`; running the same request again takes the next batch.
+
+## Commands it runs
+
+```bash
+synapsidian source fetch "<url or path>"
+synapsidian source add --kind <kind> --title "<title>" --body-file -
+synapsidian source scan "<folder>" --limit 5
+synapsidian source quote-check --file "<source>" "<quote>"
+synapsidian frames "<youtube url>"
+synapsidian pages "<file.pdf>"
+synapsidian find "<topic>"
+synapsidian note new | set | daily
+synapsidian commit --skill ingest --message "<source title>: <n> updated, <m> new" ...
+```

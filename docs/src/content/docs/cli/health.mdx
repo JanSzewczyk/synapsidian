@@ -1,5 +1,37 @@
 ---
-title: health
+title: synapsidian health
+description: The vault check, with the few fixes safe to apply unattended.
 ---
 
-Stub.
+```bash
+synapsidian health [--today YYYY-MM-DD]     # report only
+synapsidian health --fix                    # also apply the safe fixes
+```
+
+Prints JSON with `fixed` (files changed) and `issues`. The caller commits the files under `fixed`. [`/synapsidian:health`](/synapsidian/skills/health/) runs it every weekday morning (D30).
+
+## Safe fixes
+
+- tag format: lowercase, kebab-case, no `#`;
+- a missing `created`, taken from the note's first commit;
+- the letter case of a `[[link]]` when exactly one note matches.
+
+A note with frontmatter but no `type` gets no fix. `Archive/` and `Sources/` are never touched.
+
+## Issues reported
+
+| Issue | Means |
+| --- | --- |
+| `broken_links` | a link to no note |
+| `wanted_notes` | a missing note that two or more notes link to: worth writing (D126) |
+| `orphans` | a note that nothing but daily, review or capture notes links to (D117), with proposals: `mentioned_in` (notes that name it in plain text) and `related` (notes sharing a rare tag or project) |
+| `schema` | frontmatter the schema does not allow |
+| `overdue_tasks`, `stuck_tasks` | overdue tasks; tasks in `doing` or `waiting` with no change for over 14 days |
+| `stale_inbox` | old Inbox captures |
+| `duplicate_titles` | likely duplicates |
+| `credentials` | a secret in a note |
+| `templater_leftovers` | Templater commands left in a note or source (D110) |
+| `broken_blocks` | generated blocks that lost their `@end` line |
+| `not_utf8` | notes a fix skipped because they are not UTF-8 |
+
+Nothing is linked for you: orphan proposals are applied only with `/synapsidian:health apply`.

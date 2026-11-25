@@ -1,5 +1,60 @@
 ---
-title: save
+title: "/synapsidian:save"
+description: File what matters from the conversation into the vault, or sort the Inbox.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+Goes through the current conversation and files what deserves a place: decisions, tasks, facts about people, knowledge, how-tos, ideas, goal and project progress. Existing notes are updated in place; new ones are created only when nothing fits. One devlog line records the session.
+
+```text
+/synapsidian:save [focus or hint]
+/synapsidian:save inbox
+```
+
+Claude also offers it when you say "save this" or "remember this decision", and at the end of substantial work.
+
+## What is worth keeping
+
+From the plugin's `references/extraction.md`. When in doubt, it is left out: a vault full of trivia is worse than one missing a detail.
+
+| Kind | Kept when | Goes to |
+| --- | --- | --- |
+| Decision | a choice between options, with a reason, that someone may later ask about | a `decision` note when it is architectural, cross-team or costly to reverse; otherwise a dated line in the project or the note it is about |
+| Task | someone committed to do something, or you said "I need to" | a `task` with `source: save`; tasks finished in the conversation are skipped |
+| Person fact | something durable: role, what they own, what they care about, an open topic | their `person` note; `last_contact` and `follow_up` when they change |
+| Knowledge | how something works, an explanation you will need again | a `note` in `Notes/` |
+| Goal progress | a step towards a goal, or a change to it | the goal's `## Progress log` |
+| How-to | steps that worked and will be repeated | a `howto`, with the exact commands |
+| Idea | something to come back to, not acted on yet | an `idea` |
+| Project progress | a milestone, a blocker, a change of direction | the project's `## Log`, or the task's without projects |
+
+Not kept: debugging back-and-forth, tool chatter, what the code, commit history or ticket already says (unless the *why* is missing), generic knowledge, and secrets of any kind.
+
+## What it does
+
+1. **Collect.** Lists the candidate items by kind, keeping to the focus if you gave one. If nothing is left, it says so and stops without a commit.
+2. **Place.** Searches before creating, in at least two phrasings. An existing note is edited in the right section, and a stale statement is updated rather than contradicted (the old one, dated, goes to `## History` or `## Log` when it matters). Related notes are linked, and each new note, how-to, decision or idea is linked from its best unlinked neighbour so it does not start as an orphan.
+3. **Devlog.** Adds one bullet for the session to today's `devlog` block, for example "Fixed rounding in [[Report export]] (ABC-123)".
+4. **Commit.** One commit for every touched file. It also records the session as saved, so the evening run does not extract it a second time.
+5. **Report.** One line per note, created or updated, and what it left out and why.
+
+## Inbox mode
+
+`/synapsidian:save inbox` takes the notes in `Inbox/` instead of the conversation. Each capture becomes one of the kinds above, or stays where it is when it needs you.
+
+A capture that is essentially a link (a URL, perhaps with a line of comment or a passage you selected, as the Web Clipper template saves it) is a source: it is [ingested](/synapsidian/skills/ingest/), with your comment telling Claude what you cared about (D70). A page behind a login keeps the text you selected, stored as a partial copy.
+
+<Aside title="Nothing is deleted">
+A filed capture is moved to `Archive/` with `synapsidian note archive`, not deleted. Inbox mode adds no devlog line unless real work was filed, and does not record a session.
+</Aside>
+
+## Commands it runs
+
+```bash
+synapsidian find "<name or topic>" [--type person | project]
+synapsidian find --related "<new note title>"
+synapsidian note new | daily | archive
+synapsidian block get | set --name devlog
+synapsidian commit --skill save --record-session "${CLAUDE_SESSION_ID}" --message "<main items>" ...
+```

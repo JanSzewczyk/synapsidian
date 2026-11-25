@@ -1,5 +1,45 @@
 ---
-title: git-history
+title: Git history and undo
+description: Every run is one commit in the vault, so you can see and undo what Claude did.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+The vault is a git repository. Every skill run that changes it ends with exactly one commit of the files it touched:
+
+```text
+synapsidian(save): decision on export format, T15
+synapsidian(evening): devlog 2026-11-24 + release checklist
+synapsidian(capture): ask Alex about the export format
+```
+
+[`synapsidian commit`](/synapsidian/cli/commit/) stages only the files it is given, so two runs that overlap never take each other's changes. It never pushes: the vault has no remote unless you add one.
+
+## See what changed
+
+```bash
+git -C ~/Synapsidian log --oneline
+git -C ~/Synapsidian show <sha>
+```
+
+The morning brief's **Written overnight** lists the commits since the last morning run: evening runs, saves from other sessions, the review and the health run.
+
+## Undo
+
+```bash
+git -C ~/Synapsidian revert <sha>
+```
+
+A revert is itself a commit, so the history keeps both.
+
+## Your own edits
+
+synapsidian commits only what Claude changes. Your edits in Obsidian are committed by the **Git** community plugin on a timer, every 30 minutes, as `vault: manual edits <date>`. Setup configures it with push disabled.
+
+<Aside title="swept">
+The Git plugin's timer commits every changed file, so now and then it takes a file in the middle of a synapsidian run. The run's commit then reports the file as `swept` and says which commit holds it. Nothing is lost.
+</Aside>
+
+## Broken links
+
+A commit also reports `broken_links`: links the run added that lead to no note. It never refuses a commit for them (D43). The skill fixes a slip, usually a dated note linked without its date, in a second `fix links` commit.

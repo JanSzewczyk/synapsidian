@@ -1,5 +1,18 @@
 ---
-title: pages
+title: synapsidian pages
+description: Render PDF pages as images, for charts, scans and layouts the text layer garbles.
 ---
 
-Stub.
+```bash
+synapsidian pages FILE.pdf [--pages 1-3,6] [--scale 1.5] [--max 20]
+```
+
+Renders pages with PDFium (no poppler needed) into `<vault>/.git/synapsidian/pages/<file hash>/page-NNN.jpg`. [`/synapsidian:ingest`](/synapsidian/skills/ingest/) uses it for scanned PDFs and for reports whose meaning sits in charts.
+
+Folders older than two days are removed on every run, and git never sees them.
+
+```json
+{ "ok": true, "pages": 12, "images": [{ "page": 1, "path": "…" }], "dir": "…" }
+```
+
+Exit `2`: bad input. Exit `4`: the file cannot be opened as a PDF.
