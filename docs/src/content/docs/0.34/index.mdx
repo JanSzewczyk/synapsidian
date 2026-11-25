@@ -1,0 +1,130 @@
+---
+title: A second brain in your Obsidian vault
+description: Claude Code plugins that keep daily notes, tasks, meetings,
+  decisions and knowledge in an Obsidian vault, with every change a git commit.
+template: splash
+hero:
+  tagline: Synapsidian files what your Claude Code sessions produce into plain
+    Markdown notes, keeps the vault current with morning and evening runs, and
+    commits every change it makes, so you can see it and undo it.
+  actions:
+    - text: Get started
+      link: /synapsidian/0.34/getting-started/installation/
+      icon: rocket
+    - text: See the daily loop
+      link: /synapsidian/0.34/concepts/daily-loop/
+      variant: secondary
+    - text: GitHub
+      link: https://github.com/JanSzewczyk/synapsidian
+      variant: minimal
+      icon: github
+slug: "0.34"
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import LandingFlow from '../../../components/LandingFlow.astro';
+import Plugins from '../../../components/Plugins.astro';
+
+<div class="landing-section">
+  ## One loop, every day
+
+  <p class="landing-lead">You work in Claude Code as usual. Skills file what matters while you work; scheduled runs write the brief in the morning and the devlog at night.</p>
+
+  <LandingFlow />
+</div>
+
+<div class="landing-section landing-why">
+  <div class="why-intro">
+    ## Why Synapsidian
+
+    <p class="landing-lead">Scripts do the mechanics, Claude does the judgement.</p>
+  </div>
+
+  <div class="why">
+    <div>
+      ### Plain Markdown, your vault
+
+      Notes are Markdown files with frontmatter from one schema. Obsidian's own Bases show them as boards, tables and calendars. Nothing is locked in a database.
+    </div>
+
+    <div>
+      ### Every change is a commit
+
+      Each run ends with one git commit in the vault, named after the skill that made it. You see what Claude changed and undo it with git.
+    </div>
+
+    <div>
+      ### Fits any vault
+
+      The core assumes no job, no team and no tickets. Work and project features live in add-ons you install only if you need them.
+    </div>
+
+    <div>
+      ### Your sessions, kept
+
+      The evening run turns the day's sessions into devlog bullets and files decisions, how-tos and tasks. `#off-the-record` and `<private>` keep things out.
+    </div>
+  </div>
+</div>
+
+<div class="landing-section">
+  ## Four plugins
+
+  <p class="landing-lead">One marketplace. Install the core, then the add-ons you want.</p>
+
+  <Plugins />
+</div>
+
+<div class="landing-section landing-start">
+  <div class="start-copy">
+    ## Get started
+
+    <ol class="start-steps">
+      <li><strong>Install</strong> the core plugin from the marketplace and give it a vault folder.</li>
+      <li><strong>Set up the vault</strong> with <code>/synapsidian:setup</code> in a new session.</li>
+      <li><strong>Schedule the runs</strong> with <code>/synapsidian:schedule</code>.</li>
+      <li><strong>Work as usual</strong>, and save what matters with <code>/synapsidian:save</code>.</li>
+    </ol>
+  </div>
+
+  <div class="start-code">
+    <Tabs>
+      <TabItem label="Claude Code">
+        ```text
+        /plugin marketplace add JanSzewczyk/synapsidian
+        /plugin install synapsidian@synapsidian
+        ```
+      </TabItem>
+
+      <TabItem label="Shell">
+        ```bash
+        claude plugin marketplace add JanSzewczyk/synapsidian
+        claude plugin install synapsidian@synapsidian
+        ```
+      </TabItem>
+    </Tabs>
+
+    Then, in a new session:
+
+    ```text title="claude"
+    /synapsidian:setup
+    /synapsidian:schedule
+    >> look into the export format
+    /synapsidian:task add renew the domain by Friday
+    /synapsidian:save
+    ```
+  </div>
+</div>
+
+<div class="landing-section">
+  ## Explore
+
+  <nav class="explore" aria-label="Explore">
+    <a href="/synapsidian/0.34/getting-started/quick-start/" class="primary"><strong>Quick start</strong><span>Set up a vault and file your first notes.</span><svg class="go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+    <a href="/synapsidian/0.34/concepts/vault-layout/"><strong>Concepts</strong><span>Vault layout, schema, commits, hooks, privacy.</span><svg class="go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+    <a href="/synapsidian/0.34/skills/overview/"><strong>Skills</strong><span>All 16 core skills, one page each.</span><svg class="go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+    <a href="/synapsidian/0.34/cli/overview/"><strong>The synapsidian CLI</strong><span>Every command the skills run, with its flags.</span><svg class="go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+    <a href="/synapsidian/0.34/configuration/options/"><strong>Configuration</strong><span>Options, About.md, Obsidian plugins, schedules.</span><svg class="go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+    <a href="/synapsidian/0.34/extensions/overview/"><strong>Extensions</strong><span>Work, projects and the dock.</span><svg class="go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+  </nav>
+</div>

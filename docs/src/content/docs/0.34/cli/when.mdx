@@ -1,0 +1,21 @@
+---
+title: synapsidian when
+description: Date arithmetic the skills must not do by hand.
+slug: 0.34/cli/when
+---
+
+```bash
+synapsidian when done-window [--now ISO]
+synapsidian when review [--date YYYY-MM-DD]
+synapsidian when workdays --from ISO [--now ISO]
+```
+
+Prints JSON, in local time.
+
+| Subcommand | Returns |
+| --- | --- |
+| `done-window` | where the morning brief's **Done** starts: the previous morning run; without one, 26 hours back, or Friday 09:00 on a Monday |
+| `review` | `kind` (week, month or quarter) for that day, with `period_start` and `period_end`. Without `--date`, a run after a Friday that has no review yet is that Friday's catch-up, `catch_up_for` |
+| `workdays` | working days (Monday to Friday) between two moments |
+
+The week review falls on Fridays, the month review on the last Friday of the month, and the quarter review on the last Friday of the quarter.

@@ -1,0 +1,45 @@
+---
+title: synapsidian source
+description: Copy a source into Sources/ verbatim, with URL and content dedup.
+slug: 0.34/cli/source
+---
+
+```bash
+synapsidian source fetch URL|FILE [--title T]
+synapsidian source add --kind K --title T [--url U] [--author A] [--published D] [--capture-scope partial] [--attach IMAGE] [--refuse-secrets] --body-file -
+synapsidian source lookup URL
+synapsidian source scan FOLDER [--limit 5]
+synapsidian source quote-check --file SOURCE "quote"…
+```
+
+Keeps a verbatim copy of what [`/synapsidian:ingest`](/synapsidian/0.34/skills/ingest/) and [`/synapsidian:research`](/synapsidian/0.34/skills/research/) take in (D38, D75). A source's body is never edited afterwards.
+
+## fetch
+
+Fetches a URL or reads a local file, converts it to text, deduplicates and writes `Sources/<date> <title>.md`. Web pages, YouTube links (the transcript), and PDF, DOCX, PPTX, XLSX, EPUB, HTML, Markdown and text files are supported.
+
+The result's `status` is `new`, `unchanged` (already in the vault, nothing written) or `changed` (a new version of a known URL; the new note `supersedes` the old one). `chunks` are line ranges of about 40,000 characters each, for splitting the reading.
+
+Private-network and localhost addresses are refused. For tests or a page saved another way, `--html-file page.html` and `--transcript-json t.json` take the content offline.
+
+## add
+
+Stores content Claude got another way: a Confluence page, pasted text, an image it transcribed (`--attach` copies the image to `Attachments/` and embeds it). `--capture-scope partial` marks a copy that is not the whole source. `--refuse-secrets` refuses content that holds a credential.
+
+`--kind` is one of `article`, `pdf`, `document`, `slides`, `youtube`, `confluence`, `text`, `image`, `other`.
+
+## lookup
+
+The source notes already in the vault for a URL.
+
+## scan
+
+The files in a folder not ingested yet, one started half-way first (D135).
+
+## quote-check
+
+Whether each quote is in the source word for word, ignoring case, markup, typographic quotes and spacing; `...` stands for left-out text. A missing quote comes with the `closest` sentence. Ingest and research check every claim they rest on a source with it (D125).
+
+## Exit codes
+
+`2` bad input or a refused URL, `4` nothing could be extracted (a JavaScript-only page, a paywall, a scanned PDF); the result's `fallback` says what to try.

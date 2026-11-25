@@ -1,0 +1,49 @@
+---
+title: /synapsidian:schedule
+description: Set up, check or repair the recurring runs as desktop scheduled tasks.
+slug: 0.34/skills/schedule
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Creates the scheduled tasks that keep the vault current without you: the health check, the morning brief, the evening devlog and the Friday review. With `check`, it only reports how they stand.
+
+```text
+/synapsidian:schedule
+/synapsidian:schedule check
+```
+
+Claude also picks it when you ask why a run did not work.
+
+## The runs
+
+| Task id | Default time (local) | Runs |
+| --- | --- | --- |
+| `synapsidian-health` | weekdays 08:15 (`15 8 * * 1-5`) | [`/synapsidian:health`](/synapsidian/0.34/skills/health/) |
+| `synapsidian-morning` | weekdays 09:00 (`0 9 * * 1-5`) | [`/synapsidian:morning`](/synapsidian/0.34/skills/morning/) |
+| `synapsidian-evening` | every day 20:00 (`0 20 * * *`) | [`/synapsidian:evening`](/synapsidian/0.34/skills/evening/) |
+| `synapsidian-review` | Fridays 16:00 (`0 16 * * 5`) | [`/synapsidian:review`](/synapsidian/0.34/skills/review/) |
+| `synapsidian-research-watch` | Mondays 08:30 (`30 8 * * 1`) | [`/synapsidian:research watch`](/synapsidian/0.34/skills/research/), only when a dossier is watched |
+
+Each prompt is the slash command followed by a note that the run is unattended: no questions, do what the skill says, commit, and reply with the short report.
+
+The times are defaults. A time or title you changed is kept and mentioned in the report; only a missing task, a wrong prompt or a wrong folder counts as something to fix. If you move them, keep the order: health before the morning brief, so the brief lists the health commit.
+
+With [synapsidian-work](/synapsidian/0.34/extensions/work/) installed, `synapsidian-work hook schedule` adds its own rows, such as the stand-up.
+
+## Steps
+
+1. **Check.** Lists the scheduled tasks and, for each synapsidian task, whether it exists and is enabled, its schedule, and its last run with its status. A run still `running` long after it started, or a missing commit in the vault for that run, usually means it is waiting on a permission prompt. With `check`, it reports a table and stops.
+2. **Create or fix.** It asks once, because scheduled tasks are standing configuration. Then it creates the missing tasks, with notifications off, or fixes a wrong prompt. It changes a schedule only when you ask, and never deletes a task you made.
+3. **Permission mode and folder.** These two settings cannot be set by the tools, so you set them yourself.
+
+<Aside type="caution" title="You set these yourself">
+  Open **Scheduled** in the desktop app's sidebar and, for each synapsidian task:
+
+  * set the permission mode to **auto**. In the default mode every run stops at its first skill call and waits for a person. Never bypass permissions.
+  * set the folder to **the vault** (`synapsidian note where` prints its path). A new task takes the folder of the session that created it; if that is a code checkout, the runs break the day that folder moves.
+</Aside>
+
+Tasks run while the desktop app is open. A run missed while the computer slept fires on the next launch, and the evening run catches up every day still in its queue.
+
+See [Scheduled runs](/synapsidian/0.34/configuration/scheduled-runs/) for more on timing and troubleshooting.

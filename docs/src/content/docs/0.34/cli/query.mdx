@@ -1,0 +1,41 @@
+---
+title: synapsidian query
+description: Exact lookups over frontmatter, and the vault's own commit history.
+slug: 0.34/cli/query
+---
+
+```bash
+synapsidian query notes [--type T] [--folder F] [--where COND]… [--all] [--sort FIELD] [--limit 200]
+synapsidian query commits [--since-skill morning] [--skills evening,save] [--today D]
+synapsidian query stale [--days 30] [--limit 3] [--remember] [--quiet-days 14]
+synapsidian query resurface [--days 60] [--limit 1] [--remember] [--quiet-days 90]
+synapsidian query watched
+```
+
+Where [`find`](/synapsidian/0.34/cli/find/) ranks by words, `query` matches fields exactly. It prints JSON.
+
+## notes
+
+```bash
+synapsidian query notes --type task --where status!=done --where "due<=2026-10-20"
+synapsidian query notes --type task --where source_link=https://… --all
+synapsidian query notes --type meeting --where event_id=abc123
+```
+
+Operators: `=`, `!=`, `<`, `<=`, `>`, `>=`, and `~` for "contains", case-insensitive. Dates compare as dates. A missing field never matches a comparison, so `due<=X` skips undated tasks, and `field=` matches an empty field. Several `--where` must all hold. `--all` includes `Archive/` and `Sources/`. Each result carries `modified`.
+
+## commits
+
+The vault's commits since the last run of `--since-skill`, by the skills in `--skills`. The morning brief's "Written overnight" list comes from here.
+
+## stale
+
+Facts stamped `(as of YYYY-MM-DD)` older than `--days`, oldest first. With `--remember`, a fact asked about is not asked again for `--quiet-days`. The morning brief's **Still true?** uses it.
+
+## resurface
+
+One old note, how-to or live decision unchanged for `--days`, the most linked-to first. With `--remember`, the same note comes back at most once in `--quiet-days`. The morning brief's **From the archive** uses it.
+
+## watched
+
+Research dossiers with a `watch` interval that has passed, oldest first. `/synapsidian:research watch` refreshes them.

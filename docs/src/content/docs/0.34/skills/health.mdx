@@ -1,0 +1,61 @@
+---
+title: /synapsidian:health
+description: Apply safe mechanical fixes and list what needs a decision in today's note.
+slug: 0.34/skills/health
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A vault check, usually run unattended from a [scheduled task](/synapsidian/0.34/configuration/scheduled-runs/) on weekday mornings. It applies only safe fixes and writes what needs your decision into today's daily note. With `apply`, you pick which orphan notes to link.
+
+```text
+/synapsidian:health
+/synapsidian:health apply
+```
+
+## The run
+
+1. **Check and fix.** `synapsidian health --fix` applies the safe fixes: tag format, a missing `created` date taken from git, and the letter case of links. Everything else is only reported. Overdue and stuck tasks are not its business; the morning brief and the review carry them.
+2. **Clean vault.** Nothing fixed and nothing to report: it replies "Vault is clean." and stops, with no note and no commit.
+3. **Report.** Otherwise it writes a `health` block under `## Vault health` in today's note, at most 8 lines:
+   * **Fixed:** how many notes got safe fixes.
+
+   * **Needs a decision**, most serious first, at most three examples per kind:
+
+     | Kind | Means |
+     | --- | --- |
+     | `credentials` | a note that holds a secret |
+     | `templater_leftovers` | Templater code left in a note or a source |
+     | `broken_blocks` | a generated block lost its `<!-- @end -->` line; its skill refuses to refresh it until the line is back |
+     | `schema` | a field or value the schema does not allow |
+     | `not_utf8` | a note a fix skipped; save it as UTF-8 |
+     | `broken_links` | a link to a note that does not exist |
+     | `wanted_notes` | a missing note that two or more notes already link to, worth writing |
+     | `duplicate_titles` | two notes with the same title |
+     | `stale_inbox` | old captures still in the Inbox |
+
+   * **Orphans with a proposal:** a note nothing links to, with where it could be linked from. Either a note that names it in plain text (`mentioned_in`) or one that shares a rare tag or project (`related`). Claude drops proposals that make no sense, such as a name that is just an ordinary word.
+4. **Commit** the daily note and every fixed file.
+
+<Aside title="Proposals wait for you">
+  The run never links orphans itself. You accept proposals with `/synapsidian:health apply`.
+</Aside>
+
+## apply
+
+Run it when you are there. It lists the orphans that have a proposal and asks which to link, and where. For each one you accept:
+
+* `mentioned_in`: the first plain mention of the orphan's title becomes `[[Title]]`, outside code, generated blocks and existing links. The sentence is not rewritten.
+* `related`: `See also: [[Orphan]]` is added as the note's last line.
+
+One commit, and a list of the notes changed. It never creates a note and never touches `Archive/` or `Sources/`.
+
+## Commands it runs
+
+```bash
+synapsidian health --fix
+synapsidian health                     # apply: report only
+synapsidian note daily
+synapsidian block set --file "Daily/<today>.md" --name health --section "Vault health"
+synapsidian commit --skill health --message "health <today>: <n> fixes, <m> for a decision" ...
+```

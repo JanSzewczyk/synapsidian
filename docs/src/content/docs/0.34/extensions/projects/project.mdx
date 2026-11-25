@@ -1,0 +1,67 @@
+---
+title: /synapsidian-projects:project
+description: Create, refresh, report on, close or list projects, with a
+  read-only repository scan.
+slug: 0.34/extensions/projects/project
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+```text
+/synapsidian-projects:project new <name> [repo <path | url>]
+/synapsidian-projects:project refresh <name>
+/synapsidian-projects:project status <name>
+/synapsidian-projects:project close <name>
+/synapsidian-projects:project list
+```
+
+A project name alone refreshes that project, or creates it when it has no hub. Claude also picks it for "how is web-app going?" or "close the project".
+
+## new
+
+1. **Settle the basics**, asking only for what the conversation has not said:
+   * **title**: the name you call it by; it becomes `Projects/<title>/`;
+   * **kind**: `repository` for code in git, `system` for anything without a repository of its own (a product, a process, a home setup);
+   * **repo**: for a repository, the remote URL (the default when there is one: every device finds its own clone) or the local path (for a repository never pushed or kept on one device). In a monorepo, `path` is the app's folder;
+   * **docs**: paths in the repository worth reading, such as `docs` or `ARCHITECTURE.md`;
+   * **people** and **goals**: only when you mention them; a goal is never created here.
+2. **Creates the hub** with its sections and board.
+3. **Reads the repository** (below).
+4. **Fills Goal, Links and Status** from the README and your words; **Risks** only from what you named, as `what · likelihood/impact · mitigation`. Unknown stays `TBD`.
+5. Offers to move existing notes about the project into it, only those you agree to.
+
+## refresh
+
+Reads the repository again from the last scanned commit and adds one dated Log line on what changed: what was added, reworked or removed. For a system, it asks you what changed. Goal, Links, Status, Key decisions, Risks, Open questions, people and goals are your text: it lists what looks out of date and edits only what you approve. It redraws the Roadmap.
+
+## status
+
+Read-only until you approve a new Status text (D149). It counts, since the last status Log line:
+
+* what **closed**: tasks, changes and milestones done, decisions accepted;
+* what is **in progress** and what is **blocked**, and on what;
+* each open **milestone**: done out of total tasks, and days to its target.
+
+It says what looks off (a milestone past its target, a blocker nobody works on, nothing closed for a long time) and proposes a new Status, ending `(as of YYYY-MM-DD)`. On your yes it writes it with a `status:` Log line, which starts the next status window.
+
+## close
+
+Interactive only: an unattended run never closes a project (D150).
+
+1. Lists everything still open: tasks, milestones, changes, proposed decisions. For each it proposes a default you can change in one answer: close, drop, or move to another project. Something you want to keep open means the project is not done.
+2. **Retro.** Drafts the facts from the vault (the Log, milestones reached and dropped, targets that moved, decisions, incidents) and asks you what went well, what did not, and what you would do differently. The lessons are yours; the draft never invents one.
+3. Sets the hub to `done` (or `dropped`), updates Status, redraws the Roadmap and adds a Log line with the counts.
+
+## list
+
+One line per project: status, kind, open tasks, summary. Active projects first. Nothing is committed.
+
+## Reading the repository
+
+<Aside title="Read-only">
+  A repository is never written to. The scan uses `synapsidian-projects scan` and reads files; nothing is built, installed, tested, fetched or checked out (D98).
+</Aside>
+
+It finds the clone on this device, scans it, and reads at most about six files (the README and the docs that bear on Goal, Status and Open questions). The facts go into the hub's **Repository** section as a hashed [generated block](/synapsidian/0.34/concepts/generated-blocks/), and `scanned_commit` records where it read. If you edited that block by hand, it leaves it, shows the new facts, and overwrites only when you say so.
+
+A clone older than the last read never overwrites it.

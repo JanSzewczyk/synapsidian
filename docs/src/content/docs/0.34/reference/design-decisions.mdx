@@ -1,0 +1,36 @@
+---
+title: Design decisions
+description: Where the reasoning behind synapsidian is recorded, and the
+  decisions that shape it most.
+slug: 0.34/reference/design-decisions
+---
+
+Every design choice is recorded with its reason in [`references/decisions.md`](https://github.com/JanSzewczyk/synapsidian/blob/main/references/decisions.md), numbered from D1. Skills, scripts and these pages cite the numbers, for example (D90).
+
+## The ones that shape it most
+
+| # | Decision |
+| --- | --- |
+| D7 | Claude edits notes on its own, and git is the undo: every operation is one commit |
+| D19 | The Friday review lists patterns and contradictions; notes are not rewritten on that basis |
+| D21 | Every session starts with a brief of who you are and what is due |
+| D25 | No vault content goes to another provider: web searches get queries, never notes |
+| D41 | One schema file is the single source of truth for note types |
+| D43 | Checks warn, never block: validation, broken links |
+| D51 | Captures are raw: no searching, linking or rewriting |
+| D67 | An ingest updates existing notes with what the source says, with no confirmation step |
+| D75 | Sources are verbatim copies and are never edited |
+| D80 | Thinking tools propose rules; they never edit your instructions |
+| D88 | The core is universal: no job, team or tickets assumed |
+| D90 | Add-ons meet the core only through schema extensions and printed hooks |
+| D99 | Projects are an add-on; the core has no project type |
+| D120 | Files that are code or instructions always ask, so injected text cannot change them unattended |
+| D123 | Sessions can be kept off the record |
+| D125 | A claim from a source is checked against its words before it changes a note |
+| D137 | `>>` prompts are captured without a Claude turn |
+| D156 | The dock meets the core only through the CLI |
+| D160 | About.md sections are declared per plugin and filled by an interview |
+
+## Inspiration
+
+The plugin set was inspired by [eugeniughelbur/obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) and rebuilt for current Claude Code plugin features: skills with progressive disclosure, a single note schema, scripts for the mechanics and Claude for the judgement.

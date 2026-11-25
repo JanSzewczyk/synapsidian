@@ -1,0 +1,32 @@
+---
+title: synapsidian commit
+description: One git commit for the files a skill run touched.
+slug: 0.34/cli/commit
+---
+
+```bash
+synapsidian commit --skill SKILL --message "<message>" [--record-session ID] [--timeout 60] FILE…
+```
+
+Commits exactly the given vault-relative files as `synapsidian(<skill>): <message>`. It never stages anything else and never pushes. Every skill run that changes the vault ends with one call. See [Git history](/synapsidian/0.34/concepts/git-history/).
+
+| Flag | Effect |
+| --- | --- |
+| `--skill` | the skill named in the message |
+| `--message` | the summary, for example `add T14 review TDD` |
+| `--record-session` | records the Claude session as saved, so the evening run does not extract it again |
+| `--timeout` | seconds to wait for the vault lock another run holds (default 60) |
+
+## Result
+
+```json
+{ "ok": true, "sha": "…", "message": "synapsidian(save): …", "committed": true }
+```
+
+* `broken_links`: links this commit added that resolve to no note. A report, never a refusal (D43): the commit is made, and a fix goes in a second commit. `Sources/` and `Archive/` are not checked.
+* `swept`: Obsidian Git committed the run's files first. The run is still recorded, so the morning's overnight list sees it.
+* `added_archive_sources`: for a note moved into `Archive/`, its old path, which the commit also includes.
+
+## Exit codes
+
+`1` git failed, `2` the vault is not a git repository (run `/synapsidian:setup`), `4` the vault lock was not free in time.

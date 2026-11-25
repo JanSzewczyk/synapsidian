@@ -1,0 +1,31 @@
+---
+title: Bases
+description: The Obsidian Bases views setup puts in the vault.
+slug: 0.34/reference/bases
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Bases are Obsidian's core views over frontmatter: tables, kanban boards and, with the Calendar Bases plugin, calendars. `/synapsidian:setup` copies one `.base` file per note type into `Bases/`. Each selects its notes by `type`, outside `Archive/`, so notes filed in project folders show up too (D102).
+
+| Base | Views |
+| --- | --- |
+| `Tasks.base` | **Board** (kanban by status), **Calendar** (by `due`), Due this week, Done |
+| `Goals.base` | Active, **Board**, **Calendar** (by `target`), Near target |
+| `Ideas.base` | **Pipeline** (kanban by status) |
+| `Inbox.base` | To triage |
+| `Meetings.base` | Recent, **Calendar** (by `date`) |
+| `People.base` | Everyone, Follow up, Recently touched |
+| `Research.base` | All research |
+| `Reviews.base` | All reviews, Months and quarters |
+| `Sources.base` | To integrate, All sources, Articles, Videos, Documents, Confluence, Text and images, By kind |
+| `Decisions.base` | All decisions |
+| `Thinking.base` | All thinking, By kind |
+
+Dragging a card to another column changes the note's `status`; dragging a note to another day in a calendar changes its date. The board and the calendar are views of the notes, not copies that drift.
+
+The add-ons add their own: [synapsidian-work](/synapsidian/0.34/extensions/work/) adds One-to-ones and Wins; [synapsidian-projects](/synapsidian/0.34/extensions/projects/) adds Projects, By project, Milestones, Architecture, Debug and Incidents, and a board in every project hub.
+
+<Aside title="Your edits stay">
+  `setup apply` never overwrites a Base that exists. A vault set up before a view was added keeps its Bases; add the view yourself from the Base's view menu.
+</Aside>

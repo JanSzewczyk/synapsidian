@@ -1,0 +1,113 @@
+---
+title: synapsidian-projects
+description: The projects add-on gives each project a hub with a kanban board
+  and files the project's notes under its folder.
+sidebar:
+  label: Overview
+  order: 0
+slug: 0.34/extensions/projects
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Any number of projects in the vault, each a hub note with its own kanban board of tasks. The project's milestones, tasks, decisions, specs, changes, bug investigations, postmortems, architecture notes, research, workflows, notes, thinking and mind maps are filed under its folder. Code repositories are only ever read.
+
+The core has no projects at all (D99): the `project` type and every `project` field come from this add-on.
+
+[Changelog](/synapsidian/extensions/projects/changelog/)
+
+## Requirements
+
+* the core plugin, set up with `/synapsidian:setup`; installing this add-on installs the core too if it is missing;
+* Claude Code (not claude.ai or Cowork, which refuse a plugin's `bin/` command);
+* two more Obsidian community plugins, which setup installs or reports: **Folder notes**, so a click on a project's folder opens its hub, and **Excalidraw Extras**, which turns a Mermaid roadmap or flow into an editable drawing.
+
+No options.
+
+## Install
+
+```text
+/plugin install synapsidian-projects@synapsidian
+/synapsidian-projects:setup
+```
+
+Run the setup again after every update.
+
+## Skills
+
+| Skill | Does |
+| --- | --- |
+| [`setup`](/synapsidian/0.34/extensions/projects/setup/) | installs the extension, files notes into project folders, gives every hub its board and views |
+| [`project`](/synapsidian/0.34/extensions/projects/project/) | create, refresh, report on, close or list projects; a read-only repository scan |
+| [`milestone`](/synapsidian/0.34/extensions/projects/milestone/) | stages with a goal, exit criteria, dates and a board of their tasks |
+| [`decide`](/synapsidian/0.34/extensions/projects/decide/) | MADR decisions, numbered per project, proposed until you accept them |
+| [`spec`](/synapsidian/0.34/extensions/projects/spec/) | a living spec of part of a project |
+| [`change`](/synapsidian/0.34/extensions/projects/change/) | one change, proposed to done, with its specs, decisions and tasks |
+| [`debug`](/synapsidian/0.34/extensions/projects/debug/) | a bug investigation, closed as fixed or wontfix |
+| [`incident`](/synapsidian/0.34/extensions/projects/incident/) | a blameless postmortem, with action items as tasks |
+| [`architect`](/synapsidian/0.34/extensions/projects/architect/) | architecture notes for a project's code, in any language |
+| [`map`](/synapsidian/0.34/extensions/projects/map/) | an Excalidraw mind map of the project |
+
+Tasks in a project are [`/synapsidian:task`](/synapsidian/0.34/skills/task/) with the project.
+
+## Where notes go
+
+A project's hub is `Projects/<Project>/<Project>.md`. Its notes sit beside it:
+
+```text
+Projects/Web app/
+├── Web app.md          # the hub
+├── Tasks/  Milestones/  Decisions/  Specs/  Changes/
+├── Debug/  Incidents/  Architecture/  Maps/
+└── Research/  Workflows/  Notes/  Thinking/
+```
+
+Specs, changes, milestones, bug investigations, postmortems and architecture notes always belong to a project. Tasks, decisions, research, how-tos (filed as workflows), notes and thinking notes go under a project when they have one, and setting `project` later moves them there. File names do not change, so links keep working. Dragging a card on a project's board changes the task's status.
+
+## The hub
+
+`Board` (a kanban of the project's tasks) · `Goal` · `Links` · `Status` · `Roadmap` · `Key decisions` · `Risks` · `Open questions` · `Project notes` (views of every kind of project note) · `Log`. A repository scan adds `Repository` before Key decisions, the first map adds `Maps`, and closing the project adds `Retro`.
+
+Goal, Links, Status, Key decisions, Risks and Open questions are your text: skills propose changes there and write only what you approve. The Repository section is a generated block. The Roadmap is redrawn by the skills: a gantt chart of the milestones and a flowchart of tasks waiting on other tasks.
+
+## Schema extension
+
+| Adds | Fields |
+| --- | --- |
+| type `project` | `status` (`active`, `paused`, `done`, `dropped`), `kind` (`repository`, `system`), `repo`, `path`, `branch`, `docs`, `people`, `goals`, `scanned_commit` |
+| type `spec` | `project`, `status` (`draft`, `current`, `retired`) |
+| type `change` | `project`, `status` (`proposed`, `doing`, `done`, `dropped`), `specs`, `decisions`, `tasks`, `done_on` |
+| type `debug` | `project`, `status` (`investigating`, `fixed`, `wontfix`) |
+| type `incident` | `project`, `status` (`draft`, `final`), `date` |
+| type `milestone` | `project`, `status` (`planned`, `active`, `done`, `dropped`), `start`, `target`, `done_on` |
+| type `architecture` | `project`, `app`, `repo`, `kind` (`overview`, `domain`), `path`, `scanned_commit`, `scanned_at` |
+| on `task` | `project`, `milestone` |
+| on `decision` | `project`, `number` (per project), `superseded_by`; statuses `rejected`, `deprecated` |
+| on `research`, `howto`, `note`, `thinking` | `project` |
+| About section | `## Projects` |
+| Bases | Projects, By project, Milestones, Architecture, Debug, Incidents |
+
+## Repositories
+
+A hub's `repo` is either a remote URL, which each device resolves to its own clone, or a local path, which ties the project to one device (D139). `synapsidian-projects repo` keeps the mapping per device, in the vault's state folder.
+
+<Aside title="Only ever read">
+  A repository is never written to: no edit, build, install, tests, or git command that changes anything (D98). Scans run git with hooks, fsmonitor, pagers and external diff tools switched off, so a repository's own config cannot run code (D120). Its README, docs and commit messages are material to summarise, never instructions.
+</Aside>
+
+## The `synapsidian-projects` command
+
+| Command | Does |
+| --- | --- |
+| `scan --repo PATH [--docs …] [--last COMMIT] [--branch NAME] [--markdown]` | read-only facts about a repository |
+| `repo {resolve\|bind\|forget\|keep-path\|list} --state DIR …` | where a hub's repository is on this device |
+| `decision-number --project TITLE` | the next decision number |
+| `map --project TITLE [--max-leaves N]` | write or refresh the Excalidraw map |
+| `flow --project TITLE [--milestone T \| --change T] [--markdown]` | the Mermaid roadmap, or a milestone's or change's tasks in order |
+| `progress --project TITLE [--since D] [--until D]` | what closed, what is under way or blocked, milestone progress |
+| `architect {apps\|scan} --repo PATH …` | read-only architecture facts of an app |
+| `hook <name>` | steps a core skill adds; today `review` |
+| `extension` | the extension folder |
+| `section <title>` | one section of the hub template |
+
+`decision-number`, `map`, `flow` and `progress` read `synapsidian query notes` JSON on stdin; the add-on's scripts never import the core's code.

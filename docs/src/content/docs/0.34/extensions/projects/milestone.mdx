@@ -1,0 +1,45 @@
+---
+title: /synapsidian-projects:milestone
+description: Plan and track a project's stages, with a goal, exit criteria,
+  dates and a board of tasks.
+slug: 0.34/extensions/projects/milestone
+---
+
+```text
+/synapsidian-projects:milestone <name> [project <name>] [target <date>]
+/synapsidian-projects:milestone add <tasks> to <milestone>
+/synapsidian-projects:milestone start | done | drop | status <milestone>
+```
+
+A milestone is a stage of a project with a target date (D145): a note in `Projects/<Project>/Milestones/` with its goal, exit criteria and a board of its tasks. A task belongs to it through the task's own `milestone` field.
+
+| Field | |
+| --- | --- |
+| `project` | required |
+| `status` | `planned`, `active`, `done`, `dropped` |
+| `start`, `target` | dates, only from you |
+| `done_on` | set when it is done |
+
+## New
+
+1. Resolves the project, and searches for an open milestone with the same aim first.
+2. Creates it. Titles are unique across the vault, so a generic name starts with the project's: `web-app beta`, not `Beta`.
+3. Writes **Goal** (what it delivers and for whom) and **Exit criteria** you can check ("checkout works on the new API", not "done").
+4. Offers the project's open tasks that fit, and new tasks for exit criteria none covers. Order between tasks is `blocked_by`.
+5. Adds a hub Log line.
+
+Dates and scope are never invented: unknown is `TBD` and an empty field.
+
+## Add, start, status, done, drop
+
+* **add** puts tasks in, or takes them out with an empty value. A task of another project cannot join.
+* **start** sets `active`, and `start` to today when it has none.
+* **status** shows done out of total tasks, what is in progress, what is blocked, and the days left to the target. It writes nothing.
+* **done** checks the tasks and exit criteria first. With tasks still open, it asks: close them, move them, or wait.
+* **drop** records why. Its open tasks are your call.
+
+A changed `target` gets a dated Log line with the old date and the reason, so slips stay visible.
+
+## Diagrams
+
+After a change, it redraws the milestone's **Flow**, its tasks in order as Mermaid, and the hub's **Roadmap**: a gantt chart of the milestones and a flowchart of tasks waiting on other tasks. Excalidraw Extras can turn either into an editable drawing.

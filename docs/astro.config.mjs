@@ -10,7 +10,7 @@ const repo = "https://github.com/JanSzewczyk/synapsidian";
 
 // Archived releases, named after the core plugin's version (see the comment at `plugins` below).
 /** @type {{ slug: string; label?: string }[]} */
-const versions = [];
+const versions = [{ slug: "0.34", label: "v0.34" }];
 
 export default defineConfig({
   site: "https://janszewczyk.github.io",
@@ -48,7 +48,8 @@ export default defineConfig({
       plugins: [
         // `current` is the docs on main; each archived release is a folder src/content/docs/<slug>/,
         // named after the core plugin's version. To archive the next release, add { slug: "0.35" }
-        // to `versions` and start the dev server once. Never edit a snapshot folder.
+        // to `versions` and start the dev server once, then point the snapshot's changelog links back at the
+        // unversioned /changelog/ pages (changelogs are not versioned). Never edit a snapshot folder after that.
         // Pages under /changelog/ and /extensions/<add-on>/changelog/ come from the repository's
         // CHANGELOG.md (see src/content.config.ts).
         starlightChangelogs(),

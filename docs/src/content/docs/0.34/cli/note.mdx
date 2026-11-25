@@ -1,0 +1,77 @@
+---
+title: synapsidian note
+description: Create notes with schema-correct frontmatter, set fields, archive,
+  fill sections.
+slug: 0.34/cli/note
+---
+
+Everything that creates or changes a note's frontmatter goes through `note`, so fields, folders, file names and task ids always follow the [schema](/synapsidian/0.34/reference/schema/).
+
+```bash
+synapsidian note new --type <type> --title "<title>" [--field KEY=VALUE]… [--body-file FILE|-]
+synapsidian note daily [--date YYYY-MM-DD]
+synapsidian note set --file <rel> --field KEY=VALUE…
+synapsidian note next-id
+synapsidian note where
+synapsidian note archive --file <rel>
+synapsidian note fill --file <rel> --section TITLE [--subsection TITLE] [--before TITLE] [--body-file FILE|-]
+synapsidian note section --type <type> [--kind KIND] --section TITLE
+```
+
+## new
+
+Creates a note in its type's folder, with the type's body template unless `--body-file` gives one. `created` is set for you; a task gets the next `T<n>` id.
+
+* Required fields must be given, and every type but a few needs `--field summary="…"`.
+* A type with `folder_by` (a task with a `project`, for example) goes to that field's folder (D102).
+* A file name that another note already has anywhere in the vault is refused (exit `3`).
+* A file name with a date in it takes the type's `date` field, else `created`. `--field created=2026-10-13` files a decision under the day it was made, not the day it was written down (D158). A title that already starts with a date is refused.
+* A value or body that looks like a credential is refused (exit `2`).
+
+## daily
+
+Creates `Daily/<date>.md` from the daily template if it does not exist. It never overwrites.
+
+## set
+
+Changes fields. An empty value clears the field: `--field due=`.
+
+* Closing a task (`status=done`) sets `done_on`. Closing one with `repeat` files the next occurrence and returns it as `next`.
+* Setting a `folder_by` field moves the note and reports `from` and `rel`; commit both paths.
+* On `About.md` it may change any field but `protected`, which is yours.
+* Unknown fields and values outside an enum are refused with the allowed values.
+
+## where
+
+Prints the vault path, its state folder, the installed extensions and the timezone. Skills use it to check whether an add-on's extension is in the vault.
+
+## archive
+
+Moves a note to `Archive/<same path>`. Nothing is deleted.
+
+## fill
+
+Writes a `## <section>` only when it is empty or missing, and reports `kept` for a section with any text, so what you wrote stays. A missing section goes before `--before`, else at the end. On `About.md` it takes only the sections the schema declares (D160), with `--subsection` for a `###` inside one, and never `## Rules`. A source's body is never edited (D75).
+
+## section
+
+Prints one section of a type's body template, for piping into `fill`:
+
+```bash
+synapsidian note section --type person --section "Meetings and tasks" \
+  | synapsidian note fill --file "People/Alex.md" --section "Meetings and tasks"
+```
+
+## Files synapsidian will not change
+
+`set`, `fill` and `archive` work only on `.md` notes inside the vault. They refuse:
+
+* `CLAUDE.md`, `CLAUDE.local.md` and `AGENTS.md`, anywhere;
+* anything under `Templates/`, `Bases/`, `Attachments/`, `.obsidian/`, `.claude/`, `.git/`, `.trash/` or any other dot-folder;
+* `About.md`, except `set` of its fields other than `protected` and `fill` of its declared sections.
+
+See [Privacy and safety](/synapsidian/0.34/concepts/privacy/) for the vault-edit hook, which also covers `protected` paths.
+
+## Exit codes
+
+`2` bad input or refused, `3` the note exists (or is not found).

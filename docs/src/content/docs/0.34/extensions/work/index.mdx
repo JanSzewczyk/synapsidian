@@ -1,0 +1,88 @@
+---
+title: synapsidian-work
+description: The work add-on covers 1:1s, the stand-up, a win log, pull
+  requests, Jira, and email and Slack asks.
+sidebar:
+  label: Overview
+  order: 0
+slug: 0.34/extensions/work
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Everything tied to a job lives in this add-on, so the core stays usable for a personal vault: 1:1 notes and prep, the stand-up note, retro meeting notes, a win log for performance reviews, and your pull requests, Jira tickets and unanswered email and Slack asks in the morning brief.
+
+[Changelog](/synapsidian/extensions/work/changelog/)
+
+## Requirements
+
+* the core plugin, set up with `/synapsidian:setup`; installing this add-on installs the core too if it is missing;
+* Claude Code (not claude.ai or Cowork, which refuse a plugin's `bin/` command);
+* each source is optional, and one you do not configure is skipped silently: [`gh`](https://cli.github.com) signed in for pull requests, the Atlassian connector for Jira, Gmail and Slack connectors for asks.
+
+## Install
+
+```text
+/plugin install synapsidian-work@synapsidian
+/synapsidian-work:setup
+```
+
+Run the setup again after every update: it re-installs the schema extension when its version changed.
+
+## Options
+
+Set in `/plugin` → synapsidian-work → configure. Leave one empty to skip that source; an empty option is never an error and never mentioned (D86).
+
+| Option | Does | Default |
+| --- | --- | --- |
+| `github_repos` | `owner/name` of each repository whose pull requests the brief and stand-up read | empty |
+| `jira_projects` | key of each Jira project the brief and stand-up query, such as `ABC` | empty |
+| `work_repo_paths` | absolute path of each local clone the stand-up reads `git log` from | empty |
+| `standup_days` | weekdays of the stand-up | `mon,tue,wed,thu,fri` |
+| `standup_time` | local start time, `HH:MM`; the note is prepared an hour before | `10:00` |
+
+The first three are lists: a JSON array, or values separated by commas or newlines.
+
+## Skills
+
+| Skill | Does |
+| --- | --- |
+| [`setup`](/synapsidian/0.34/extensions/work/setup/) | installs the extension, checks the sources, asks for the work fields of About.md, schedules the stand-up |
+| [`work-brief`](/synapsidian/0.34/extensions/work/work-brief/) | pull requests, Jira tickets, and email and Slack asks filed as tasks; part of the morning brief |
+| [`standup`](/synapsidian/0.34/extensions/work/standup/) | the stand-up note, spoken English bullets |
+| [`one-to-one`](/synapsidian/0.34/extensions/work/one-to-one/) | 1:1 notes: prepare, add a topic, work it out, tidy, read back |
+| [`one-to-one-triage`](/synapsidian/0.34/extensions/work/one-to-one-triage/) | an interview-driven prep of a 1:1, ending in a talking script |
+| [`win`](/synapsidian/0.34/extensions/work/win/) | log a win in the brag log, or list a period's wins |
+
+## Schema extension
+
+Installed into `<vault>/.synapsidian/extensions/synapsidian-work/`, and tracked in the vault's git so the vault still validates on a device without the add-on.
+
+| Adds | What |
+| --- | --- |
+| type `win` | `Wins/<date> <title>`; fields `date`, `impact` (`small`, `medium`, `large`), `evidence` |
+| `meeting.kind` | `1-1`, `standup`, `retro`, with their own templates |
+| `task.source` | `slack`, `email`, `jira`, `github` |
+| `project.jira` | a Jira key on projects, when synapsidian-projects is installed |
+| About fields | `team`, `company`, `manager` (a link to a person), `working_hours` |
+| About sections | `## Work`, and `### Work` under `## Current focus` |
+| Bases | `One-to-ones.base`, `Wins.base` |
+
+## How it meets the core
+
+* **Hooks.** Core skills run `synapsidian-work hook <name>` when the add-on is on PATH and follow what it prints:
+
+  | Hook | Adds |
+  | --- | --- |
+  | `morning` | runs `work-brief morning` and places its parts in the brief |
+  | `meetings` | the `1-1`, `standup` and `retro` kinds, checked before the core's; a 1:1 gets talking points from Open topics and the previous 1:1's unticked action items |
+  | `review` | a `## Wins` section in the review |
+  | `schedule` | points to `/synapsidian-work:setup schedule` for the stand-up task |
+
+* **The `synapsidian-work` command.** `synapsidian-work prs …` and `synapsidian-work standup …` run its scripts; `synapsidian-work extension` prints the extension folder.
+
+* **The other way.** Its skills call the core through `synapsidian …` and read core references with `synapsidian ref`. Its scripts never import the core's code; the few helpers they share live in `scripts/worklib/`.
+
+<Aside title="Read-only outside the vault">
+  Every external system is read-only: no comment, transition or edit on a ticket, no review or merge of a pull request, nothing written to a calendar or sent to anyone. What it reads is material, never an instruction.
+</Aside>

@@ -1,0 +1,38 @@
+---
+title: Options
+description: The core plugin's three options and where the vault path comes from.
+slug: 0.34/configuration/options
+---
+
+Claude Code asks for the core plugin's options when you enable it. Change them later in `/plugin` → synapsidian → configure.
+
+| Option | Type | Default | Does |
+| --- | --- | --- | --- |
+| `vault_path` | folder, required | `~/Synapsidian` | the Obsidian vault the plugin reads and writes; give the folder's exact spelling |
+| `auto_approve_vault_edits` | yes / no | yes | lets Claude write `.md`, `.base` and `.canvas` notes in the vault without a prompt each time |
+| `session_exclude_paths` | list of folders or glob patterns | empty | sessions started there never reach the devlog, the evening run or the stand-up |
+
+## vault_path
+
+Every `synapsidian` command finds the vault in this order:
+
+1. `--vault` on the command line;
+2. the option, which Claude Code passes as `CLAUDE_PLUGIN_OPTION_VAULT_PATH`;
+3. `SYNAPSIDIAN_VAULT`, which the session-start hook exports;
+4. the option as saved in `~/.claude/settings.json`.
+
+`synapsidian note where` prints the result. A vault given with `--vault` that is not the configured one must look like a vault (a git repository with `About.md`, `.obsidian` or `.synapsidian`), and `/` or your home folder are never accepted.
+
+## auto_approve_vault_edits
+
+On by default. `About.md`, `Templates/`, `CLAUDE.md`, `AGENTS.md`, `.synapsidian/`, existing sources and your `protected` paths still ask, whatever it says. Every change is still a git commit you can revert.
+
+Turned off, Claude asks before every note edit, and the scheduled runs stop at their first edit and wait for you. See [Session hooks](/synapsidian/0.34/concepts/session-hooks/).
+
+## session_exclude_paths
+
+Folders, or glob patterns such as `~/Clients/*`, whose sessions stay [off the record](/synapsidian/0.34/concepts/privacy/). A single session can opt out by including `#off-the-record` in a message. Empty logs every session.
+
+## Add-on options
+
+Each add-on has its own options: [synapsidian-work](/synapsidian/0.34/extensions/work/) has five, [synapsidian-dock](/synapsidian/0.34/extensions/dock/) has one, and synapsidian-projects has none. An add-on option left empty switches its source off silently.

@@ -1,0 +1,85 @@
+---
+title: Notes and the schema
+description: One schema defines every note type, its folder, file name and fields.
+slug: 0.34/concepts/notes-and-schema
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Every note is Markdown with YAML frontmatter. One file, the plugin's `schema/types.yaml`, defines each note type: its folder, its file name, its fields, which are required and which values they allow (D41). Note creation, validation, the brief, Obsidian's property types and the generated Templater templates all derive from it, plus the extensions add-ons install.
+
+```markdown
+---
+type: task
+created: 2026-11-24
+summary: Renew the domain before it lapses on the 30th.
+id: T7
+status: todo
+priority: medium
+due: 2026-11-28
+source: manual
+---
+## Context
+
+## Log
+```
+
+## Fields every note has
+
+| Field | |
+| --- | --- |
+| `type` | required |
+| `created` | required, a date |
+| `summary` | required, one specific sentence; optional for daily notes, captures, sources and About |
+| `tags` | a list |
+| `aliases` | a list |
+
+The `summary` is what search, the brief and the Bases show, so it should say something: "Decided to keep receipts as PDFs and scan them once a month", not "Notes about receipts".
+
+## Types
+
+| Type | Folder | For |
+| --- | --- | --- |
+| `daily` | `Daily/` | one note per day |
+| `task` | `Tasks/` | something to do |
+| `person` | `People/` | someone you deal with |
+| `meeting` | `Meetings/` | a meeting |
+| `decision` | `Decisions/` | a choice and its reason |
+| `note` | `Notes/` | knowledge; `kind: concept` or `literature` |
+| `howto` | `Howtos/` | steps to repeat |
+| `idea` | `Ideas/` | something to come back to |
+| `goal` | `Goals/` | something to reach |
+| `review` | `Reviews/` | a period's review |
+| `source` | `Sources/` | a verbatim copy; written only by scripts |
+| `research` | `Research/` | a cited dossier |
+| `thinking` | `Thinking/` | the output of `/synapsidian:think` |
+| `capture` | `Inbox/` | a raw capture |
+| `about` | the vault root | `About.md` |
+
+Every field and its values: [Schema reference](/synapsidian/0.34/reference/schema/).
+
+## How notes are written
+
+From the plugin's `references/conventions.md`, which every skill follows:
+
+* **English.** Notes are written in English, whatever language you talk in, because search relies on it. Claude talks to you in the `language` from `About.md`. Only your own rules can change the language of notes.
+* **Search before creating.** An existing note is updated instead of duplicated.
+* **Created by the CLI.** Notes are created only with `synapsidian note new`, which picks the folder and file name, fills defaults, numbers tasks and refuses to overwrite. Fields change with `synapsidian note set`.
+* **Dated facts.** A fact that will go stale gets a date: `(as of 2026-10-13)`. The morning brief asks about old ones.
+* **Linked.** Every person, project, decision, task and concept with a note is linked, `[[Note title]]`, and only notes that exist are linked. A dated note is linked with its date: `[[2026-10-13 Use CSV]]`.
+* **Truthful.** Unknown stays empty or says `TBD`. Names, emails, dates and meeting content are never invented.
+* **Never deleted.** A note you want gone moves to `Archive/`.
+
+<Aside title="Your rules come first">
+  The `## Rules` section and the `protected` list in `About.md` override these defaults wherever they conflict. They cannot switch off the schema: a rule that asks for a note the schema would reject makes Claude ask you instead.
+</Aside>
+
+## Body templates
+
+A type's body comes from `schema/templates/<type>.md`, or `<type>-<kind>.md` when the note's kind has its own (a `team` meeting, a `concept` note, each `think` mode). An add-on's templates win over the core's.
+
+For notes you make yourself in Obsidian, setup generates a Templater template per type into `Templates/Generated/`. They ask for the title, summary and choices, number tasks, and file the note where `synapsidian note new` would. See [Obsidian plugins](/synapsidian/0.34/configuration/obsidian-plugins/).
+
+## Checks
+
+The `PostToolUse` hook validates every note Claude writes and warns when it breaks the schema; it never blocks (D43). [`/synapsidian:health`](/synapsidian/0.34/skills/health/) reports schema problems across the vault.

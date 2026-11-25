@@ -1,0 +1,138 @@
+{
+  "sidebar": [
+    {
+      "label": "Getting started",
+      "items": [
+        "getting-started/introduction",
+        "getting-started/installation",
+        "getting-started/quick-start"
+      ]
+    },
+    {
+      "label": "Concepts",
+      "items": [
+        "concepts/vault-layout",
+        "concepts/notes-and-schema",
+        "concepts/generated-blocks",
+        "concepts/git-history",
+        "concepts/session-hooks",
+        "concepts/daily-loop",
+        "concepts/privacy",
+        "concepts/extensions"
+      ]
+    },
+    {
+      "label": "Skills",
+      "items": [
+        {
+          "autogenerate": {
+            "directory": "skills"
+          }
+        }
+      ]
+    },
+    {
+      "label": "CLI",
+      "collapsed": true,
+      "items": [
+        {
+          "autogenerate": {
+            "directory": "cli"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Configuration",
+      "items": [
+        "configuration/options",
+        "configuration/about",
+        "configuration/obsidian-plugins",
+        "configuration/scheduled-runs"
+      ]
+    },
+    {
+      "label": "Extensions",
+      "items": [
+        "extensions/overview",
+        {
+          "label": "synapsidian-work",
+          "collapsed": true,
+          "items": [
+            {
+              "autogenerate": {
+                "directory": "extensions/work"
+              }
+            },
+            {
+              "label": "Changelog",
+              "link": "/extensions/work/changelog",
+              "attrs": {
+                "data-sl-changelogs-link-base": "extensions/work/changelog",
+                "data-sl-changelogs-link-type": "all"
+              }
+            }
+          ]
+        },
+        {
+          "label": "synapsidian-projects",
+          "collapsed": true,
+          "items": [
+            {
+              "autogenerate": {
+                "directory": "extensions/projects"
+              }
+            },
+            {
+              "label": "Changelog",
+              "link": "/extensions/projects/changelog",
+              "attrs": {
+                "data-sl-changelogs-link-base": "extensions/projects/changelog",
+                "data-sl-changelogs-link-type": "all"
+              }
+            }
+          ]
+        },
+        {
+          "label": "synapsidian-dock",
+          "collapsed": true,
+          "items": [
+            {
+              "autogenerate": {
+                "directory": "extensions/dock"
+              }
+            },
+            {
+              "label": "Changelog",
+              "link": "/extensions/dock/changelog",
+              "attrs": {
+                "data-sl-changelogs-link-base": "extensions/dock/changelog",
+                "data-sl-changelogs-link-type": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Reference",
+      "items": [
+        "reference/file-structure",
+        "reference/schema",
+        "reference/bases",
+        "reference/design-decisions",
+        "reference/contributing",
+        "reference/troubleshooting"
+      ]
+    },
+    {
+      "label": "Changelog",
+      "link": "/changelog",
+      "attrs": {
+        "data-sl-changelogs-link-base": "changelog",
+        "data-sl-changelogs-link-type": "all"
+      }
+    }
+  ],
+  "excluded": []
+}

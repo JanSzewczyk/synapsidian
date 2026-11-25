@@ -1,0 +1,36 @@
+---
+title: /synapsidian-projects:change
+description: Track one change to a project, from proposed to done, with its
+  specs, decisions and tasks.
+slug: 0.34/extensions/projects/change
+---
+
+```text
+/synapsidian-projects:change <what changes> [project <name>]
+/synapsidian-projects:change start | done | drop <change>
+```
+
+A feature, a migration, a refactor or a process change, as one note in `Projects/<Project>/Changes/` (D100, D108). Single steps are [tasks](/synapsidian/0.34/skills/task/); a choice between options is a [decision](/synapsidian/0.34/extensions/projects/decide/).
+
+| Field | |
+| --- | --- |
+| `project` | required |
+| `status` | `proposed`, `doing`, `done`, `dropped` |
+| `specs`, `decisions`, `tasks` | links |
+| `done_on` | set when it is done |
+
+## Open a change
+
+1. Resolves the project and searches for an open change with the same aim.
+2. Creates it as `proposed`, with an imperative title such as "Move checkout to the new payment API", linking only specs and decisions that exist.
+3. Writes **Why**, **What changes** (and what stays the same) and **Plan**, ordered steps.
+4. Asks whether the steps should become tasks. A step that can start only after another gets `blocked_by`, so the order is in the notes and the diagram. A step that needs a decision first is a call for `decide`.
+5. Draws the change's **Flow**, its tasks in order, and adds a hub Log line.
+
+Why, scope and plan come from you and the project's notes; unknown is `TBD`.
+
+## Start, done, drop
+
+* **start** sets `doing`.
+* **done** checks the tasks first; with any open, it asks: close them, move them, or wait. Then it logs the outcome in the change and on the hub, and updates every spec the change altered, in place.
+* **drop** records why. Its open tasks are your call.
