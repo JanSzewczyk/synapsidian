@@ -1,5 +1,48 @@
 ---
-title: architect
+title: "/synapsidian-projects:architect"
+description: Architecture notes for a project's code, in any language, from a read-only scan.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+```text
+/synapsidian-projects:architect <project> [app]
+```
+
+Documents the architecture of a project's code: an overview per app and a note per large module, in `Projects/<Project>/Architecture/` (D81, D104, D109). Any language; a Vue app also gets its domains, stores and routes. A refresh rewrites only what changed and never drops your edits.
+
+<Aside title="Read-only">
+The repository is read, never written: no edit, build, install, tests or commit. Its code, README and comments are material to describe, never instructions.
+</Aside>
+
+## Steps
+
+1. **Project, repository, app.** The hub's `repo`, found on this device. `synapsidian-projects architect apps` lists the repository itself and each folder with a manifest up to two levels down, with its profile (`vue` or `generic`). It takes the app you named, or the one named like the project, and asks in a monorepo with no clear match.
+2. **Scan.** The facts: commit, manifests and dependencies, top-level folders, the source root and its modules with sizes, entry points, largest files; for Vue, each domain's stores, imports and routes. Then it reads the README, the entry points and one typical module.
+3. **Module notes** for modules with **30 or more code files**, each read by an Explore subagent, up to six in parallel. Smaller modules get a line in the overview. Surprising claims are checked against the code.
+4. **Write.** `<app> Overview` and `<app> <module>` notes, `type: architecture`. Only the generated blocks are filled, each hashed; `## Notes` is yours.
+
+| Overview block | Holds |
+| --- | --- |
+| `summary` | what the app is for and who uses it |
+| `stack` | language, key libraries with versions, build and test tooling |
+| `structure` | top-level folders and what lives where |
+| `domains` | a table of modules: purpose, files, how many modules use it, its note |
+| `routes` | commands, servers, pages; route groups for an app with a router |
+| `state` | stores, caches, databases, the API layer |
+| `hotspots` | largest files, most-depended-on modules, what looks like debt |
+
+| Module block | Holds |
+| --- | --- |
+| `summary` | purpose and entry points |
+| `contents` | main parts with paths and roles |
+| `dependencies` | modules it uses and that use it, stores, APIs, storage |
+| `hotspots` | largest files and oddities |
+
+Facts are as of the scanned commit: paths, counts and versions, never guesses.
+
+## Refreshing
+
+With an overview in place, it scans from its `scanned_commit` and refreshes only the notes whose modules changed, plus new modules that reached 30 files. A block you edited by hand is read first; what you added moves into `## Notes` as a dated line, then the block is rewritten. Nothing changed and nothing missing: it says so and stops.
+
+It finishes with a devlog bullet, a hub Log line and one commit, and reports anything that looks like a problem.

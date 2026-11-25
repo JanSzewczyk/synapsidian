@@ -1,5 +1,99 @@
 ---
-title: index
+title: synapsidian-dock
+description: The brief on screen without a Claude turn - a band above the prompt and a task pane.
+sidebar:
+  label: Overview
+  order: 0
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+A Claude Code mod on top of the core (D156): a band above the prompt says what is overdue, due today and in progress, and its **Tasks** button opens a pane where one key closes, starts, moves or drops a task. Nothing in it assumes a job or a project; it shows what the core's session brief shows. It has no skills and no schema extension.
+
+[Changelog](/synapsidian/extensions/dock/changelog/)
+
+## Requirements
+
+- the core plugin, enabled: the dock calls its `synapsidian` command;
+- Claude Code 2.1.299 or later, in the terminal or the desktop app. Older versions draw no dock; WSL sessions and `--safe-mode` load no mods, and synapsidian works as before.
+
+## Install
+
+```text
+/plugin install synapsidian-dock@synapsidian
+```
+
+Then start a new session. There is nothing to set up: the vault is the one the core uses.
+
+## Options
+
+| Option | Does | Default |
+| --- | --- | --- |
+| `show_dock_band` | show the band as soon as a session starts; off, it shows when you run `/synapsidian` | off |
+
+## The band
+
+`/synapsidian` shows it, even while Claude works; the close button hides it for the session. It reads: the synapsidian mark (`✻` in the terminal), the overdue task (or how many) in the theme's alert colour, how many are due today, what is in progress, and the Inbox count. It refreshes every 5 minutes and after Claude writes in the vault. **Tasks**, or `/synapsidian tasks`, opens the pane.
+
+## The pane
+
+It opens on the date, today's meetings and the Inbox count, with refresh and the lists' age on the right. Three tabs, each with its count:
+
+| Tab | Key | Shows |
+| --- | --- | --- |
+| Today | `1` | the brief's lists |
+| Projects | `2` | open tasks by project, when an add-on gives tasks a `project` |
+| Writes | `3` | vault notes changed in this session |
+
+`r` refreshes and Esc closes. Rows go by priority, then due date.
+
+In the terminal, a row reads its state mark, its id, its title, and on the right when it is due (`9d late`, `today`, `tomorrow`, a weekday, a date), or `high` for an undated high-priority task:
+
+| Mark | State |
+| --- | --- |
+| `●` | in progress |
+| `○` | to do |
+| `◑` | waiting |
+| `⊘` | blocked, while a task it waits on is open |
+
+On the desktop the same facts are badges, and hovering a row shows its two likeliest status moves.
+
+## A task's details
+
+A press on a row opens its details: the summary, state, due date, priority, project and repeat, then its actions:
+
+| Action | Terminal key |
+| --- | --- |
+| the two likeliest status moves: Start, Done, Waiting, back to To-do | `s`, `d`, `w`, `t` |
+| **Status** and **Due** pickers: today, end of this week, month or year, or no date | |
+| **Ask Claude**: a draft question in the prompt box, sent with Enter | `a` |
+| **Hand to Claude**: a draft hand-over in the prompt box | `c` |
+| **Open in Obsidian** | `o` |
+
+A second press closes it. On the desktop the actions are clicked. Colours are the Claude theme's own, so the dock follows a light, dark or custom theme; the desktop's badges follow the system's light or dark scheme.
+
+`claude -p "/synapsidian"` prints the same lists as text.
+
+## How it meets the core
+
+Only through the `synapsidian` command:
+
+| Call | For |
+| --- | --- |
+| `synapsidian brief --json` | the lists |
+| `synapsidian note set` | a change to a task |
+| `synapsidian commit --skill task` | one commit per change, its message ending in `(dock)` |
+
+So the vault path, schema checks, `done_on`, folder moves and the next occurrence of a recurring task are the core's own, and every change is a commit you can revert.
+
+<Aside title="Nothing without a key press">
+The dock writes nothing until you press a key. Where the desktop app leaves `synapsidian` off a mod's PATH, the dock runs the installed core's `bin/synapsidian` directly. Sessions share state less than a minute old, so many open sessions do not each read the vault.
+</Aside>
+
+## Development
+
+```bash
+claude plugin validate plugins/synapsidian-dock    # its hooks and calls
+(cd plugins/synapsidian-dock && claude plugin test) # its tests
+claude --plugin-dir plugins/synapsidian-dock        # load it for one session, reload on save
+```

@@ -1,5 +1,39 @@
 ---
-title: map
+title: "/synapsidian-projects:map"
+description: An Excalidraw mind map of a project, refreshed without losing what you moved or drew.
 ---
 
-Stub.
+```text
+/synapsidian-projects:map <project> [all | <n> per branch]
+```
+
+Draws the project at a glance: an Excalidraw drawing in `Projects/<Project>/Maps/<Project> map.excalidraw.md`, with the hub in the middle and a branch for each kind of project note. Every node is a link.
+
+## What is on it
+
+Open milestones, open tasks, decisions, specs, changes, open bugs, draft postmortems, open questions and notes. Text is coloured by status:
+
+| Colour | Means |
+| --- | --- |
+| blue | under way |
+| orange | waiting |
+| grey | not settled: a proposed decision or change, a draft spec |
+| red | an open bug |
+
+A branch shows 10 notes and ends in a `+N more` link. `all`, or a number, shows more for that run only.
+
+## Refreshing
+
+A refresh adds what is new and removes nodes of notes that left the map (closed tasks, superseded decisions, retired specs, archived notes). It keeps the drawing yours:
+
+- nodes you moved, resized or recoloured stay where and as they are;
+- a renamed note or reworded question keeps its node;
+- new nodes go under their siblings, further down past any box they would cover, yours included;
+- anything you drew yourself is never touched.
+
+The first map is linked from the hub's `## Maps` section.
+
+## When it refuses
+
+- **"compressed"**: the Excalidraw plugin saves compressed drawings. Switch off *Compress Excalidraw JSON* in its settings (`/synapsidian:setup` does it), save the drawing once, and run it again.
+- **The map is open** in Obsidian with unsaved changes: the plugin may write its version over the refresh. Close it first, or refresh again after saving.

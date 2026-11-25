@@ -1,5 +1,47 @@
 ---
-title: decide
+title: "/synapsidian-projects:decide"
+description: Record a project decision as MADR, numbered per project, accepted only after review.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+```text
+/synapsidian-projects:decide <what was decided> [project <name>]
+/synapsidian-projects:decide accept | reject | deprecate <decision>
+/synapsidian-projects:decide supersede <decision> with <what>
+```
+
+Records an architecture or project decision as a MADR note in the project's `Decisions/` folder, numbered within the project (D100, D107). Smaller decisions found while saving a conversation are [`/synapsidian:save`](/synapsidian/skills/save/)'s.
+
+| Field | |
+| --- | --- |
+| `status` | `proposed`, `accepted`, `rejected`, `deprecated`, `superseded` |
+| `number` | its number within the project |
+| `project` | the project |
+| `supersedes`, `superseded_by` | links between a decision and the one that replaced it |
+| `decided_by` | the people who decided, linked to their notes |
+
+<Aside title="Rules">
+- **An accepted decision is never rewritten.** To change it, record a new one that supersedes it; in the old note only `status` and `superseded_by` change.
+- **Nothing is accepted unreviewed.** A draft stays `proposed` until you accept it. An unattended run leaves it proposed.
+- **No invented references.** Only notes that exist and sources you gave; every quote or figure from a source is checked with `synapsidian source quote-check`.
+</Aside>
+
+## Record a decision
+
+1. Resolves the project. A decision that belongs to no project is recorded without `project` and `number`.
+2. Searches earlier decisions. If an accepted one already answers the same question, this one supersedes it.
+3. Takes the next number with `synapsidian-projects decision-number`.
+4. Creates the note as `proposed` and writes the MADR sections:
+   - **Context**: the problem, why it needs a decision now, and the decision drivers;
+   - **Options considered**: at least two real ones, each with Good and Bad against the drivers;
+   - **Decision**: "Chosen: **option**, because …";
+   - **Consequences**: Good, Bad, follow-up work, and how to tell it is being followed.
+5. Shows you the summary, the choice and the main trade-off, and asks: accept, change, or keep it proposed.
+
+## Accept, reject, deprecate, supersede
+
+- **accept** (only `proposed`): adds `- [[decision]] (#n): summary` to the hub's Key decisions, and a Log line.
+- **reject** (only `proposed`): the note stays as the record of why not.
+- **deprecate** (only `accepted`): it no longer applies and nothing replaces it; its Key decisions line gets "(deprecated YYYY-MM-DD)".
+- **supersede**: records the new decision with `supersedes`. When it is accepted, the old one becomes `superseded` with `superseded_by`, its body untouched, and its Key decisions line points to the new one.
