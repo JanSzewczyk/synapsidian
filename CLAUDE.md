@@ -9,7 +9,7 @@ One local marketplace (`.claude-plugin/marketplace.json`, `synapsidian`) with fo
 - `plugins/synapsidian-work/`: the work add-on (`dependencies: ["synapsidian"]`). 1:1s, stand-up, work
   brief (PRs, Jira, email and Slack asks), its own setup.
 - `plugins/synapsidian-projects/`: the projects add-on (`dependencies: ["synapsidian"]`; D98-D111,
-  D139-D152, D154, `docs/spec.md` §10d).
+  D139-D152, D154).
   - It owns the `project` type and every `project` field: hubs live in
     `Projects/<Project>/<Project>.md` with a kanban board, and project notes are filed under
     that folder.
@@ -26,7 +26,8 @@ One local marketplace (`.claude-plugin/marketplace.json`, `synapsidian`) with fo
   `synapsidian commit` (on PATH, or the installed synapsidian's `bin/synapsidian` where the desktop app leaves it
   off), and writes nothing without a key press.
 
-`tests/`, `docs/`, `pyproject.toml` and `uv.lock` sit at the repo root and ship with none of them.
+`tests/`, `docs/`, `references/`, `pyproject.toml` and `uv.lock` sit at the repo root and ship with none of them.
+`references/decisions.md` is the decision log; skills, scripts and references cite its numbers (`D90`).
 The one exception is a mod's `*.test.ts` (today `plugins/synapsidian-dock/tests/`), which
 `claude plugin test` runs only from inside its plugin.
 
