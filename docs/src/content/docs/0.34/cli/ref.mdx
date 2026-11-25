@@ -1,0 +1,25 @@
+---
+title: synapsidian ref
+description: Print one of the core plugin's references.
+slug: 0.34/cli/ref
+---
+
+```bash
+synapsidian ref <name>
+```
+
+Prints `references/<name>.md` from the core plugin. An add-on's skills cannot see the core's folder (`${CLAUDE_PLUGIN_ROOT}` in an add-on skill is the add-on's own root), so they read shared rules this way, for example `synapsidian ref conventions`.
+
+| Reference | Holds |
+| --- | --- |
+| `conventions` | how every skill writes notes, and the Projects rules |
+| `extraction` | what is worth keeping from a conversation |
+| `ingest` | the six ingest steps |
+| `meetings` | calendar events to meeting notes |
+| `meeting-import` | importing Gemini notes |
+| `about-interview` | the About interview |
+| `obsidian-plugins` | required, recommended and optional Obsidian plugins |
+| `setup-report` | the setup report format |
+| `think-<mode>` | one file per `/synapsidian:think` mode |
+
+A name with characters other than lowercase letters, digits and `-`, or one that does not exist, exits `2`.

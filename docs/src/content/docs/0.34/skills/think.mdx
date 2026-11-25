@@ -1,0 +1,88 @@
+---
+title: /synapsidian:think
+description: Thinking tools over the vault, one mode per call.
+slug: 0.34/skills/think
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Eight ways to think something through with what the vault knows. Each call runs one mode and, except `graduate`, keeps the result as a `thinking` note in `Thinking/`.
+
+```text
+/synapsidian:think <mode> <subject> [fix]
+```
+
+The mode is the first word. Without one, it is picked from what you ask; when two fit, Claude asks once.
+
+| Mode | Use it to | Result |
+| --- | --- | --- |
+| `challenge` | stress-test a decision, plan or belief before you commit | a verdict: go, go with changes, or rethink |
+| `brainstorm` | work a problem out, one question at a time | 3 to 5 named options and one recommendation |
+| `topic` | gather everything the vault knows about one topic | synthesis, contradictions, stale facts, gaps |
+| `patterns` | find what keeps coming up over a period | 3 to 7 recurring themes with evidence |
+| `distill` | turn a long note, source or meeting into its claims | numbered claims, each with where it came from |
+| `learn` | find lessons that repeat in your Claude Code sessions | proposed rules, ready to paste |
+| `ideas` | review the ideas waiting in `Ideas/` | a ranking, and what to graduate or drop |
+| `graduate` | turn an idea into work | a project with first tasks, or tasks |
+
+## Modes
+
+### challenge
+
+States what is under test, then reads the vault for context: the subject, its project, earlier decisions and anything that contradicts it. Three to five subagents argue it from one lens each, in parallel. Risk and alternatives always run; cost, user, evidence and team are added when they fit. Each returns at most six findings with a severity.
+
+Claude merges them, drops findings without evidence, and **checks every blocker and major finding itself** before it goes in the note, because a lens argues one side and gets facts wrong. The verdict says what would change it. The note is linked from the decision or project it tests.
+
+### brainstorm
+
+Restates the problem and checks the vault for earlier thinking. Then it asks **one question per turn**, the one that narrows the space most, usually three to five in all. It names 3 to 5 genuinely different approaches, at least one unconventional, each with its upside and cost. It recommends one, with the first concrete step and what it would need to learn to be surer.
+
+### topic
+
+Searches in at least three phrasings, sources and archive included, and reads every relevant note. The note gives the current understanding with each claim cited, the contradictions and which side is likelier right, stale facts (stamped more than about three months ago, or contradicted by newer notes), and the gaps worth a [`/synapsidian:research`](/synapsidian/0.34/skills/research/).
+
+<Aside title="Fixes only with fix">
+  Without `fix`, `topic` only lists the corrections it proposes. With `fix`, it applies them as ingest does: corrected in place with a dated `## History` line, or an unresolved contradiction marked with a callout. Nothing is deleted, and every changed note is listed.
+</Aside>
+
+### patterns
+
+Reads a period (30 days by default, or `last month`, `Q3`, `since 2026-09-01`): devlogs, reviews, meetings, decisions, tasks and the vault's commits. It names 3 to 7 themes that recur at least three times, each with dated evidence and whether it helps or hurts. For each harmful one it suggests one change, and offers tasks without creating them. The Friday review already lists its week's patterns; this mode is for longer spans or a specific question.
+
+### distill
+
+Reads a note, a source or a file and lists its claims, one sentence each, marked as fact, opinion, recommendation or open question, usually 5 to 25. Each claim has a source map (line range, transcript timestamp or heading) so it can be checked. The target itself is never edited.
+
+### learn
+
+Reads every Claude Code session of a period (14 days by default) and looks for moments where you corrected Claude, repeated an instruction, reverted a change, or a mistake recurred. Only lessons seen twice, or once with a clear "always" or "never", count. A lesson your instructions already cover is reported as a rule that was ignored.
+
+<Aside type="caution">
+  `learn` never edits `CLAUDE.md`, rules files, settings, skills or the Rules section of `About.md` (D80). It proposes rules, each with where it belongs and its evidence; you decide and paste.
+</Aside>
+
+### ideas
+
+Lists the open ideas, checks what changed since each was written, and ranks them by value to your current focus against effort. It suggests one or two to graduate next. Dropping or parking an idea (`status: dropped` or `exploring`) happens only when you agree.
+
+### graduate
+
+Turns an idea into work. With [synapsidian-projects](/synapsidian/0.34/extensions/projects/), something that needs several steps over more than a week, or has its own decisions, becomes a project with 2 to 5 first tasks; otherwise it becomes tasks on an existing project. Without the add-on it is always tasks. The idea gets `status: graduated` and a `graduated_to` link. No thinking note: the idea records where it went.
+
+## For every mode
+
+* The vault is searched before Claude says it has nothing, and every vault fact is cited as a link.
+* Subagents only read; the main run writes every note.
+* The note's title is the subject, not the mode; the file name already carries the mode: `Thinking/<date> <mode> <subject>.md`.
+* Notes are written in English. You get the answer in your language, result first.
+* One devlog bullet ("Thought through \[\[note]]") and one commit finish the run.
+
+## Commands it runs
+
+```bash
+synapsidian find "<subject>" [--type decision | idea | project] [--all]
+synapsidian note new --type thinking --title "<subject>" --field kind=<mode> --field summary="<result>" [--field about="<note>,<note>"]
+synapsidian sessions digest --since "<day> 00:00" --scan     # learn
+synapsidian query notes --type idea ...                     # ideas
+synapsidian commit --skill think --message "<mode>: <subject>" ...
+```

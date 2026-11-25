@@ -1,0 +1,34 @@
+---
+title: /synapsidian-projects:setup
+description: Install, update or check the projects add-on, and bring existing
+  projects up to date.
+slug: 0.34/extensions/projects/setup
+---
+
+```text
+/synapsidian-projects:setup
+/synapsidian-projects:setup check      # report only
+```
+
+Idempotent. Run it after installing the add-on and after every update.
+
+## Steps
+
+1. **Check.** The core plugin must be installed and the vault ready. Then a checklist: the extension at the add-on's version; Folder notes and Excalidraw Extras installed and enabled; every hub with a Board and a Links section; and, per hub with a `repo`, where its repository is on this device:
+
+   | `how` | Means |
+   | --- | --- |
+   | `local` | a path, on this device |
+   | `elsewhere` | a path from another device |
+   | `map` | a URL with its clone found here |
+   | `missing` | a URL with no clone here yet |
+   | `mismatch` | the clone does not match |
+
+   These are information, not errors. With `check`, it stops here.
+2. **Install the extension.** It adds the `project` type, the property types and the Bases, and commits. In the same run it **files notes into their folders**, in a commit of its own: each hub moves into `Projects/<Project>/<Project>.md`, and each note with a `project` moves to its project's folder. A note whose target is taken stays and is reported. It also switches old Bases that pick a type by folder to pick it by type, so nested notes show up.
+3. **Obsidian plugins.** Folder notes and Excalidraw Extras are installed the way the core's setup installs plugins: Restricted mode stays your call, it asks once, and anything left goes under Still needed.
+4. **About your projects.** One question for the `## Projects` section of `About.md`, with your active projects as drafts and a Skip.
+5. **Architecture notes into projects.** Architecture notes from synapsidian-work before 0.3.0 have no project. They are grouped by app, mapped to a project (a hub is created when missing), and moved under `Projects/<Project>/Architecture/`.
+6. **A board on every project.** Hubs without a Board, Links, Project notes, Roadmap or Risks section get it from the hub template; `fill` writes only a missing or empty section. Older hubs' Project notes and Board get the newer views only after one question.
+7. **Repositories as URLs, on request.** A local path works on one device; a URL works on every device the vault syncs to. Hubs with a local path and an `origin` are listed, and it asks once which to switch. One you keep as a path is not asked about again on this device.
+8. **Report**: ready, added, still needed, including plugins left out and hubs whose repository has no clone here.

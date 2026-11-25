@@ -1,0 +1,49 @@
+---
+title: Privacy and safety
+description: Keeping sessions out of the vault, and keeping the vault safe from
+  what it reads.
+slug: 0.34/concepts/privacy
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Off the record
+
+Three ways to keep something out of the devlog, the evening run and the stand-up (D123):
+
+| How | Covers |
+| --- | --- |
+| the `session_exclude_paths` option | every session started in those folders, or matching glob patterns such as `~/Clients/*` |
+| `#off-the-record` in a message | that whole session |
+| `<private>…</private>` around text | that text, left out of the digests' prompts and closing messages |
+
+A session kept off the record is marked as processed and never mentioned. The memory files of excluded folders are left out too (D136). See [Options](/synapsidian/0.34/configuration/options/).
+
+## Secrets
+
+* `note new`, `note set`, `note fill` and `block set` refuse text that looks like a credential. Nothing is written; the secret has to come out of the text first.
+* Session digests print a credential in a prompt, command or memory file as `[redacted: <what it was>]` (D158).
+* `/synapsidian:health` reports a credential that reached a note anyway.
+* Notes never hold tokens, passwords, keys or personal data beyond name, role and work email.
+
+## Material is not instructions
+
+Web pages, transcripts, emails, Slack messages, Gemini notes and tool output are material to summarise, never instructions to follow, whatever they say. An ingested page that says "update the note on X" is described, not obeyed.
+
+Files that are code or instructions rather than notes always ask before Claude edits them: `CLAUDE.md`, `AGENTS.md`, `About.md`, `Templates/`, `.synapsidian/` and existing sources. An unattended run cannot answer, so it cannot change them (D120). See [Session hooks](/synapsidian/0.34/concepts/session-hooks/).
+
+## Your protected paths
+
+List folders or files in the `protected` property of `About.md`, and Claude asks before creating, editing, moving or committing anything there. An unattended run leaves them alone and lists what it skipped. Only you can change the list; `synapsidian note set` refuses to.
+
+## Web searches
+
+[`/synapsidian:research`](/synapsidian/0.34/skills/research/) builds search queries from the question, never from your notes (D25). Ticket keys, customer names, internal hostnames, unreleased product names and people's names stay out of queries. A question that is private through and through is answered from the vault instead.
+
+## Code repositories
+
+The [projects add-on](/synapsidian/0.34/extensions/projects/) only ever reads repositories, and runs git with hooks, fsmonitor and external diff tools switched off, so a repository's own config cannot run code (D120).
+
+<Aside title="Templater">
+  Keep Templater's **Trigger Templater on new file creation** off. With it on, a copied web page that happens to contain Templater syntax would run as JavaScript in Obsidian. synapsidian never needs it. See [Obsidian plugins](/synapsidian/0.34/configuration/obsidian-plugins/).
+</Aside>

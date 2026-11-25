@@ -1,0 +1,40 @@
+---
+title: /synapsidian-projects:spec
+description: A living spec of how part of a project should work, edited in place.
+slug: 0.34/extensions/projects/spec
+---
+
+```text
+/synapsidian-projects:spec <subject> [project <name>]
+/synapsidian-projects:spec update <spec> …
+```
+
+A spec says how something **should** work now: a feature, a module, an API, a process. It lives in `Projects/<Project>/Specs/` and is edited in place; git keeps its history, so it never collects dated "update" paragraphs (D100).
+
+| `status` | Means |
+| --- | --- |
+| `draft` | still being worked out |
+| `current` | you agreed it holds |
+| `retired` | the thing is gone, or another spec replaced it |
+
+Requirements are never invented: what you said and what the project's notes, decisions and code show (read-only) go in. Anything else is an open question or `TBD`.
+
+## New
+
+Searches first; an existing spec on the subject is updated instead. A generic subject starts with the project's name (`web-app API`). Then it writes:
+
+* **Purpose**: what it is for and who uses it;
+* **Scope**: `In:` and `Out:` bullets;
+* **Requirements**: numbered `R1`, `R2`…, one testable "must" or "should" statement each, linked to the decision it comes from;
+* **Design**: components, data, flows, short, linking notes rather than repeating them;
+* **Open questions**.
+
+## Update
+
+* The changed requirement or section is edited in place.
+* `R` numbers stay stable: a removed requirement keeps its number, struck through with the reason (`~~R4 …~~ dropped, see [[decision]]`), so links and talk about "R5" stay right.
+* The decision or change that caused an edit is linked next to it.
+* An answered open question moves into the section it settles.
+* `current` or `retired` is set when you say so, with a hub Log line.
+
+A [change](/synapsidian/0.34/extensions/projects/change/) that alters how something works updates the specs it links when it is done.

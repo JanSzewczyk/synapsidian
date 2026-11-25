@@ -1,0 +1,67 @@
+---
+title: /synapsidian:task
+description: Add, update, close or list numbered tasks.
+slug: 0.34/skills/task
+---
+
+Tasks are notes named `T<n> <title>`, with a status, a priority, an optional due date and, with the projects add-on, a project. The Tasks Base shows them as a kanban board, a calendar and lists.
+
+```text
+/synapsidian:task add <what> [due <date>] [priority] [project]
+/synapsidian:task done <Tn>
+/synapsidian:task update <Tn> ...
+/synapsidian:task list [today | overdue | week | project <name>]
+```
+
+Claude also picks it for "remind me to…", "close T12" or "what's on today?". Relative dates such as "friday" or "next week" become an absolute `YYYY-MM-DD` before anything is written.
+
+## Fields
+
+| Field | Values |
+| --- | --- |
+| `id` | `T<n>`, assigned for you |
+| `status` | `todo` (default), `doing`, `waiting`, `done`, `dropped` |
+| `priority` | `high`, `medium` (default), `low` |
+| `due` | `YYYY-MM-DD` |
+| `repeat` | every `<n>d`, `<n>w`, `<n>m` or `<n>y`: `1w` weekly, `1m` monthly |
+| `blocked_by` | links to the tasks that must be done first |
+| `source` | `save`, `session`, `meeting`, `manual`, `capture`, `ingest`, `research`, plus any an add-on adds |
+| `source_link` | where it came from |
+| `done_on` | set when the task is closed |
+| `goal` | a link to a goal |
+| `project`, `milestone` | with [synapsidian-projects](/synapsidian/0.34/extensions/projects/) only |
+
+## Add
+
+1. Checks that an open task does not already cover it. If one does, it updates that one.
+2. Finds the project's exact title when you name one and the vault has projects. The task is then filed under `Projects/<Project>/Tasks/`. Without projects, the name goes into the summary.
+3. Creates the task with `source: manual`. `high` priority only when you signal urgency.
+4. Something that comes back on a schedule ("every month") gets `repeat` and a first `due`. Something that can start only after other tasks ("after T5") gets `blocked_by`, linking only tasks that exist.
+5. Useful context (why, links, acceptance) goes under `## Context`.
+
+## Update or close
+
+Fields change with `synapsidian note set`; an empty value clears a field. Closing sets `done_on` on its own.
+
+* **Recurring.** Closing a task with `repeat` files the next one and tells you its due date. To stop it recurring, clear `repeat` before closing.
+* **Unblocked.** After a task is closed or dropped, the tasks it blocked are checked, and you hear which are now free to start.
+* **Log.** A dated line under `## Log` records anything notable, such as "2026-10-13: waiting on the quote from \[\[Alex]]".
+
+A task never waits on itself or on a task that waits on it.
+
+## List
+
+Open tasks are grouped as overdue, due today, in progress, upcoming (7 days) and no date. One line each: link, priority, due date, project, and `blocked by` while a blocker is open. Done and dropped tasks only when you ask. Listing commits nothing.
+
+## Commands it runs
+
+```bash
+synapsidian find --type task "<what>"
+synapsidian find --type project "<name>"
+synapsidian note new --type task --title "<title>" --field summary="<what and why>" --field priority=<p> [--field due=<date>] [--field repeat=1m] [--field blocked_by="[[T3 …]]"] --field source=manual
+synapsidian note set --file "<task>" --field status=done
+synapsidian query notes --type task --where status!=done --where status!=dropped
+synapsidian commit --skill task --message "add T14 review TDD" ...
+```
+
+The [dock](/synapsidian/0.34/extensions/dock/) changes a task's status from a pane above the prompt, without a Claude turn.

@@ -1,0 +1,41 @@
+---
+title: /synapsidian:daily
+description: Create or refresh today's daily note and fill its brief from the vault.
+slug: 0.34/skills/daily
+---
+
+Makes sure the daily note exists and writes its **brief**: what is overdue, due today, in progress and coming up this week. It reads only the vault. The full morning brief, with the calendar and add-on sources, is [`/synapsidian:morning`](/synapsidian/0.34/skills/morning/).
+
+```text
+/synapsidian:daily [YYYY-MM-DD]
+```
+
+With no date it works on today. Other skills also use it when they need today's note to exist.
+
+## What it does
+
+1. Creates `Daily/<date>.md` if it is missing. It never overwrites an existing note.
+2. Reads the facts for the brief from `synapsidian brief --plain`.
+3. Checks the `brief` block. If it has a **Done** or **Needs attention** line, the morning run wrote it with sources this skill does not read, so it leaves the block alone, shows it to you and says that `/synapsidian:morning` refreshes it.
+4. Otherwise it writes the `brief` block: overdue and due-today tasks first (as links, with priority), then tasks in progress, then the week ahead, then active projects only when one needs attention. At most about 12 bullets.
+5. If meeting notes exist for the date, it lists them in the `agenda` block, one link per line, in time order when known.
+6. Commits the note and shows you the brief.
+
+It never touches `## Notes`, your own section, or any other block. See [Generated blocks](/synapsidian/0.34/concepts/generated-blocks/).
+
+## What it writes
+
+| File | Blocks |
+| --- | --- |
+| `Daily/<date>.md` | `brief` (unless the morning run wrote it), `agenda` |
+
+## Commands it runs
+
+```bash
+synapsidian note daily [--date YYYY-MM-DD]
+synapsidian brief --plain [--today YYYY-MM-DD]
+synapsidian block get --file "Daily/<date>.md" --name brief
+synapsidian block set --file "Daily/<date>.md" --name brief
+synapsidian block set --file "Daily/<date>.md" --name agenda
+synapsidian commit --skill daily --message "brief <date>" "Daily/<date>.md"
+```

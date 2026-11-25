@@ -1,0 +1,73 @@
+---
+title: /synapsidian:setup
+description: Set up or repair the vault end to end.
+slug: 0.34/skills/setup
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+Checks Obsidian, uv and git, creates the vault layout, configures Obsidian and its community plugins, registers the vault, and fills in `About.md` with you. Everything it does is idempotent: on a working vault it changes nothing and says so.
+
+```text
+/synapsidian:setup            # set up or repair
+/synapsidian:setup check      # report only, change nothing
+/synapsidian:setup about      # only the About interview, for every installed plugin
+```
+
+Run it in a **new** session after installing the plugin: a new plugin's hooks load only in a new session. Other skills send you here when the vault is missing.
+
+## Steps
+
+<Steps>
+  1. **Check.** `synapsidian setup check` gives a checklist: Obsidian installed and at least version 1.14, the vault folder, git, folders, `About.md`, the vault registered in Obsidian, the Obsidian CLI (optional), each community plugin, and the automation: uv where the hooks look for it, `jq` or `python3` for the session-end hook, and how many sessions wait in the queue. With `check`, it stops here.
+
+     Problems you fix yourself:
+
+     | Problem | Fix |
+     | --- | --- |
+     | Obsidian missing | the install command for your system, from the check result |
+     | Obsidian older than 1.14 | Settings → General → Check for updates (Bases kanban needs 1.14) |
+     | uv missing | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+     | no git identity | give the name and email to sign vault commits with |
+
+  2. **About you.** For a new vault it asks for `role`, `language` and `interests`, each with a Skip. Your timezone is detected. It never asks about an employer, team or manager; [synapsidian-work](/synapsidian/0.34/extensions/work/) asks for those.
+
+  3. **Apply.** `synapsidian setup apply` creates the folders, `.gitignore`, `About.md`, `Templates/Daily.md`, a Templater template per note type in `Templates/Generated/`, and the [Bases](/synapsidian/0.34/reference/bases/). It writes Obsidian's config:
+
+     | File | Sets |
+     | --- | --- |
+     | `.obsidian/core-plugins.json` | Bases, Properties, Daily notes, Backlinks, Outgoing links, File recovery, Canvas and others on |
+     | `.obsidian/app.json` | new notes in `Inbox/`, attachments in `Attachments/`, shortest wikilinks, links updated on rename, deleted files to the vault's `.trash` |
+     | `.obsidian/daily-notes.json` | folder `Daily`, format `YYYY-MM-DD`, template `Templates/Daily` |
+     | `.obsidian/types.json` | property types from the schema: dates, lists |
+
+     Then it makes the vault a git repository and commits what it created. Settings you already changed are kept and listed. A later run rewrites a generated template only while it is as synapsidian wrote it; one you edited stays. If the core **Templates** plugin points at a folder holding `Templates/Generated/`, it would paste the templates as raw JavaScript (D118), so it is turned off, or you choose to move your own templates.
+
+     It also runs migrations from older versions: `ZAD-n` task ids become `Tn`, and person and goal notes get their missing views (on your yes).
+
+  4. **About you, in your words.** `About.md` has sections you write yourself: `## Who I am`, `## Current focus`, `## How I work`, plus one per add-on that declares any. The interview asks about the empty ones, each with a Skip, and asks again next time. See [About.md](/synapsidian/0.34/configuration/about/).
+
+  5. **Register the vault in Obsidian.** Obsidian only opens folders it knows. Either quit Obsidian and let `synapsidian setup register` add it (it backs up Obsidian's registry first and asks for a clear yes, since that file is undocumented), or choose *Open folder as vault* in Obsidian yourself.
+
+  6. **Community plugins.** Four are required: Git, Excalidraw, Templater and Calendar Bases; an add-on can require more. With the Obsidian CLI on PATH and the vault registered, it installs and enables them after one question. It never turns off Restricted mode for you. Anything it cannot do here becomes one task, "Install the Obsidian plugins synapsidian needs", with the steps. Claudian is offered as a recommended extra. See [Obsidian plugins](/synapsidian/0.34/configuration/obsidian-plugins/).
+
+  7. **Optional extras**, mentioned only: the Obsidian CLI and Obsidian's own skills (`kepano/obsidian-skills`).
+
+  8. **Self-test.** `synapsidian setup selftest` feeds a fake session end to the hook against a throwaway vault, reads the row back, and runs the session brief on the real vault.
+
+  9. **Report**, in three groups: ✅ ready, ➕ added in this run, ❗ still needed. An add-on that is installed but has no extension in the vault is listed with its setup skill as the fix. Then it offers to schedule the recurring runs with [`/synapsidian:schedule`](/synapsidian/0.34/skills/schedule/): without the evening run, the session queue never becomes a devlog.
+</Steps>
+
+<Aside title="Changing the vault path">
+  The vault path is the plugin option `vault_path`, set when you enabled the plugin. Change it in `/plugin` → synapsidian → configure. See [Options](/synapsidian/0.34/configuration/options/).
+</Aside>
+
+## Commands it runs
+
+```bash
+synapsidian setup check | apply | register | selftest | about --owner synapsidian
+synapsidian note section | fill | set
+obsidian vault=<vault> plugins:restrict
+obsidian vault=<vault> plugin:install id=<id> enable
+obsidian vault=<vault> plugin:reload id=<id>
+```

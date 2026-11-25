@@ -1,0 +1,193 @@
+---
+title: Schema reference
+description: Every note type of the core plugin, with its folder, file name and fields.
+slug: 0.34/reference/schema
+---
+
+The core's `schema/types.yaml`, field by field. A `*` marks a required field. Add-ons add types and fields: see [synapsidian-work](/synapsidian/0.34/extensions/work/) and [synapsidian-projects](/synapsidian/0.34/extensions/projects/).
+
+## Every note
+
+| Field | Kind |
+| --- | --- |
+| `type`\* | text |
+| `created`\* | date |
+| `summary`\* | text; optional where a type says so |
+| `tags` | list |
+| `aliases` | list |
+
+## daily
+
+Folder `Daily/`, file name `{date}`, `summary` optional, no Templater template.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `date`\* | date |  |
+
+## task
+
+Folder `Tasks/`, file name `{id} {title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `id`\* | text | pattern `T[1-9][0-9]*` |
+| `status`\* | text | `todo`, `doing`, `waiting`, `done`, `dropped`; default `todo` |
+| `priority`\* | text | `high`, `medium`, `low`; default `medium` |
+| `due` | date |  |
+| `source` | text | `save`, `session`, `meeting`, `manual`, `capture`, `ingest`, `research` |
+| `source_link` | link |  |
+| `done_on` | date |  |
+| `repeat` | text | pattern `[1-9][0-9]*[dwmy]` |
+| `goal` | link |  |
+| `blocked_by` | links |  |
+
+## person
+
+Folder `People/`, file name `{title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `role` | text |  |
+| `team` | text |  |
+| `email` | text |  |
+| `relationship` | text | `manager`, `report`, `peer`, `stakeholder`, `external`, `family`, `friend`, `mentor`, `other` |
+| `last_contact` | date |  |
+| `follow_up` | date |  |
+
+## meeting
+
+Folder `Meetings/`, file name `{date} {kind} {title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `date`\* | date |  |
+| `kind`\* | text | `team`, `review`, `external`, `other`; default `other` |
+| `attendees` | links |  |
+| `event_id` | text |  |
+
+## decision
+
+Folder `Decisions/`, file name `{date} {title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `status`\* | text | `proposed`, `accepted`, `superseded`; default `accepted` |
+| `supersedes` | link |  |
+| `decided_by` | links |  |
+
+## note
+
+Folder `Notes/`, file name `{title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `area` | text | `domain`, `tech`, `process` |
+| `kind` | text | `concept`, `literature` |
+
+## howto
+
+Folder `Howtos/`, file name `{title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `applies_to` | links |  |
+
+## idea
+
+Folder `Ideas/`, file name `{date} {title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `status`\* | text | `new`, `exploring`, `graduated`, `dropped`; default `new` |
+| `graduated_to` | link |  |
+
+## goal
+
+Folder `Goals/`, file name `{title}`.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `status`\* | text | `active`, `paused`, `achieved`, `dropped`; default `active` |
+| `target` | date |  |
+| `progress` | number |  |
+| `horizon` | text | `year`, `quarter`, `month` |
+
+## review
+
+Folder `Reviews/`, file name `{period_end} {period} review`, no Templater template.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `period`\* | text | `week`, `month`, `quarter` |
+| `period_start`\* | date |  |
+| `period_end`\* | date |  |
+
+## source
+
+Folder `Sources/`, file name `{fetched_at} {title}`, `summary` optional, no Templater template.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `url` | text |  |
+| `source_kind`\* | text | `article`, `pdf`, `document`, `slides`, `youtube`, `confluence`, `text`, `image`, `other` |
+| `content_hash`\* | text | pattern `[0-9a-f]{16}` |
+| `fetched_at`\* | date |  |
+| `capture_scope`\* | text | `full`, `partial`; default `full` |
+| `author` | text |  |
+| `published` | date |  |
+| `supersedes` | link |  |
+| `integrated` | date |  |
+| `source_quality` | text | `primary`, `secondary`, `opinion` |
+
+## research
+
+Folder `Research/`, file name `{date} {title}`, no Templater template.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `question`\* | text |  |
+| `sources` | links |  |
+| `watch` | text | `weekly`, `monthly`, `quarterly` |
+| `refreshed` | date |  |
+
+## thinking
+
+Folder `Thinking/`, file name `{date} {kind} {title}`, no Templater template.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `kind`\* | text | `challenge`, `brainstorm`, `topic`, `patterns`, `distill`, `learn`, `ideas` |
+| `about` | links |  |
+
+## capture
+
+Folder `Inbox/`, file name `{date} {time} {title}`, `summary` optional.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `source_url` | text |  |
+
+## about
+
+Folder: the vault root, file name `About`, `summary` optional, no Templater template.
+
+| Field | Kind | Values |
+| --- | --- | --- |
+| `role` | text |  |
+| `timezone` | text |  |
+| `language` | text |  |
+| `interests` | list |  |
+| `protected` | list |  |
+
+Body sections: `## Who I am`, `## Current focus`, `## How I work`, and `## Rules`, which is yours.
+
+## Kinds
+
+| Kind | Stored as |
+| --- | --- |
+| text | a string |
+| date | `YYYY-MM-DD` |
+| link | `"[[Note title]]"` |
+| links | a list of links |
+| list | a list of strings |
+| number | a number |

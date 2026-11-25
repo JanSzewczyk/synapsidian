@@ -1,0 +1,42 @@
+---
+title: /synapsidian-work:win
+description: Log a win in the brag log, or list the wins of a period.
+slug: 0.34/extensions/work/win
+---
+
+A brag log for performance reviews (D111): one note in `Wins/` per thing you did or drove that someone else benefits from. A release, a fix that unblocked people, a finished migration, a better process, help that mattered.
+
+```text
+/synapsidian-work:win <what happened>
+/synapsidian-work:win list [week | month | quarter | half | year | <from> <to>]
+```
+
+Claude also picks it for "log a win" or "what did I achieve this quarter?".
+
+## Log a win
+
+1. Checks the win is not there already; if it is, it adds what is new instead of a second note.
+
+2. Fills the fields from what you said and the vault, never invented:
+
+   | Field | |
+   | --- | --- |
+   | `date` | when it happened; today by default |
+   | `impact` | `small` (your own work or one person), `medium` (the team or one stakeholder group), `large` (beyond the team); unclear means `medium`, and it says so |
+   | `evidence` | links that prove it: notes in the vault, and URLs of PRs, tickets or docs you named |
+   | `summary` | the outcome, not the activity |
+
+3. Writes **What** (first person, past tense, your phrasing), **Impact**, **Evidence** and **Who saw it**. People are linked when they have a note; none is created here.
+
+4. Commits, and tells you any field you could still add.
+
+## List wins
+
+`list` takes a period, the last 90 days by default. `week`, `month` and `quarter` run from their start to today; `half` and `year` count 183 and 365 days back. A half or a year is grouped by month. Nothing is committed.
+
+The wins also show up in the [review](/synapsidian/0.34/skills/review/), in a `## Wins` section, and in your [1:1 prep](/synapsidian/0.34/extensions/work/one-to-one/) with your manager.
+
+## Rules
+
+* Only what you said or a note shows: no inflated impact, no added numbers, no credit for someone else's work. Shared work says who else did it.
+* Compensation, ratings and other people's performance stay out.

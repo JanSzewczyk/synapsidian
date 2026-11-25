@@ -1,0 +1,44 @@
+---
+title: /synapsidian:capture
+description: Drop a thought, link or snippet into the Inbox as given, with no processing.
+slug: 0.34/skills/capture
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Saves text to `Inbox/` exactly as you wrote it. No searching, no linking, no rewriting: captures are raw on purpose (D51), and you sort them later with [`/synapsidian:save inbox`](/synapsidian/0.34/skills/save/).
+
+```text
+/synapsidian:capture <text or URL>
+```
+
+Claude also picks this skill when you say "capture this" or "jot this down".
+
+<Aside type="tip" title="The faster way: >>">
+  A prompt that starts with `>>` is saved to the Inbox by a hook and never reaches Claude, so it costs no turn (D137). See [Session hooks](/synapsidian/0.34/concepts/session-hooks/).
+
+  ```text
+  >> ask Alex about the export format
+  ```
+</Aside>
+
+## What it does
+
+1. Picks a title of 3 to 6 words from the text, in English. A URL is also stored in the `source_url` field.
+2. Creates the note with your text as its body, in your wording and language.
+3. Commits it and replies with one line: the note's link.
+
+## What it writes
+
+| File | Type | Fields |
+| --- | --- | --- |
+| `Inbox/<date> <time> <title>.md` | `capture` | `source_url` when the text is a URL |
+
+## Commands it runs
+
+```bash
+synapsidian note new --type capture --title "<title>" [--field source_url="<url>"] --body-file -
+synapsidian commit --skill capture --message "<title>" "<file>"
+```
+
+**Next:** [`/synapsidian:save inbox`](/synapsidian/0.34/skills/save/) files the Inbox.

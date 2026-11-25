@@ -1,0 +1,32 @@
+---
+title: /synapsidian:recap
+description: Summarise any period from the vault in chat, writing nothing.
+slug: 0.34/skills/recap
+---
+
+Tells you what happened over a stretch of time: a day, a week, a sprint, a month or "since" a date. It reads devlogs, tasks, decisions and meetings and answers in chat. To keep a review as a note, use [`/synapsidian:review`](/synapsidian/0.34/skills/review/).
+
+```text
+/synapsidian:recap <period> [topic or project]
+```
+
+```text
+/synapsidian:recap last week
+/synapsidian:recap since 2026-10-01 export format
+```
+
+## What it does
+
+It runs in an Explore subagent (D131), so the notes it reads stay out of your conversation.
+
+1. Turns the period into dates. Weeks start on Monday. A topic or project narrows everything below to it.
+2. Gathers the `devlog` block of each daily note in the period, the tasks done and created, the decisions and meetings created, and any review notes that cover it. For a topic it also searches the vault and keeps only the notes changed in the period.
+3. Answers in your language: what got done (grouped by project when the vault has projects, otherwise by topic), the decisions, and what is still open. Every claim cites its note. Days with nothing in the vault are named as empty, not guessed.
+
+## Commands it runs
+
+```bash
+synapsidian block get --file "Daily/<date>.md" --name devlog
+synapsidian query notes --type task --where "done_on>=<from>" ...
+synapsidian find "<topic>"
+```

@@ -1,0 +1,46 @@
+---
+title: synapsidian setup
+description: Check and set up the vault and Obsidian, register the vault,
+  install add-on extensions.
+slug: 0.34/cli/setup
+---
+
+```bash
+synapsidian setup check
+synapsidian setup apply [--name N --email E] [--about KEY=VALUE]…
+synapsidian setup register [--obsidian-closed]
+synapsidian setup about [--owner PLUGIN]
+synapsidian setup selftest
+synapsidian setup extension --from DIR
+```
+
+The mechanics behind [`/synapsidian:setup`](/synapsidian/0.34/skills/setup/) (D52). Every subcommand prints JSON.
+
+## check
+
+Reports, without changing anything: Obsidian (installed, version against the minimum 1.14, how to install it on this system), the vault folder, git and its identity, folders, `About.md`, whether Obsidian knows the vault, the Obsidian CLI, required and recommended community plugins with the settings still unset, the installed extensions, and the automation (uv, `jq` or `python3`, hook events, the session queue).
+
+## apply
+
+Idempotent. It creates what is missing and never overwrites a note. For Obsidian settings it sets only keys you have not set differently, and lists those as `kept`.
+
+* Folders, `.gitignore`, `About.md`, `Templates/Daily.md` and the Bases.
+* A Templater template per note type in `Templates/Generated/` (D110, D119), rewritten only while you have not edited it.
+* Migrations: legacy `ZAD-n` task ids become `Tn`, links included (D93); an old `About.md` gets its missing sections (D94, D160); Base filters by folder become "this type, outside Archive/" so notes filed in project folders show up (D102); notes in a folder their type no longer uses move to the right one (D106). Migrations get commits of their own.
+* `--about KEY=VALUE` sets About fields for a new vault. `--name` and `--email` set the git identity for vault commits.
+
+## register
+
+Adds the vault to Obsidian's list of vaults. Obsidian must be closed, or it would overwrite the change. It backs up the registry first and prints `open_with`, the command that opens the vault on this system. Where it cannot tell whether Obsidian is running, `--obsidian-closed` confirms it.
+
+## about
+
+What the About interview still has to ask: the empty fields and declared sections (D160). `--owner` limits it to one plugin's questions, so each add-on's setup asks only its own. See [About.md](/synapsidian/0.34/configuration/about/).
+
+## selftest
+
+Feeds a fake session end to the hook against a throwaway vault, reads the row back through uv, and runs the session brief on the real vault. The real queue stays clean.
+
+## extension
+
+Copies an add-on's `extension.yaml`, `schema.yaml`, `templates/` and `bases/` into `<vault>/.synapsidian/extensions/<name>/`, then runs `apply`, so the new folders, Bases views and property types exist. Both go into one commit (D90). See [Extensions](/synapsidian/0.34/concepts/extensions/).

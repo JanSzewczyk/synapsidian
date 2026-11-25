@@ -49,7 +49,7 @@ npm run build
 
 - Pages are in `docs/src/content/docs/`: one per skill under `skills/` and `extensions/<add-on>/`, one per command under `cli/`. A changed skill, command, option or field updates its page.
 - The changelog pages are generated from `CHANGELOG.md`; never edit them here.
-- Archived versions follow the core plugin's version. To archive the current docs at a release, add `{ slug: "0.35" }` to `versions` in `astro.config.mjs` and start the dev server once. Never edit a snapshot folder.
+- Archived versions follow the core plugin's version. To archive the current docs at a release, add `{ slug: "0.35", label: "v0.35" }` to `versions` in `astro.config.mjs` and start the dev server once. The changelogs are not versioned, so point the snapshot's `/synapsidian/0.35/…/changelog/` links back at `/synapsidian/…/changelog/`. After that, never edit a snapshot folder.
 
 <Aside title="English only">
 The site, like the notes the plugins write, is in English.

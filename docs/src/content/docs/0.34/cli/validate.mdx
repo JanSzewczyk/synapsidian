@@ -1,0 +1,15 @@
+---
+title: synapsidian validate
+description: Check notes against the schema. Warns, never blocks.
+slug: 0.34/cli/validate
+---
+
+```bash
+synapsidian validate FILE…
+synapsidian validate --all
+synapsidian validate --hook
+```
+
+Checks frontmatter against the [schema](/synapsidian/0.34/reference/schema/): required fields, types, enum values, patterns. It warns and never blocks (D43).
+
+`--hook` is how the `PostToolUse` hook calls it after every `Write` or `Edit`: it reads the hook's JSON on stdin and warns Claude when a note it just wrote breaks the schema. Files can be vault-relative or absolute; `--all` checks every note.

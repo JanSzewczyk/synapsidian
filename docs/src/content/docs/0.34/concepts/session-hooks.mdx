@@ -1,0 +1,69 @@
+---
+title: Session hooks
+description: What the core plugin does on its own in every Claude Code session.
+slug: 0.34/concepts/session-hooks
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The core plugin registers five hooks. They load when a session starts, so after installing or updating the plugin, start a new session.
+
+| Event | Runs | Does |
+| --- | --- | --- |
+| `SessionStart` (startup, clear) | `brief.py` | puts the session brief in context and exports `SYNAPSIDIAN_VAULT` |
+| `SessionStart` (compact) | `brief.py --minimal` | After `/compact`: About facts and the vault path only |
+| `SessionEnd` | `session-end.sh` | queues the finished session for the evening run |
+| `UserPromptSubmit` | `capture.sh` | saves a `>>` prompt to the Inbox, without a Claude turn |
+| `PreToolUse` on `Write`, `Edit` | `approve.py` | approves vault note edits without a prompt each time |
+| `PostToolUse` on `Write`, `Edit` | `validate.py --hook` | warns when a note breaks the schema |
+
+The Python hooks run through `hooks/run.sh`, which finds uv on PATH or in `~/.local/bin`, `~/.cargo/bin`, `/opt/homebrew/bin` and `/usr/local/bin`. The desktop app does not read your shell profile, so these fallbacks matter.
+
+## The session brief
+
+Every session starts knowing who you are and what is going on (D21):
+
+* **About the user:** the fields and sections of [About.md](/synapsidian/0.34/configuration/about/);
+* **Vault rules:** your `## Rules` and the `protected` paths;
+* what is overdue, due today and in progress;
+* active projects, with the projects add-on.
+
+With no vault configured the hook prints nothing, so a missing vault never breaks a session. See [`synapsidian brief`](/synapsidian/0.34/cli/brief/).
+
+## The session queue
+
+`SessionEnd` appends one line per ended session to `<vault>/.git/synapsidian/session-queue.jsonl`: the time, the session id, the transcript path, the folder and the reason it ended. It does nothing slow, because Claude Code stops these hooks as it exits: no uv, no Python environment, no model. It reads its input with `jq`, or `python3` when `jq` is missing.
+
+The evening run reads the queue and the transcripts later. Sessions the desktop app keeps open for days are also found by scanning recent transcripts. See [`synapsidian sessions`](/synapsidian/0.34/cli/sessions/).
+
+## `>>` capture
+
+A prompt that starts with `>>` becomes an Inbox capture, committed as `synapsidian(capture): …`, and the prompt is blocked: Claude never sees it and no tokens are spent (D137). The message you get says where it went. Other prompts never start uv.
+
+```text
+>> ask Alex about the export format
+```
+
+## Vault edit approval
+
+Without this hook, Claude would ask before every note it writes. `approve.py` approves `Write` and `Edit` on `.md`, `.base` and `.canvas` files inside the vault (D7), with exceptions for files that are code or instructions rather than notes (D120):
+
+| Path | Decision |
+| --- | --- |
+| `.git/`, `.obsidian/`, `.trash/`, `.claude/` | none: Claude Code's own rules apply |
+| `CLAUDE.md`, `CLAUDE.local.md`, `AGENTS.md` anywhere | ask |
+| `About.md` | ask: its Rules reach every session |
+| `Templates/` | ask: Templater runs the code in a template |
+| `.synapsidian/` | ask: installed schema extensions |
+| existing files in `Sources/` | ask: they are immutable copies |
+| paths in `About.md`'s `protected` list | ask, even with the hook turned off |
+
+The option `auto_approve_vault_edits` turns the hook off. Then the scheduled runs stop at their first note edit and wait for you.
+
+<Aside type="caution">
+  An unattended run cannot answer "ask", so a scheduled run that tries to write one of these files fails at that step. This is on purpose, so a line injected into a web page or transcript cannot change your instructions on its own.
+</Aside>
+
+## Schema check
+
+After every `Write` or `Edit`, `validate.py --hook` checks the note against the schema and warns Claude about a missing field or a wrong value. It never blocks (D43).

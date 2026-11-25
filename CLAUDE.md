@@ -44,8 +44,9 @@ The one exception is a mod's `*.test.ts` (today `plugins/synapsidian-dock/tests/
   `docs/astro.config.mjs`. `tests/test_docs_site.py` fails when a skill or command has no page.
 - `cd docs && npm run check && npm run build` (the build also fails on a broken internal link).
 - Archived releases follow the core version: `versions` in `astro.config.mjs` and a snapshot folder
-  (`docs/src/content/docs/0.34/`) written by `starlight-versions` on the first `npm run dev`. Never
-  edit a snapshot.
+  (`docs/src/content/docs/0.34/`) written by `starlight-versions` on the first `npm run dev`. The
+  changelogs are not versioned, so right after writing a snapshot point its `/synapsidian/<slug>/…/changelog/`
+  links back at `/synapsidian/…/changelog/`; after that, never edit a snapshot.
 - The changelog pages (`/changelog/` for the core, `/extensions/<add-on>/changelog/`) are generated
   from the root `CHANGELOG.md` by `starlight-changelogs` (`docs/src/content.config.ts`).
 - A change to a skill, command, option or schema field also updates its page here.

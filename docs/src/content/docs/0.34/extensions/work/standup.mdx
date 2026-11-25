@@ -1,0 +1,46 @@
+---
+title: /synapsidian-work:standup
+description: The stand-up note says what you did, what you are on and any
+  blocker, in spoken English.
+slug: 0.34/extensions/work/standup
+---
+
+Prepares what you say at the stand-up, from the vault and your work sources, and saves it to today's daily note. A scheduled task runs it an hour before the stand-up on your `standup_days`.
+
+```text
+/synapsidian-work:standup
+```
+
+## The window
+
+`synapsidian-work standup window` gives the time of the previous stand-up from `standup_days` and `standup_time`. Every query uses that timestamp, not just a date.
+
+## Sources
+
+| Source | What |
+| --- | --- |
+| Devlogs | the `devlog` block of each daily note since then |
+| Today's sessions | `synapsidian sessions digest --since … --scan`, sessions still open included |
+| Jira | your tickets updated since then, and those in progress |
+| GitHub | your PRs updated since then, and those you are involved in |
+| Git | your own commits in `work_repo_paths`, by each repository's `user.email` |
+| Calendar | working sessions such as planning or a design review; not routine calls or the stand-up itself |
+
+A ticket, its PR and its commits are one piece of work: one bullet, under the ticket key, at its furthest state.
+
+## The note
+
+```markdown
+- ABC-1312 — I've been working on the data export task; the PR is up now, just waiting on a review.
+- ABC-1298 — I finished off the reporting one, and that's been merged since Tuesday.
+- Today — I'm carrying on with the CSV import, and I'd like to get a PR open by the end of the day.
+- No blockers.
+```
+
+* Up to 5 bullets of what was done, oldest first, led by the ticket key or PR number.
+* One `Today —` bullet, then one `Blocker —` bullet or `No blockers.` A blocker is never invented.
+* One or two spoken sentences each, first person: what the work concerns, never what changed in the code, and always where it landed.
+
+It is saved as the `standup` block under `## Stand-up` in today's note, committed, and shown to you exactly as saved.
+
+Everything outside the vault is read-only: no ticket is touched, no PR reviewed, nothing sent.

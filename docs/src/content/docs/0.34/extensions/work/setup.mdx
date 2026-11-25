@@ -1,0 +1,23 @@
+---
+title: /synapsidian-work:setup
+description: Install, update or check the work add-on, and schedule the stand-up.
+slug: 0.34/extensions/work/setup
+---
+
+```text
+/synapsidian-work:setup
+/synapsidian-work:setup check      # report only
+/synapsidian-work:setup schedule   # only the stand-up task
+```
+
+Idempotent. Run it after installing the add-on and after every update.
+
+## Steps
+
+1. **Check.** The core plugin must be installed and the vault ready; otherwise it sends you to `/synapsidian:setup` and stops. Then a checklist: is the extension installed at the add-on's version, and which options are set. For GitHub it checks that `gh` is signed in and each repository answers; for Jira, that each key is a visible project; for work repositories, that each path is a git repository. An option that is not set is information, not an error. With `check`, it stops here.
+2. **Install the extension.** `synapsidian setup extension --from "$(synapsidian-work extension)"` copies it into the vault, adds the Bases views and property types, and commits. An unchanged extension makes no commit.
+3. **About you.** The [About interview](/synapsidian/0.34/configuration/about/) for this add-on only: `team`, `company`, `manager` (a person note's title), `working_hours`, `## Work` and `### Work` under Current focus. Each has a Skip; drafts come only from what Claude knows, such as your git email's domain for the company.
+4. **Schedule the stand-up.** `synapsidian-work standup cron` turns `standup_days` and `standup_time` into a schedule an hour before the stand-up. After asking once, it creates or fixes the task `synapsidian-standup`, running `/synapsidian-work:standup`. You set its permission mode to **auto** and its folder to the vault, as for the core's runs.
+5. **Report**: ready, added in this run, still needed. Options not set are listed in one line.
+
+Options from synapsidian-work 0.1 (`github_repo`, `jira_project`, `work_repo_path`) are no longer read: enter them again under the list options.
