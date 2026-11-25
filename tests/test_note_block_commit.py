@@ -681,3 +681,13 @@ def test_an_extension_for_a_newer_core_names_the_fix(run, vault):
     assert code == 2 and out["ok"] is False
     assert out["error"].startswith("extension newer 2.0.0 needs synapsidian >= 99.0.0")
     assert out["error"].endswith("update the synapsidian plugin")
+
+
+def test_a_schema_of_the_wrong_shape_is_a_json_answer_too(run, vault):
+    _, task = run("note", "new", "--type", "task", "--title", "T", "--field", "summary=s", vault=vault)
+    folder = vault / ".synapsidian" / "extensions" / "odd"
+    folder.mkdir(parents=True)
+    for text in ("types:\n  thing: {folder: X}\n", "extend: [task]\n"):
+        (folder / "schema.yaml").write_text(text)
+        code, out = run("note", "set", "--file", task["rel"], "--field", "due=", vault=vault)
+        assert code == 2 and out["ok"] is False and "has the wrong shape" in out["error"], out
