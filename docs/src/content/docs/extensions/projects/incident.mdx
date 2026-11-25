@@ -1,5 +1,34 @@
 ---
-title: incident
+title: "/synapsidian-projects:incident"
+description: A blameless postmortem, with action items filed as tasks.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+```text
+/synapsidian-projects:incident <what happened> [project <name>] [date YYYY-MM-DD]
+/synapsidian-projects:incident final <incident note>
+```
+
+When something broke for users or a team, it writes the postmortem in `Projects/<Project>/Incidents/`, named after the day it happened (D111). The hunt for a bug's cause is [`debug`](/synapsidian/extensions/projects/debug/).
+
+<Aside title="Blameless">
+It describes what the system and the process allowed, never who was at fault. People appear by role, not by name, unless you ask otherwise.
+</Aside>
+
+`status`: `draft`, then `final` after your review. Times, numbers of users affected, causes and quotes come from you, the conversation, debug notes or meeting notes; unknown is `TBD`.
+
+## Draft
+
+Searches for an existing postmortem of the same event and for debug notes to link, then writes:
+
+- **Summary**: what happened, impact, cause, how it ended;
+- **Timeline**: `HH:MM` bullets, the time zone given once, from the first sign to the all-clear;
+- **Impact**: who and what, for how long, with numbers when known;
+- **Root cause**: the mechanism, and the conditions that let it reach users;
+- **What went well**: what limited the damage or sped up the fix;
+- **Action items**: each filed as a task after one question, its bullet turned into the task's link with its priority.
+
+## Final
+
+When you have reviewed the draft and the `TBD`s are settled or accepted, it becomes `final`, with a hub Log line. A final postmortem is not rewritten; a new fact goes in as a dated line at the end of the section it changes.

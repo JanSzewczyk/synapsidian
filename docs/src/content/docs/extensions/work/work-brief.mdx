@@ -1,5 +1,47 @@
 ---
-title: work-brief
+title: "/synapsidian-work:work-brief"
+description: Pull requests, Jira tickets, and unanswered email and Slack asks for the morning brief.
 ---
 
-Stub.
+import { Aside } from '@astrojs/starlight/components';
+
+The work side of the morning brief. The core's morning run calls it with `morning`; you can also ask for it alone ("what PRs need me?", "my open tickets").
+
+```text
+/synapsidian-work:work-brief [morning]
+```
+
+## What it reads
+
+| Source | How |
+| --- | --- |
+| Pull requests | `synapsidian-work prs` over every repository in `github_repos`: waiting on you, ready to merge, stuck with the reason, in review, drafts, to escalate, and your PRs merged since the done window |
+| Jira | your open tickets in `jira_projects`, through the Atlassian connector |
+| Email | threads from the last two days that ask you for something you have not answered |
+| Slack | mentions and DMs from the last two days that end in a question or ask you have not answered or reacted to |
+
+A source that is not configured or not available is skipped silently. Everything is read-only.
+
+## What it files
+
+Unanswered asks from email and Slack become tasks, with `source: email` or `slack` and a link to the thread (D64):
+
+- only asks addressed to you that you have not answered or acknowledged; not newsletters, notifications, FYIs or asks to someone else;
+- deduplicated by link, against open tasks by meaning, and against tasks closed in the last 7 days;
+- at most 5 per run, titled in plain words, with a `due` only when the message states a date;
+- money, health and credentials are never filed.
+
+It only creates tasks: it never edits, closes or re-dates one you have.
+
+<Aside title="Pull requests are never tasks">
+No run creates a task, checklist line or note for a pull request, not even a review waiting on you (D96). The brief lists them, and that is all.
+</Aside>
+
+## The reply
+
+1. **Needs attention:** PRs to escalate, and asks not filed as a task.
+2. **Done:** PRs merged since the done window.
+3. **Pull requests:** a tally of every group, then *To review*, *Ready to merge*, *Stuck* (with the reason), *In review* and *Drafts*, each with its count; then **Jira**, at most 6 tickets.
+4. **Files** it changed, for the morning commit.
+
+With `morning`, the morning run places these parts in the brief and commits. Without it, the skill commits itself and replies with parts 1 to 3.

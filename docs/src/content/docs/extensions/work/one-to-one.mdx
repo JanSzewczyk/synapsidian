@@ -1,5 +1,42 @@
 ---
-title: one-to-one
+title: "/synapsidian-work:one-to-one"
+description: Prepare and keep 1:1 notes - topics, notes and action items carried forward.
 ---
 
-Stub.
+On the day of a 1:1 you open one note and see the two to four things you want to say, each written out. The shape stays the same every week.
+
+```text
+/synapsidian-work:one-to-one prepare <person>
+/synapsidian-work:one-to-one add <person> <topic>
+/synapsidian-work:one-to-one work <person> <topic>
+/synapsidian-work:one-to-one tidy <person>
+/synapsidian-work:one-to-one read <person>
+```
+
+Claude also picks it whenever a one-on-one comes up ("add a topic for my next 1:1 with Alex").
+
+## Where things live
+
+| Note | Holds |
+| --- | --- |
+| `People/<Name>.md` | `## Open topics`, the backlog with no cap; `## History`, links to past meetings |
+| `Meetings/<date> 1-1 <Name>.md` | `## Talking points` (2 to 4 topics), `## Notes`, `## Action items` (checkboxes) |
+
+A topic is a `###` heading of at most 10 words, with its body in prose: the situation, the words to say, the ask, questions, links. Notes are in English, whatever language you write in.
+
+The meeting is found in the calendar, today to 21 days ahead: an event with exactly two attendees, you and that person. With none, the topic goes to the person's Open topics, and no date is invented.
+
+## Modes
+
+- **prepare.** Finds or creates the note, one per date. Talking points come from the person's Open topics (a topic moves with its body), unfinished business from the previous 1:1, and decisions that never landed. Every unticked action item from the previous 1:1 is copied as `- [ ] <item> (from YYYY-MM-DD)`; past notes are never edited. With your manager (`manager` in About.md), it lists your [wins](/synapsidian/extensions/work/win/) since the last 1:1 in the reply and offers to make them a topic.
+- **add.** Acts at once and confirms in one line: a new topic on the next 1:1 note, or a line in Open topics when no meeting is scheduled. At four topics it does not add a fifth; it says which one it would move out and lets you pick.
+- **work.** Files what you say under the right topic, keeping your phrasing. Asked for a draft, it writes one in the first person and says it is a draft. For a hard topic it suggests [`one-to-one-triage`](/synapsidian/extensions/work/one-to-one-triage/).
+- **tidy.** Fixes structure, never content: sections named and ordered, every topic a heading, duplicates merged, action items as checkboxes. Asked whether you are ready, it reports topics with no body, topics with no ask, and topics carried three weeks without discussion.
+- **read.** The headings and meeting time, one topic in full, or the previous note.
+
+## Rules
+
+- At most one question, only when acting would guess at something only you know.
+- Nobody's verbatim message goes into a note; your words, or a short quote where the wording matters.
+- Compensation, health and other people's private situations stay a topic in your words, with no figures or detail.
+- The calendar is only read; nothing is sent to anyone.

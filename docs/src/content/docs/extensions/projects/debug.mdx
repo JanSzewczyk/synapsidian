@@ -1,5 +1,32 @@
 ---
-title: debug
+title: "/synapsidian-projects:debug"
+description: Keep the investigation of one bug - symptom, repro, what was ruled out, root cause, fix.
 ---
 
-Stub.
+```text
+/synapsidian-projects:debug <the bug> [project <name>]
+/synapsidian-projects:debug update | fixed | wontfix <debug note>
+```
+
+A lab notebook for one bug, in `Projects/<Project>/Debug/` (D111). What was observed and tried stays, even a dead end: that is what saves the next person an afternoon. Claude also uses it to answer "did we see this error before?". A postmortem of an outage is [`incident`](/synapsidian/extensions/projects/incident/).
+
+`status`: `investigating`, `fixed` or `wontfix`.
+
+Error messages, commands, versions and causes come from the conversation, you or the code (read-only). A cause not proven yet is a hypothesis and says so.
+
+## Open
+
+Searches for the same bug first; a closed note on it is reopened instead. The note is titled by the symptom as a user sees it, "Checkout total ignores the discount", and gets:
+
+- **Symptom**: what happens and what should, the exact error in a code block, where and since when;
+- **Repro**: numbered steps with the environment and version, or `TBD`;
+- **Investigation**: dated bullets, one per hypothesis or experiment, each `ruled out`, `confirmed` or `inconclusive`, with files as `path:line` and commits by hash;
+- **Root cause** and **Fix**, empty until known.
+
+## Update, fixed, wontfix
+
+- **update** adds dated Investigation bullets; a proven cause goes into Root cause as the mechanism, not only the wrong line.
+- **fixed** writes the Fix and why it addresses the cause, linking the commit, PR, change or task, and adds a hub Log line.
+- **wontfix** says why (cost, rarity, superseded) and any workaround.
+
+Follow-up work, such as a test or a guard, becomes tasks after one question. A bug people felt as an outage gets a suggestion to write the postmortem.
