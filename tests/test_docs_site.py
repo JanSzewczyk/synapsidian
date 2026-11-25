@@ -23,8 +23,12 @@ PAGES = SITE / "src" / "content" / "docs"
 # The same pattern docs/src/content.config.ts uses to split CHANGELOG.md into one feed per plugin.
 HEADING = r"^\[(\S+) (synapsidian(?:-work|-projects|-dock)?)\]\s*—\s*(\d{4}-\d{2}-\d{2})$"
 
-# Add-on plugin -> its folder of pages under extensions/.
-ADDONS = {"synapsidian-work": "work", "synapsidian-projects": "projects", "synapsidian-dock": "dock"}
+# Add-on plugin -> its folder of pages: extensions/ for the add-ons, mods/ for the Claude Code mod.
+ADDONS = {
+    "synapsidian-work": "extensions/work",
+    "synapsidian-projects": "extensions/projects",
+    "synapsidian-dock": "mods/dock",
+}
 
 
 def skills(plugin: str) -> set[str]:
@@ -42,7 +46,7 @@ def test_every_core_skill_has_a_page_and_no_page_outlives_its_skill() -> None:
 
 @pytest.mark.parametrize("plugin", sorted(ADDONS))
 def test_every_addon_skill_has_a_page_and_no_page_outlives_its_skill(plugin: str) -> None:
-    folder = PAGES / "extensions" / ADDONS[plugin]
+    folder = PAGES / ADDONS[plugin]
     assert (folder / "index.mdx").is_file(), f"{plugin} has no overview page"
     assert pages(folder, skip={"index"}) == skills(plugin)
 

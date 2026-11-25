@@ -40,15 +40,16 @@ The one exception is a mod's `*.test.ts` (today `plugins/synapsidian-dock/tests/
 `docs/` is the documentation site (Astro Starlight, English only), deployed to GitHub Pages by
 `.github/workflows/docs.yml`:
 - Pages live in `docs/src/content/docs/`: one page per skill under `skills/` (core) and
-  `extensions/<work|projects|dock>/` (add-ons), one per CLI command under `cli/`. The sidebar is in
-  `docs/astro.config.mjs`. `tests/test_docs_site.py` fails when a skill or command has no page.
+  `extensions/<work|projects>/` (add-ons), the dock (a Claude Code mod) under `mods/dock/`, and one
+  page per CLI command under `cli/`. The sidebar is in `docs/astro.config.mjs`. `tests/test_docs_site.py` fails when a skill or command has no page.
 - `cd docs && npm run check && npm run build` (the build also fails on a broken internal link).
 - Archived releases follow the core version: `versions` in `astro.config.mjs` and a snapshot folder
   (`docs/src/content/docs/0.34/`) written by `starlight-versions` on the first `npm run dev`. The
   changelogs are not versioned, so right after writing a snapshot point its `/synapsidian/<slug>/…/changelog/`
-  links back at `/synapsidian/…/changelog/`; after that, never edit a snapshot.
-- The changelog pages (`/changelog/` for the core, `/extensions/<add-on>/changelog/`) are generated
-  from the root `CHANGELOG.md` by `starlight-changelogs` (`docs/src/content.config.ts`).
+  links back at `/synapsidian/…/changelog/`; after that, edit a snapshot only to follow a changelog
+  page that moved.
+- The changelog pages (`/changelog/` for the core, `/extensions/<add-on>/changelog/`,
+  `/mods/dock/changelog/`) are generated from the root `CHANGELOG.md` by `starlight-changelogs` (`docs/src/content.config.ts`).
 - A change to a skill, command, option or schema field also updates its page here.
 
 ## The core is universal (D88, D90)

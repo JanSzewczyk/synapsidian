@@ -1,25 +1,23 @@
 ---
 title: Extensions overview
-description: The three add-ons, what each adds, and how they meet the core.
+description: The two add-ons, what each adds, and how they meet the core.
 ---
 
-The core plugin fits any vault, personal or work. Three optional add-ons build on it. Install only the ones you need; each needs the core.
+The core plugin fits any vault, personal or work. Two optional add-ons build on it. Install only the ones you need; each needs the core. The dock, which changes Claude Code's own screen rather than the vault, is under [Claude Code mods](/synapsidian/mods/overview/).
 
 | Add-on | For | Skills | Options | Schema extension |
 | --- | --- | --- | --- | --- |
 | [synapsidian-work](/synapsidian/extensions/work/) | 1:1s, the stand-up, a win log, pull requests, Jira, email and Slack asks | 6 | 5 | yes |
 | [synapsidian-projects](/synapsidian/extensions/projects/) | project hubs with boards, milestones, decisions, specs, changes, postmortems, architecture notes, mind maps | 10 | none | yes |
-| [synapsidian-dock](/synapsidian/extensions/dock/) | what is due, in a band above the prompt, with a task pane | none | 1 | no |
 
 ## Install
 
 ```text
 /plugin install synapsidian-work@synapsidian
 /plugin install synapsidian-projects@synapsidian
-/plugin install synapsidian-dock@synapsidian
 ```
 
-Then, in a new session, run each add-on's setup: `/synapsidian-work:setup`, `/synapsidian-projects:setup`. The dock has none. Run the setup again after every update: it re-installs the schema extension when the version changed.
+Then, in a new session, run each add-on's setup: `/synapsidian-work:setup`, `/synapsidian-projects:setup`. Run the setup again after every update: it re-installs the schema extension when the version changed.
 
 ## Versions
 
@@ -27,7 +25,6 @@ Each add-on depends on a `~` range of the core, for example `~0.34.0`: any 0.34 
 
 - [synapsidian-work changelog](/synapsidian/extensions/work/changelog/)
 - [synapsidian-projects changelog](/synapsidian/extensions/projects/changelog/)
-- [synapsidian-dock changelog](/synapsidian/extensions/dock/changelog/)
 
 ## How they meet the core
 
@@ -43,4 +40,3 @@ See [Extensions](/synapsidian/concepts/extensions/) for the details.
 
 - With **work and projects**, projects get a Jira key (`project.jira`).
 - With **projects**, the core's task, decision, research, how-to, note and thinking notes can belong to a project and are filed under it; the review reports each active project.
-- With the **dock**, the Projects tab groups open tasks by project when the projects add-on is installed.

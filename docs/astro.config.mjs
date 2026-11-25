@@ -22,18 +22,18 @@ export default defineConfig({
       mermaidConfig: {
         themeVariables: {
           fontFamily: "Inter Variable, system-ui, sans-serif",
-          primaryColor: "#eff6ff",
+          primaryColor: "#fbf0ea",
           primaryTextColor: "#0a0a0a",
-          primaryBorderColor: "#93c5fd",
-          secondaryColor: "#dbeafe",
+          primaryBorderColor: "#e8a68a",
+          secondaryColor: "#fbe8df",
           tertiaryColor: "#f5f5f5",
-          lineColor: "#64748b",
+          lineColor: "#737373",
           textColor: "#737373",
-          noteBkgColor: "#dbeafe",
+          noteBkgColor: "#fbe8df",
           noteTextColor: "#0a0a0a",
-          edgeLabelBackground: "#eff6ff",
-          stateBkg: "#eff6ff",
-          labelBackground: "#eff6ff",
+          edgeLabelBackground: "#fbf0ea",
+          stateBkg: "#fbf0ea",
+          labelBackground: "#fbf0ea",
         },
       },
     }),
@@ -49,15 +49,15 @@ export default defineConfig({
         // `current` is the docs on main; each archived release is a folder src/content/docs/<slug>/,
         // named after the core plugin's version. To archive the next release, add { slug: "0.35" }
         // to `versions` and start the dev server once, then point the snapshot's changelog links back at the
-        // unversioned /changelog/ pages (changelogs are not versioned). Never edit a snapshot folder after that.
-        // Pages under /changelog/ and /extensions/<add-on>/changelog/ come from the repository's
+        // unversioned /changelog/ pages (changelogs are not versioned). After that, edit a snapshot only to follow a changelog page that moved.
+        // Pages under /changelog/, /extensions/<add-on>/changelog/ and /mods/dock/changelog/ come from the repository's
         // CHANGELOG.md (see src/content.config.ts).
         starlightChangelogs(),
         ...(versions.length ? [starlightVersions({ current: { label: "Latest" }, versions })] : []),
         starlightLinksValidator({
           errorOnLocalLinks: true,
           // The changelog pages are routes starlight-changelogs adds, not docs entries the validator sees.
-          exclude: ["/synapsidian/changelog/**", "/synapsidian/extensions/*/changelog/**"],
+          exclude: ["/synapsidian/changelog/**", "/synapsidian/extensions/*/changelog/**", "/synapsidian/mods/*/changelog/**"],
         }),
       ],
       components: { SiteTitle: "./src/components/SiteTitle.astro", Footer: "./src/components/Footer.astro", Hero: "./src/components/Hero.astro" },
@@ -103,12 +103,18 @@ export default defineConfig({
                 ...makeChangelogsSidebarLinks([{ type: "all", base: "extensions/projects/changelog", label: "Changelog" }]),
               ],
             },
+          ],
+        },
+        {
+          label: "Claude Code mods",
+          items: [
+            "mods/overview",
             {
               label: "synapsidian-dock",
               collapsed: true,
               items: [
-                { autogenerate: { directory: "extensions/dock" } },
-                ...makeChangelogsSidebarLinks([{ type: "all", base: "extensions/dock/changelog", label: "Changelog" }]),
+                { autogenerate: { directory: "mods/dock" } },
+                ...makeChangelogsSidebarLinks([{ type: "all", base: "mods/dock/changelog", label: "Changelog" }]),
               ],
             },
           ],

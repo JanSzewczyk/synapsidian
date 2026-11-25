@@ -31,7 +31,7 @@ export const collections = {
       feed("synapsidian", "changelog", "synapsidian changelog"),
       feed("synapsidian-work", "extensions/work/changelog", "synapsidian-work changelog"),
       feed("synapsidian-projects", "extensions/projects/changelog", "synapsidian-projects changelog"),
-      feed("synapsidian-dock", "extensions/dock/changelog", "synapsidian-dock changelog"),
+      feed("synapsidian-dock", "mods/dock/changelog", "synapsidian-dock changelog"),
     ]),
   }),
   versions: defineCollection({ loader: docsVersionsLoader() }),
