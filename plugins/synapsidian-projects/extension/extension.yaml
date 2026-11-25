@@ -1,7 +1,7 @@
 # Installed into the vault by `synapsidian setup extension --from <this dir>` (D90).
 # Keep `version` equal to .claude-plugin/plugin.json's: skills compare the two to know when to re-install.
 name: synapsidian-projects
-version: 0.13.0
+version: 0.13.1
 description: Projects add-on for synapsidian - a hub and kanban board per project, milestones, project notes filed under its folder, MADR decisions numbered per project, specs, changes, bug investigations, postmortems and architecture notes.
 # Community plugins this add-on needs; `synapsidian setup check` lists them with core's (D115).
 plugins:
