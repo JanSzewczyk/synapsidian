@@ -119,7 +119,7 @@ covers is dropped.
 | --- | --- |
 | Value | `mail` |
 | Connector | one that can search messages and read a thread (a Gmail, Outlook or IMAP connector); the first one found in the session |
-| Reads | messages in the inbox, not from the user, inside the window (Gmail syntax for example: `in:inbox newer_than:2d -from:me`); opens each candidate thread once |
+| Reads | messages in the inbox, not from the user, inside the window (Gmail syntax for example: `in:inbox newer_than:<window in days>d -from:me`); opens each candidate thread once |
 | Window | common rule |
 | Limits | at most 20 threads opened, 5 tasks filed, 5 brief lines |
 | Dedup key | the thread's permanent link from the connector |
@@ -132,10 +132,14 @@ One reader per source per run. When `morning_sources` lists `mail`, core reads m
 synapsidian-work's `work-brief` skips its Email step; otherwise work-brief reads email as before.
 
 The signal travels in the argument, not through a new channel. Core's skill sees its own
-`${user_config.morning_sources}` and knows whether `synapsidian-work hook morning` printed steps.
-`hook-morning.md` (synapsidian-work's printed reference) names the argument: `morning`, or
-`morning core-mail` when synapsidian's morning run says its mail source is on; work-brief skips
-email on `core-mail`. Dedup by `source_link` catches an overlap if either side gets it wrong.
+`${user_config.morning_sources}` and states, once, which sources are on for this run ("sources on:
+mail"); it knows no add-on argument names (D90). `hook-morning.md` (synapsidian-work's printed
+reference) maps that to its own argument: `morning`, or `morning core-mail` when mail is on;
+work-brief skips email on `core-mail`.
+
+An older synapsidian-work whose hook doesn't know `core-mail` reads mail too. Dedup by
+`source_link` stops a second task, and "one item, one place" drops a second Needs attention line
+about the same message, whichever plugin wrote it.
 
 ## Implementation (when built)
 
@@ -145,7 +149,7 @@ email on `core-mail`. Dedup by `source_link` catches an overlap if either side g
   add-on versions on either side stay valid. A device on an older core sees a core-filed
   `source: email` task only as a validation warning when work isn't installed there (D43).
 - `plugins/synapsidian/skills/morning/SKILL.md`: a sources step after step 1, the placement above,
-  the `core-mail` argument when it invokes work-brief, report lines.
+  the "sources on" statement add-on hooks read, report lines.
 - This file to `plugins/synapsidian/references/sources.md`; `synapsidian ref sources` then prints
   it with no code change (`bin/synapsidian` serves any `references/<name>.md`).
 - synapsidian-work: `hook-morning.md` and `work-brief` learn `core-mail`; `commitments.md` keeps
