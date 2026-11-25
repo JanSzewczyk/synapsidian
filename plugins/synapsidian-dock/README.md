@@ -4,7 +4,7 @@ The synapsidian brief on screen, without a Claude turn. A Claude Code mod on top
 
 ## Requirements
 
-- The `synapsidian` plugin 0.32.0 or later, enabled (the dock calls its `synapsidian` command); task summaries in the details need 0.32.3
+- The `synapsidian` plugin 0.34.x, enabled (the manifest requires `~0.34.0`; the dock calls its `synapsidian` command)
 - Claude Code 2.1.299 or later, in the terminal or the desktop app (the dock's spacing and type sizes need it; it is tested on 2.1.323); older versions draw no dock, WSL sessions and `--safe-mode` load no mods, and synapsidian works as before
 
 ## Install
