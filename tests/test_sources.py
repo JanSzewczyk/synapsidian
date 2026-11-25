@@ -384,3 +384,14 @@ def test_skill_rejects_unknown_file_types(run, vault, tmp_path):
     odd.write_bytes(b"\x00\x01")
     rc, out = run("source", "fetch", str(odd), vault=vault)
     assert rc == 2 and "unsupported file type" in out["error"]
+
+
+def test_add_answers_json_when_the_schema_wont_load(run, vault):
+    # An extension installed by a newer core (D161): no traceback, no note.
+    folder = vault / ".synapsidian" / "extensions" / "newer"
+    folder.mkdir(parents=True)
+    (folder / "schema.yaml").write_text("extend:\n  about:\n    lanes: [a]\n")
+    body = "\n".join(PARAGRAPHS[:3])
+    code, out = run("source", "add", "--kind", "text", "--title", "Notes", "--body-file", "-", stdin=body, vault=vault)
+    assert code == 2 and out == {"ok": False, "error": "extension newer: extend: about can't set lanes"}
+    assert not (vault / "Sources").exists()

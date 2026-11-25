@@ -347,3 +347,17 @@ def test_the_brief_still_answers_when_the_schema_wont_load(run, vault):
     assert "The vault's schema did not load, so synapsidian can't write notes: extension newer" in out
     code, out = run("brief", "--json", vault=vault)
     assert code == 0 and out["ok"] is True
+
+
+def test_a_capture_says_why_when_the_schema_wont_load(run, vault):
+    # An extension installed by a newer core (D161): the prompt is blocked with the reason, nothing written.
+    folder = vault / ".synapsidian" / "extensions" / "newer"
+    folder.mkdir(parents=True)
+    (folder / "schema.yaml").write_text("extend:\n  about:\n    lanes: [a]\n")
+    payload = json.dumps({"session_id": "s", "hook_event_name": "UserPromptSubmit", "prompt": ">> Call the plumber"})
+    code, out = run("capture", stdin=payload, vault=vault)
+    assert code == 0 and out["decision"] == "block", out
+    assert out["reason"] == (
+        "synapsidian: capture failed (extension newer: extend: about can't set lanes); the text was not saved."
+    )
+    assert not (vault / "Inbox").exists()
