@@ -32,6 +32,13 @@
       "title": "Folders kept off the record",
       "description": "Claude sessions started in these folders (or matching these glob patterns, e.g. ~/Clients/*) never reach the devlog, the evening run or the stand-up. A single session can also opt out by including #off-the-record in a message. Leave empty to log every session.",
       "required": false
+    },
+    "morning_sources": {
+      "type": "string",
+      "multiple": true,
+      "title": "Morning sources",
+      "description": "Sources the morning run reads, read-only, through a connector in the session. Today: mail (unanswered inbox asks become tasks). Empty reads none.",
+      "required": false
     }
   }
 }

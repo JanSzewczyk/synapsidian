@@ -36,7 +36,7 @@ Inspired by [eugeniughelbur/obsidian-second-brain](https://github.com/eugeniughe
 ### 🔎 Knowledge and review
 
 - **🧠 [Research and thinking tools](plugins/synapsidian/README.md)** — `research` writes a cited dossier from the vault first and the web for the gaps; `think` and `find` work on what the vault knows
-- **🌅 [Morning brief, evening run, reviews](plugins/synapsidian/README.md)** — `morning`, `evening`, `recap`, `review` and `schedule` keep the vault current
+- **🌅 [Morning brief, evening run, reviews](plugins/synapsidian/README.md)** — `morning`, `evening`, `recap`, `review` and `schedule` keep the vault current; the morning run can also file unanswered mail asks as tasks (opt-in, read-only)
 - **🩺 [Vault health](plugins/synapsidian/README.md)** — `health` applies safe mechanical fixes and lists what needs a decision
 
 ### 🧩 Add-ons
@@ -256,7 +256,7 @@ synapsidian/
 
 - **`plugins/<name>/.claude-plugin/plugin.json`** — each plugin's manifest; `skills/<skill>/SKILL.md` holds its skills
 - **`docs/`** — the documentation site (Astro Starlight): pages in `docs/src/content/docs/`, built by `cd docs && npm run build`, deployed to GitHub Pages
-- **`references/`** — [decisions.md](references/decisions.md), the design decisions that skills and scripts cite by number (`D90`), and the contract of a design not built yet ([morning-sources.md](references/morning-sources.md), D162)
+- **`references/`** — [decisions.md](references/decisions.md), the design decisions that skills and scripts cite by number (`D90`)
 - **`tests/`, `pyproject.toml`, `uv.lock`** — the dev environment; like `docs/` and `references/`, they sit at the repo root and ship with none of the plugins
 
 ---

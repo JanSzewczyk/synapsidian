@@ -1,6 +1,6 @@
 ---
 title: Options
-description: The core plugin's three options and where the vault path comes from.
+description: The core plugin's four options and where the vault path comes from.
 ---
 
 Claude Code asks for the core plugin's options when you enable it. Change them later in `/plugin` → synapsidian → configure.
@@ -10,6 +10,7 @@ Claude Code asks for the core plugin's options when you enable it. Change them l
 | `vault_path` | folder, required | `~/Synapsidian` | the Obsidian vault the plugin reads and writes; give the folder's exact spelling |
 | `auto_approve_vault_edits` | yes / no | yes | lets Claude write `.md`, `.base` and `.canvas` notes in the vault without a prompt each time |
 | `session_exclude_paths` | list of folders or glob patterns | empty | sessions started there never reach the devlog, the evening run or the stand-up |
+| `morning_sources` | list of sources | empty | external sources the morning run reads, read-only; today `mail` |
 
 ## vault_path
 
@@ -31,6 +32,16 @@ Turned off, Claude asks before every note edit, and the scheduled runs stop at t
 ## session_exclude_paths
 
 Folders, or glob patterns such as `~/Clients/*`, whose sessions stay [off the record](/synapsidian/concepts/privacy/). A single session can opt out by including `#off-the-record` in a message. Empty logs every session.
+
+## morning_sources
+
+The sources [`/synapsidian:morning`](/synapsidian/skills/morning/) reads through a connector in the session (D162). Empty reads none: a connector being there is never enough, since reading mail unattended needs your yes.
+
+| Value | Reads | Files |
+| --- | --- | --- |
+| `mail` | inbox threads not from you since the previous morning run (at most 3 days), at most 20 opened, through the first connector that can search and read mail (Gmail, Outlook, IMAP) | unanswered asks as tasks, `source: email`, at most 5 a run |
+
+A value no source has, or `mail` with no mail connector in the session, is one line in the run's report, never in the brief. With [synapsidian-work](/synapsidian/extensions/work/work-brief/) installed, `mail` on means `work-brief` leaves email to the core; off, it reads email as before.
 
 ## Add-on options
 

@@ -17,8 +17,7 @@ synapsidian/
 │   ├── synapsidian-projects/ # projects add-on
 │   └── synapsidian-dock/     # dock mod
 ├── references/
-│   ├── decisions.md          # the design decisions, D1 onwards
-│   └── morning-sources.md    # D162's design, until it is built
+│   └── decisions.md          # the design decisions, D1 onwards
 ├── tests/                    # pytest suite and a fixture vault
 ├── CHANGELOG.md              # one section per plugin release
 ├── CLAUDE.md                 # rules for working on the repository
@@ -53,7 +52,7 @@ plugins/synapsidian/
 | --- | --- |
 | `scripts/` | `note`, `find`, `block`, `commit`, `brief`, `validate`, `setup`, `sessions`, `when`, `query`, `health`, `source`, `frames`, `pages`, plus `approve.py` and `capture.py` for the hooks |
 | `scripts/synapsidianlib/` | the shared library: config, schema, frontmatter, blocks, links, git, vault, sources, task ids, dates, credentials, the Templater generator |
-| `references/` | `conventions`, `extraction`, `ingest`, `meetings`, `meeting-import`, `about-interview`, `obsidian-plugins`, `setup-report`, `think-<mode>` |
+| `references/` | `conventions`, `extraction`, `ingest`, `meetings`, `meeting-import`, `about-interview`, `obsidian-plugins`, `setup-report`, `sources`, `think-<mode>` |
 
 Each script declares its own dependencies inline (PEP 723) and runs with `uv run --script`.
 

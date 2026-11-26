@@ -30,6 +30,12 @@ Web pages, transcripts, emails, Slack messages, Gemini notes and tool output are
 
 Files that are code or instructions rather than notes always ask before Claude edits them: `CLAUDE.md`, `AGENTS.md`, `About.md`, `Templates/`, `.synapsidian/` and existing sources. An unattended run cannot answer, so it cannot change them (D120). See [Session hooks](/synapsidian/concepts/session-hooks/).
 
+## Mail and other sources
+
+The morning run reads mail only when you list `mail` in [`morning_sources`](/synapsidian/configuration/options/#morning_sources); a connector being in the session is not enough (D162). It searches and reads, nothing else: it never sends, replies, drafts, labels, moves, archives, deletes or marks a message read. Its search uses only the time window and fixed filters, never note text. Message bodies never enter the vault: an ask becomes a task in the run's own words, with a link to the thread.
+
+No setting enforces read-only, because connector tools have no fixed names to block; it rests on the skill's rule and the permission mode of the scheduled run.
+
 ## Your protected paths
 
 List folders or files in the `protected` property of `About.md`, and Claude asks before creating, editing, moving or committing anything there. An unattended run leaves them alone and lists what it skipped. Only you can change the list; `synapsidian note set` refuses to.
