@@ -200,8 +200,8 @@ type Write = { rel: string; what: string; at: string }
  */
 export type BandFact = { strong: string; rest: string; isAlert: boolean; badge: BadgeSpec }
 
-/** Whether the band shows: hidden at start unless the option asks for it, /synapsidian shows it, ✕ hides it. */
-let showBand = false
+/** Whether the band shows: shown at start unless the option turns it off, ✕ hides it, /synapsidian shows it again. */
+let showBand = true
 /** The surface session.start named; null in claude -p and the Agent SDK. */
 let startSurface: string | null = null
 let dock: Dock | null = null
@@ -772,7 +772,7 @@ function errorText(error: unknown): string {
 }
 
 export function register(on, options: Record<string, unknown> = {}) {
-  showBand = options.show_dock_band === true
+  showBand = options.show_dock_band !== false
 
   on('session.start', async ($, e, next) => {
     startSurface = typeof e.surface === 'string' ? e.surface : null

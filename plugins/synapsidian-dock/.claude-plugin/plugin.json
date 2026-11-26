@@ -3,7 +3,7 @@
   "name": "synapsidian-dock",
   "displayName": "Synapsidian Dock",
   "version": "0.7.4",
-  "description": "Dock add-on for the synapsidian plugin: /synapsidian shows a band above the prompt with what is overdue, due today and in progress, with a Tasks button to a pane whose keys close, start, move or drop a task without a Claude turn. A Claude Code mod; needs Claude Code 2.1.299 or later.",
+  "description": "Dock add-on for the synapsidian plugin: a band above the prompt, shown from the start of a session, says what is overdue, due today and in progress, and its Tasks button opens a pane whose keys close, start, move or drop a task without a Claude turn. A Claude Code mod; needs Claude Code 2.1.299 or later.",
   "author": {
     "name": "Szum Tech Team",
     "email": "szum.tech@gmail.com",
@@ -17,8 +17,8 @@
     "show_dock_band": {
       "type": "boolean",
       "title": "Show the band above the prompt",
-      "description": "Show the band above the prompt (what is overdue, due today and in progress, and a Tasks button) as soon as a session starts. Off (the default), it shows when you run /synapsidian.",
-      "default": false
+      "description": "Show the band above the prompt (what is overdue, due today and in progress, and a Tasks button) as soon as a session starts (the default). Off, it shows when you run /synapsidian.",
+      "default": true
     }
   }
 }

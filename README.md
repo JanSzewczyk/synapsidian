@@ -78,7 +78,7 @@ Each plugin's README lists its skills, options and hooks.
 | [`synapsidian`](plugins/synapsidian/README.md) | 16 | The core, for any vault: from `/synapsidian:setup` and `/synapsidian:task` to `/synapsidian:morning`, `/synapsidian:evening` and `/synapsidian:review`, plus the hooks |
 | [`synapsidian-work`](plugins/synapsidian-work/README.md) | 6 | Optional work add-on: setup, the work brief, the stand-up, 1:1 prep and the win log |
 | [`synapsidian-projects`](plugins/synapsidian-projects/README.md) | 10 | Optional projects add-on: setup, projects, milestones, decisions, specs, changes, bug investigations, postmortems, architecture notes and mind maps. Code repositories are only ever read |
-| [`synapsidian-dock`](plugins/synapsidian-dock/README.md) | 0 | Optional Claude Code mod: the band, its task pane and their keys; `/synapsidian` shows the band. Needs Claude Code 2.1.299 or later and no setup |
+| [`synapsidian-dock`](plugins/synapsidian-dock/README.md) | 0 | Optional Claude Code mod: the band, its task pane and their keys; the band shows from the start of a session, ✕ hides it and `/synapsidian` brings it back. Needs Claude Code 2.1.299 or later and no setup |
 
 ---
 

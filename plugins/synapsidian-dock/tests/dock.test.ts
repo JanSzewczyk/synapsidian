@@ -174,7 +174,15 @@ async function start($) {
   await $.command.run({ command: 'synapsidian', args: '' })
 }
 
-test('the band stays hidden at session start until /synapsidian asks for it', async ($, on) => {
+test('the band shows from session start, with no command', async ($, on) => {
+  stubWorld(on)
+  await $.session.start({ surface: 'desktop', isInteractive: false, cwd: '/work' })
+  await $.command.run({ command: 'synapsidian', args: 'refresh' })
+  const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  expect(await band.find({ key: 'dock-row' })).toBeDefined()
+})
+
+test('with show_dock_band off the band stays hidden at session start until /synapsidian asks for it', { options: { show_dock_band: false } }, async ($, on) => {
   stubWorld(on)
   await $.session.start({ surface: 'desktop', isInteractive: false, cwd: '/work' })
   await $.command.run({ command: 'synapsidian', args: 'refresh' })

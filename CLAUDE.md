@@ -24,7 +24,7 @@ One local marketplace (`.claude-plugin/marketplace.json`, `synapsidian`) with fo
     stdin; `scan`, `repo` and `architect` read the repository and the add-on's state folder.
   - It only ever reads code repositories.
 - `plugins/synapsidian-dock/`: the dock add-on (D156), a Claude Code mod
-  (`hooks/register.ts`): a band above the prompt (`/synapsidian` shows it, ✕ hides it) with a Tasks
+  (`hooks/register.ts`): a band above the prompt (shown at session start, ✕ hides it, `/synapsidian` shows it again) with a Tasks
   button to a task pane. No skills, no
   schema extension. It meets the core only through `synapsidian brief --json`, `synapsidian note set` and
   `synapsidian commit` (on PATH, or the installed synapsidian's `bin/synapsidian` where the desktop app leaves it
