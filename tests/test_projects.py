@@ -891,4 +891,4 @@ def test_extension_version_follows_the_plugin():
 
     plugin = json.loads((PROJECTS / ".claude-plugin/plugin.json").read_text())
     assert yaml.safe_load((PROJECTS / "extension/extension.yaml").read_text())["version"] == plugin["version"]
-    assert plugin["dependencies"] == [{"name": "synapsidian", "version": "~0.34.0"}]
+    assert plugin["dependencies"] == [{"name": "synapsidian", "version": "~0.35.0"}]

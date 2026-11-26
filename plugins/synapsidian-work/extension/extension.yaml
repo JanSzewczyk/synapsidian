@@ -1,7 +1,7 @@
 # Installed into the vault by `synapsidian setup extension --from <this dir>` (D90).
 # Keep `version` equal to .claude-plugin/plugin.json's: skills compare the two to know when to re-install.
 name: synapsidian-work
-version: 0.7.2
+version: 0.8.0
 description: Work add-on for synapsidian - 1:1s, stand-up, retros, a win log, pull requests, Jira, email and Slack asks.
 # The oldest synapsidian that reads schema.yaml (`extend: about: sections` came in 0.34.0, D160).
 # A core that checks it says to update synapsidian instead of failing on an unknown key (D161).

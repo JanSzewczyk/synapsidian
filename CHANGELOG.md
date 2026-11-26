@@ -9,6 +9,35 @@ The sections before synapsidian-dock 0.6.0 were reconstructed from git history o
 commits that changed each plugin's version; some versions in between had no release commit of their
 own and are folded into the next one.
 
+## [0.35.0 synapsidian] — 2026-11-26
+
+### Added
+
+- Option `morning_sources`: external sources the morning run reads, read-only, through a connector in the session. Empty reads none; a connector being there is never enough (D162).
+- Source `mail`: `/synapsidian:morning` reads inbox threads not from you since the previous morning run (at most 3 days, 20 threads opened) and files unanswered asks as tasks, at most 5 a run, deduplicated by thread link, by meaning against open tasks and against tasks closed in the last 7 days. Each task it filed, and each ask it saw but did not file, gets a line in Needs attention. An unknown value, or `mail` with no mail connector, is one line in the run's report.
+- `email` is a core `task.source` value.
+- `synapsidian ref sources` prints the sources contract and the rules for filing asks as tasks, for add-ons.
+
+## [0.8.0 synapsidian-work] — 2026-11-26
+
+### Changed
+
+- With `mail` in the core's `morning_sources`, the morning run calls `work-brief` with `morning core-mail` and it skips email, so mail is read once. With `mail` off, it reads email as before.
+- Asks are filed by the core's rules (`synapsidian ref sources`), at most 5 tasks per source per run: email and Slack can now file 5 each, where the total was 5.
+- Requires synapsidian ~0.35.0.
+
+## [0.13.3 synapsidian-projects] — 2026-11-26
+
+### Changed
+
+- Requires synapsidian ~0.35.0.
+
+## [0.7.4 synapsidian-dock] — 2026-11-26
+
+### Changed
+
+- Requires synapsidian ~0.35.0.
+
 ## [0.34.2 synapsidian] — 2026-11-25
 
 ### Added

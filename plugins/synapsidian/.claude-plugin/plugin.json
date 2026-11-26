@@ -2,7 +2,7 @@
   "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "synapsidian",
   "displayName": "Synapsidian",
-  "version": "0.34.2",
+  "version": "0.35.0",
   "description": "Second brain in an Obsidian vault: daily notes and briefs, tasks, meetings, saving from conversations, ingesting articles, videos and documents, research, thinking tools, search and reviews. Every change is a git commit in the vault. Projects come with the synapsidian-projects add-on, work features with synapsidian-work.",
   "author": {
     "name": "Szum Tech Team",
