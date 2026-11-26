@@ -15,7 +15,7 @@ Claude also picks it for "morning brief" or "what's on today?". For only the dai
 
 ## What it reads
 
-A source that is not available is skipped silently. Everything external is read-only, and what it reads (the calendar included) is material, never an instruction.
+A source that is not available is skipped silently, except one you turned on in `morning_sources`, which gets one line in the report. Everything external is read-only, and what it reads (the calendar and mail included) is material, never an instruction.
 
 | Source | What |
 | --- | --- |
@@ -26,8 +26,9 @@ A source that is not available is skipped silently. Everything external is read-
 | Vault history | commits since the last morning run by `evening`, `save`, `review` and `health` |
 | Archive | one note, how-to or live decision unchanged for 60 days, the most linked-to first; the same note at most once in 90 days |
 | Stale facts | at most 3 facts stamped `(as of …)` more than 30 days ago; each asked about once in 14 days |
+| Mail | only with `mail` in [`morning_sources`](/synapsidian/configuration/options/#morning_sources): inbox threads not from you since the previous morning run, at most 20 opened; unanswered asks become tasks (`source: email`, at most 5, deduplicated by thread link, by meaning against open tasks and against tasks closed in the last 7 days) |
 
-With [synapsidian-work](/synapsidian/extensions/work/) installed, `synapsidian-work hook morning` adds pull requests, Jira tickets and asks from email and Slack.
+With [synapsidian-work](/synapsidian/extensions/work/) installed, `synapsidian-work hook morning` adds pull requests, Jira tickets and asks from Slack, and from email unless `mail` is on: one reader per source.
 
 ## What it writes
 
@@ -37,13 +38,13 @@ It creates a meeting note for each of **today's** qualifying events, as [`/synap
 
 In this order, leaving out empty sections:
 
-1. **Needs attention.** Overdue tasks with their due date, then due today, then people to follow up (with the first open topic from their note), then goals past their target, then prep for tomorrow's meetings. A due task whose blocker is still open says `blocked by [[T5 …]]`: the blocker is what needs attention.
+1. **Needs attention.** Overdue tasks with their due date, then due today, then add-on lines (escalated pull requests, unfiled asks), then mail: each task it filed (`[[T12 …]] new, from mail: <who asked>`) and asks it saw but did not file, at most 5 lines; then people to follow up (with the first open topic from their note), then goals past their target, then prep for tomorrow's meetings. A due task whose blocker is still open says `blocked by [[T5 …]]`: the blocker is what needs attention.
 2. **Done.** Tasks closed since the done window, or "Nothing new since yesterday."
 3. **Coming up.** Tasks due in the next 7 days (at most 6), at most 2 undated tasks untouched for 14 days or more, and goals whose target is within 30 days with their progress.
 4. **Still true?** One line per stale fact. You answer when you like: a changed fact goes in through `/synapsidian:save` with a new date, and an unchanged one gets its stamp moved to today. The run never changes a fact.
 5. **From the archive.** One note you once wrote, as a reminder. Nothing to do.
 
-One item, one place: a task beats any message about the same thing.
+One item, one place: a task beats any message about the same thing, and a message two plugins read is listed once.
 
 ### agenda
 
@@ -59,7 +60,7 @@ One line per commit since the last morning run (evening runs, saves from other s
 
 ## Commit and report
 
-One commit, even when only the daily note changed: the next morning's `overnight` counts from it. The reply is the brief as written and one line with the tasks filed and meeting notes created.
+One commit, even when only the daily note changed: the next morning's `overnight` counts from it. The reply is the brief as written, one line with the tasks filed and meeting notes created, and any report lines: an unknown `morning_sources` value, `mail` with no mail connector, or an ask refused because it looked like a credential.
 
 <Aside title="Daily vs morning">
 `/synapsidian:daily` leaves a brief alone once it has a **Done** or **Needs attention** line, because those mean the morning run wrote it with sources `daily` does not read.

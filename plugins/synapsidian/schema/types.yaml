@@ -61,7 +61,7 @@ types:
       status: {required: true, kind: text, enum: [todo, doing, waiting, done, dropped], default: todo}
       priority: {required: true, kind: text, enum: [high, medium, low], default: medium}
       due: {kind: date}
-      source: {kind: text, enum: [save, session, meeting, manual, capture, ingest, research]}
+      source: {kind: text, enum: [save, session, meeting, manual, capture, ingest, research, email]}
       source_link: {kind: link}
       done_on: {kind: date}
       # D124: a recurring task, every <n> days, weeks, months or years (1w, 2w, 1m, 1y). Closing

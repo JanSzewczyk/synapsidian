@@ -37,7 +37,7 @@ Set in `/plugin` → synapsidian-work → configure. Leave any empty to skip tha
 | Skill | What it does |
 |---|---|
 | **setup** | `/synapsidian-work:setup [check\|schedule]`: install or update the schema extension in the vault, check the work sources, fill team / company / manager / working hours and the `## Work` section of `About.md`, schedule the stand-up |
-| **work-brief** | `/synapsidian-work:work-brief`: PRs waiting on you, ready or stuck, open Jira tickets, unanswered email and Slack asks filed as tasks; PRs are listed, never filed (part of `/synapsidian:morning`) |
+| **work-brief** | `/synapsidian-work:work-brief`: PRs waiting on you, ready or stuck, open Jira tickets, unanswered email and Slack asks filed as tasks (email is left to the core when its `morning_sources` lists `mail`); PRs are listed, never filed (part of `/synapsidian:morning`) |
 | **standup** | `/synapsidian-work:standup`: stand-up note from devlogs, today's sessions, Jira, GitHub, git and the calendar (scheduled an hour before the stand-up) |
 | **one-to-one** | `/synapsidian-work:one-to-one`: prepare a 1:1 note, add or work out a topic, carry action items forward, read it back |
 | **one-to-one-triage** | `/synapsidian-work:one-to-one-triage`: interview-driven prep of a 1:1, topic by topic, ending in an English talking script |

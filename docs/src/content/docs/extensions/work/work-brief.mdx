@@ -8,7 +8,7 @@ import { Aside } from '@astrojs/starlight/components';
 The work side of the morning brief. The core's morning run calls it with `morning`; you can also ask for it alone ("what PRs need me?", "my open tickets").
 
 ```text
-/synapsidian-work:work-brief [morning]
+/synapsidian-work:work-brief [morning] [core-mail]
 ```
 
 ## What it reads
@@ -17,18 +17,20 @@ The work side of the morning brief. The core's morning run calls it with `mornin
 | --- | --- |
 | Pull requests | `synapsidian-work prs` over every repository in `github_repos`: waiting on you, ready to merge, stuck with the reason, in review, drafts, to escalate, and your PRs merged since the done window |
 | Jira | your open tickets in `jira_projects`, through the Atlassian connector |
-| Email | threads from the last two days that ask you for something you have not answered |
+| Email | threads from the last two days that ask you for something you have not answered; skipped with `core-mail` |
 | Slack | mentions and DMs from the last two days that end in a question or ask you have not answered or reacted to |
 
 A source that is not configured or not available is skipped silently. Everything is read-only.
 
+When the core's [`morning_sources`](/synapsidian/configuration/options/#morning_sources) lists `mail`, the core reads mail and the morning run calls this skill with `morning core-mail`, so email is read once. With `mail` off, it reads email as before.
+
 ## What it files
 
-Unanswered asks from email and Slack become tasks, with `source: email` or `slack` and a link to the thread (D64):
+Unanswered asks from email and Slack become tasks, with `source: email` or `slack` and a link to the thread, by the core's filing rules (D64, D162):
 
 - only asks addressed to you that you have not answered or acknowledged; not newsletters, notifications, FYIs or asks to someone else;
 - deduplicated by link, against open tasks by meaning, and against tasks closed in the last 7 days;
-- at most 5 per run, titled in plain words, with a `due` only when the message states a date;
+- at most 5 per source per run (email 5, Slack 5), titled in plain words, with a `due` only when the message states a date;
 - money, health and credentials are never filed.
 
 It only creates tasks: it never edits, closes or re-dates one you have.
