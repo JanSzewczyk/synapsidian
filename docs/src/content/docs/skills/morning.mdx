@@ -76,6 +76,7 @@ synapsidian query notes --type task | person | goal ...
 synapsidian query commits --since-skill morning --skills evening,save,review,health
 synapsidian query resurface --remember
 synapsidian query stale --remember
+synapsidian note new --type task --field source=email ...   # only with mail in morning_sources
 synapsidian block set --file "Daily/<today>.md" --name brief | agenda | overnight
 synapsidian commit --skill morning --message "brief <today>, <n> tasks filed, <n> meetings" ...
 ```
