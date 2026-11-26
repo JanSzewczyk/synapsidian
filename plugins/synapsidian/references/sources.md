@@ -102,9 +102,8 @@ covers is dropped, whichever plugin read it.
 
 One reader per source per run. The morning run states once, before an add-on's steps run, which
 sources are on (`sources on: mail`, or `sources on: none`). An add-on that also reads one of them
-maps that statement to its own argument in its printed hook reference, and skips its own read.
-synapsidian-work's `work-brief` gets `morning core-mail` and skips its Email step; with mail off it
-reads email as before.
+maps that statement to its own argument in its printed hook reference, and skips its own read; with
+the source off, it reads as before. The core knows no add-on argument names (D90).
 
 An add-on version whose hook doesn't know the statement reads the source too: dedup by
 `source_link` stops a second task, and one item, one place drops a second Needs attention line.
