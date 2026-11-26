@@ -9,6 +9,12 @@ The sections before synapsidian-dock 0.6.0 were reconstructed from git history o
 commits that changed each plugin's version; some versions in between had no release commit of their
 own and are folded into the next one.
 
+## [0.8.0 synapsidian-dock] — 2026-11-26
+
+### Changed
+
+- The band shows as soon as a session starts, with no command. `show_dock_band` now defaults to on; turned off, the band waits for `/synapsidian` as before. If your settings already store `show_dock_band: false`, turn it on to get the band at start.
+
 ## [0.35.0 synapsidian] — 2026-11-26
 
 ### Added
